@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notícias de IA — 11 de junho de 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222536;
+      --border: #2e3150;
+      --accent: #6c63ff;
+      --accent2: #00d4aa;
+      --accent3: #ff6b6b;
+      --accent4: #ffa500;
+      --text: #e8eaf6;
+      --muted: #8b8fa8;
+      --tag-bg: #252840;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #1a1d27 0%, #12142a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 0 1.5rem;
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .header-top {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .logo-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 10px var(--accent2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.6; transform: scale(1.3); }
+    }
+    .brand {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent2);
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #fff 0%, #9b97ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .meta-row {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.2rem;
+      flex-wrap: wrap;
+    }
+    .meta-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .meta-badge span { color: var(--text); font-weight: 600; }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* ── Section header ── */
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .section-label h2 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    /* ── Featured card (top story) ── */
+    .featured {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 780px) { .featured { grid-template-columns: 1fr; } }
+
+    /* ── Card grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 500px) { .cards { grid-template-columns: 1fr; } }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .card.purple::before  { background: linear-gradient(90deg, #6c63ff, #9b97ff); }
+    .card.teal::before    { background: linear-gradient(90deg, #00d4aa, #00bcd4); }
+    .card.red::before     { background: linear-gradient(90deg, #ff6b6b, #ff8e8e); }
+    .card.orange::before  { background: linear-gradient(90deg, #ffa500, #ffcc44); }
+    .card.green::before   { background: linear-gradient(90deg, #4caf50, #81c784); }
+    .card.blue::before    { background: linear-gradient(90deg, #2196f3, #64b5f6); }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+    .card-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .tag.hot { border-color: #ff6b6b44; color: #ff6b6b; background: #ff6b6b11; }
+    .tag.new { border-color: #00d4aa44; color: #00d4aa; background: #00d4aa11; }
+    .tag.dev { border-color: #6c63ff44; color: #9b97ff; background: #6c63ff11; }
+    .tag.biz { border-color: #ffa50044; color: #ffa500; background: #ffa50011; }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: #fff;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .card p strong { color: var(--text); }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+    .source-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .read-link {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent2);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.15s;
+    }
+    .read-link:hover { color: #fff; }
+    .read-link::after { content: '↗'; font-size: 0.7rem; }
+
+    /* ── Highlights strip ── */
+    .highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+    .highlight-item {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+    .hi-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .hi-body { flex: 1; }
+    .hi-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent2);
+      line-height: 1.1;
+    }
+    .hi-desc { font-size: 0.78rem; color: var(--muted); margin-top: 0.15rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 2rem;
+      text-align: center;
+    }
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo-dot"></div>
+      <div class="brand">AI Intelligence Briefing</div>
+    </div>
+    <h1>Notícias de Inteligência Artificial</h1>
+    <p class="subtitle">Curadoria automática dos principais portais de tecnologia — focada em engenheiros e líderes de negócios</p>
+    <div class="meta-row">
+      <div class="meta-badge">📅 <span>11 de junho de 2026</span></div>
+      <div class="meta-badge">⏱ <span>Últimas 24 horas</span></div>
+      <div class="meta-badge">📰 <span>8 histórias</span></div>
+      <div class="meta-badge">🌐 <span>TechCrunch · Fortune · CNBC · NVIDIA · Microsoft · Anthropic</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Numbers -->
+  <div class="section-label"><h2>Números em destaque</h2></div>
+  <div class="highlights">
+    <div class="highlight-item">
+      <div class="hi-icon">🚀</div>
+      <div class="hi-body">
+        <div class="hi-val">$1 trilhão</div>
+        <div class="hi-desc">Valuation esperado da OpenAI no IPO — maior IPO de tech da história</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="hi-icon">⚡</div>
+      <div class="hi-body">
+        <div class="hi-val">550B params</div>
+        <div class="hi-desc">NVIDIA Nemotron 3 Ultra — maior modelo open-weights dos EUA</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="hi-icon">💼</div>
+      <div class="hi-body">
+        <div class="hi-val">$206 mil/ano</div>
+        <div class="hi-desc">Salário médio de AI/ML Engineer em 2026, alta de +$50k em 12 meses</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="hi-icon">🔌</div>
+      <div class="hi-body">
+        <div class="hi-val">97M installs</div>
+        <div class="hi-desc">Model Context Protocol (MCP) da Anthropic — infraestrutura padrão de agentes</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="hi-icon">🏭</div>
+      <div class="hi-body">
+        <div class="hi-val">75% devs</div>
+        <div class="hi-desc">Vão orquestrar IA ao invés de codificar diretamente até fim de 2026 (Gartner)</div>
+      </div>
+    </div>
+    <div class="highlight-item">
+      <div class="hi-icon">📉</div>
+      <div class="hi-body">
+        <div class="hi-val">-40%</div>
+        <div class="hi-desc">Queda na demanda por devs juniores onde IA é adotada de forma séria</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured stories -->
+  <div class="section-label"><h2>Principais histórias</h2></div>
+  <div class="cards">
+
+    <!-- OpenAI IPO -->
+    <div class="card purple">
+      <div class="card-header">
+        <div class="card-icon">📈</div>
+        <div class="tags">
+          <span class="tag hot">HOT</span>
+          <span class="tag biz">NEGÓCIOS</span>
+        </div>
+      </div>
+      <h3>OpenAI registra S-1 confidencial na SEC — IPO se aproxima</h3>
+      <p>
+        A OpenAI confirmou publicamente em <strong>10 de junho de 2026</strong> o depósito sigiloso do S-1 junto à SEC (equivalente à CVM), primeiro passo formal rumo ao IPO. A companhia trabalha com <strong>Goldman Sachs, Morgan Stanley e JPMorgan</strong> como underwriters.
+        <br><br>
+        Janela provável de listagem: <strong>setembro–novembro de 2026</strong>, com valuation estimado acima de <strong>US$ 1 trilhão</strong> (última rodada privada avaliou em US$ 852 bi). Impacto direto para equipes de produto e negócios: maior pressão por monetização e expansão do ecossistema de APIs.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">Fortune / OpenAI</span>
+        <a class="read-link" href="https://fortune.com/2026/06/09/openai-files-confidential-s-1-sec-ipo/" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- Microsoft MAI -->
+    <div class="card blue">
+      <div class="card-header">
+        <div class="card-icon">🪟</div>
+        <div class="tags">
+          <span class="tag new">NOVO</span>
+          <span class="tag dev">DEV</span>
+        </div>
+      </div>
+      <h3>Microsoft lança MAI-Code-1-Flash e MAI-Thinking-1 — modelos próprios de codificação</h3>
+      <p>
+        No <strong>Microsoft Build 2026</strong>, a empresa apresentou sua primeira família própria de modelos de IA, diminuindo dependência da OpenAI:
+        <br><br>
+        • <strong>MAI-Code-1-Flash</strong>: 137B params (5B ativos), janela 256K tokens. Supera Claude Haiku 4.5 no SWE-Bench Pro (+16 pts). Disponível no GitHub Copilot agora. <br>
+        • <strong>MAI-Thinking-1</strong>: modelo de raciocínio, 35B ativos. Alcança <strong>97% no AIME 2025</strong> e equipara ao Claude Opus no SWE-Bench. Preview via Microsoft Foundry.
+        <br><br>
+        Também anunciados: MAI-Image-2.5, MAI-Transcribe-1.5 (43 idiomas) e MAI-Voice-2.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">Microsoft AI / CNBC</span>
+        <a class="read-link" href="https://microsoft.ai/news/introducingmai-code-1-flash/" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- NVIDIA Nemotron -->
+    <div class="card green">
+      <div class="card-header">
+        <div class="card-icon">🟢</div>
+        <div class="tags">
+          <span class="tag new">NOVO</span>
+          <span class="tag dev">OPEN-WEIGHTS</span>
+        </div>
+      </div>
+      <h3>NVIDIA Nemotron 3 Ultra: o maior modelo open-weights americano já lançado</h3>
+      <p>
+        Apresentado no <strong>Computex 2026</strong> e lançado em 4 de junho, o Nemotron 3 Ultra é um MoE de <strong>550B parâmetros (55B ativos)</strong>, projetado para agentes de longa duração.
+        <br><br>
+        Destaques técnicos: arquitetura <em>Mamba-Transformer híbrida</em>, quantização NVFP4 (até <strong>5× mais throughput</strong>), contexto de <strong>1M tokens</strong>, checkpoints abertos. Supera rivais chineses em velocidade (300+ tokens/s) com custo 30% menor em tarefas agênticas. Adotado por CrowdStrike, Cursor, Perplexity e Siemens.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">NVIDIA Newsroom</span>
+        <a class="read-link" href="https://nvidianews.nvidia.com/news/nvidia-debuts-nemotron-3-family-of-open-models" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- Anthropic MCP -->
+    <div class="card teal">
+      <div class="card-header">
+        <div class="card-icon">🔌</div>
+        <div class="tags">
+          <span class="tag dev">DEV</span>
+          <span class="tag new">ATUALIZAÇÃO</span>
+        </div>
+      </div>
+      <h3>Anthropic expande Claude Managed Agents com MCP privado e créditos reformulados</h3>
+      <p>
+        A Anthropic anunciou que <strong>Claude Managed Agents</strong> agora suportam <em>private MCP servers</em> — agentes rodando em sandbox controlado pela empresa cliente, conectados a servidores MCP internos com total controle de segurança. Sandboxes auto-hospedados estão em beta público (Cloudflare, Vercel, Modal, Daytona).
+        <br><br>
+        Atenção: em <strong>15 de junho de 2026</strong> a Anthropic reformula o sistema de créditos e deprecia modelos legados. Equipes usando Claude via API devem revisar contratos e camadas de uso com urgência.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">Anthropic / Releasebot</span>
+        <a class="read-link" href="https://releasebot.io/updates/anthropic/claude" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- Impact on devs -->
+    <div class="card orange">
+      <div class="card-header">
+        <div class="card-icon">👨‍💻</div>
+        <div class="tags">
+          <span class="tag biz">CARREIRA</span>
+          <span class="tag dev">DEV</span>
+        </div>
+      </div>
+      <h3>IA redefine o papel do engenheiro de software em 2026 — dados e tendências</h3>
+      <p>
+        Levantamentos de 2026 revelam uma transformação profunda para devs:
+        <br><br>
+        • <strong>65%</strong> dos devs esperam redefinição de função em 2026 (de coder para arquiteto/orquestrador)<br>
+        • Novos títulos emergentes: <em>AI Orchestrator, RAG Engineer, AI Guardian</em><br>
+        • Salário médio AI/ML Engineer: <strong>$206k/ano</strong> (+$50k em 12 meses)<br>
+        • Demanda por juniores caiu <strong>40%</strong> onde IA é implantada a sério<br>
+        • ~15% dos devs citam custo de ferramentas de IA como preocupação principal
+        <br><br>
+        Takeaway: investir em prompt engineering, arquitetura de agentes e orquestração de LLMs é o diferencial competitivo de 2026.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">Pragmatic Engineer / WEF</span>
+        <a class="read-link" href="https://newsletter.pragmaticengineer.com/p/the-impact-of-ai-on-software-engineers-2026" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- LangChain + MCP ecosystem -->
+    <div class="card purple">
+      <div class="card-header">
+        <div class="card-icon">🤖</div>
+        <div class="tags">
+          <span class="tag dev">FRAMEWORKS</span>
+          <span class="tag new">NOVO</span>
+        </div>
+      </div>
+      <h3>LangChain 1.0 e ecossistema de agentes explodem em junho 2026</h3>
+      <p>
+        <strong>LangChain 1.0</strong> foi lançado consolidando-se como plataforma completa de lifecycle para times de engenharia de agentes. O Model Context Protocol (MCP) da Anthropic ultrapassou <strong>97 milhões de instalações</strong>, tornando-se infraestrutura padrão de agentes com suporte de todos os grandes provedores.
+        <br><br>
+        Outros destaques do ecossistema: <strong>Cognition's Devin</strong> (AI coding agent) saltou de $37M para $492M ARR em 12 meses e captou $1B em Series D a $26B de valuation. MetaMask lançou <em>Agent Wallet</em> para agentes executarem transações on-chain com limites de segurança.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">llm-stats.com / AI Agent Store</span>
+        <a class="read-link" href="https://llm-stats.com/ai-news" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- Layoffs / Business impact -->
+    <div class="card red">
+      <div class="card-header">
+        <div class="card-icon">⚠️</div>
+        <div class="tags">
+          <span class="tag hot">IMPACTO</span>
+          <span class="tag biz">NEGÓCIOS</span>
+        </div>
+      </div>
+      <h3>Snap demite 1.000 e Meta reestrutura 15.000 postos citando avanços em IA</h3>
+      <p>
+        O CEO do Snap anunciou demissão de <strong>aproximadamente 1.000 funcionários</strong> e encerramento de mais de 300 vagas abertas, citando explicitamente que avanços em IA permitem que equipes menores entreguem o mesmo resultado.
+        <br><br>
+        A <strong>Meta</strong> iniciou reestruturação de ~8.000 postos, com 7.000 colaboradores realocados para times focados em IA. Tendência que deve se intensificar no segundo semestre de 2026 à medida que modelos agênticos assumem tarefas operacionais antes delegadas a equipes inteiras.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">crescendo.ai / CNN Business</span>
+        <a class="read-link" href="https://www.crescendo.ai/news/latest-ai-news-and-updates" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+    <!-- Colorado AI Act -->
+    <div class="card orange">
+      <div class="card-header">
+        <div class="card-icon">⚖️</div>
+        <div class="tags">
+          <span class="tag hot">REGULAÇÃO</span>
+          <span class="tag biz">COMPLIANCE</span>
+        </div>
+      </div>
+      <h3>Colorado AI Act entra em vigor em 30 de junho — primeira lei de IA com enforcement nos EUA</h3>
+      <p>
+        O <strong>Colorado Consumer Protections for Artificial Intelligence Act</strong> é o primeiro deadline real de enforcement de IA em solo americano: a partir de <strong>30 de junho de 2026</strong>, desenvolvedores e implantadores de sistemas de IA de alto risco que atendam residentes do Colorado precisam estar em conformidade.
+        <br><br>
+        Paralelamente, o Presidente Trump assinou ordem executiva pedindo que empresas de IA forneçam voluntariamente modelos frontier ao governo federal <strong>até 30 dias antes</strong> do lançamento público para benchmarking de cibersegurança. Equipes jurídicas e de produto devem mapear exposição com urgência.
+      </p>
+      <div class="card-footer">
+        <span class="source-label">White House / Radical Data Science</span>
+        <a class="read-link" href="https://www.whitehouse.gov/presidential-actions/2026/06/promoting-advanced-artificial-intelligence-innovation-and-security/" target="_blank">Leia a matéria</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Rapid bullets -->
+  <div class="section-label"><h2>Em resumo — outros destaques</h2></div>
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem 2rem; margin-bottom: 2.5rem;">
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+      <li style="display:flex; gap:0.8rem; align-items:flex-start; font-size:0.88rem; color:var(--muted);">
+        <span style="color:var(--accent2); font-size:0.9rem; flex-shrink:0; margin-top:2px;">▸</span>
+        <span><strong style="color:var(--text)">Google Gemini 3.5 Flash</strong>: aumento de preço 3×, mas desempenho equipara a modelos flagship em velocidade 4× maior. Anthropic contrapõe com Fast Mode do Opus 4.8, 3× mais barato que Opus padrão. <a href="https://llm-stats.com/llm-updates" target="_blank" style="color:var(--accent2);">Ver comparativo</a></span>
+      </li>
+      <li style="display:flex; gap:0.8rem; align-items:flex-start; font-size:0.88rem; color:var(--muted);">
+        <span style="color:var(--accent2); font-size:0.9rem; flex-shrink:0; margin-top:2px;">▸</span>
+        <span><strong style="color:var(--text)">OpenAI + Codex em Oracle Cloud</strong>: acesso a modelos OpenAI e Codex via compromisso com Oracle Cloud Infrastructure anunciado em 11 de junho. <a href="https://openai.com/news/" target="_blank" style="color:var(--accent2);">Ver news</a></span>
+      </li>
+      <li style="display:flex; gap:0.8rem; align-items:flex-start; font-size:0.88rem; color:var(--muted);">
+        <span style="color:var(--accent2); font-size:0.9rem; flex-shrink:0; margin-top:2px;">▸</span>
+        <span><strong style="color:var(--text)">Workday AI Agents</strong>: centenas de novos agentes para HR, Finance, IT e Legal lançados. Sana (assistente conversacional) now GA. <a href="https://augusto.digital/insights/blogs/monthly-llm-news-june-2026/" target="_blank" style="color:var(--accent2);">Leia mais</a></span>
+      </li>
+      <li style="display:flex; gap:0.8rem; align-items:flex-start; font-size:0.88rem; color:var(--muted);">
+        <span style="color:var(--accent2); font-size:0.9rem; flex-shrink:0; margin-top:2px;">▸</span>
+        <span><strong style="color:var(--text)">Investimento Big Tech em IA</strong>: Amazon, Google e Microsoft planejam injetar juntas mais de <strong>US$ 300 bilhões</strong> em infraestrutura de IA somente em 2026. <a href="https://exame.com/inteligencia-artificial/" target="_blank" style="color:var(--accent2);">Exame IA</a></span>
+      </li>
+      <li style="display:flex; gap:0.8rem; align-items:flex-start; font-size:0.88rem; color:var(--muted);">
+        <span style="color:var(--accent2); font-size:0.9rem; flex-shrink:0; margin-top:2px;">▸</span>
+        <span><strong style="color:var(--text)">Brasil: +306% na busca por talentos em IA</strong> em 12 meses. Plano Brasileiro de IA prevê R$ 23 bilhões até 2028. <a href="https://www.alura.com.br/artigos/mercado-de-ia" target="_blank" style="color:var(--accent2);">Alura</a></span>
+      </li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  <p>
+    Resumo gerado automaticamente por IA em <strong>11 de junho de 2026</strong> — para uso informativo.<br>
+    Fontes: <a href="https://fortune.com" target="_blank">Fortune</a> · <a href="https://www.cnbc.com" target="_blank">CNBC</a> · <a href="https://microsoft.ai" target="_blank">Microsoft AI</a> · <a href="https://nvidianews.nvidia.com" target="_blank">NVIDIA</a> · <a href="https://openai.com/news" target="_blank">OpenAI</a> · <a href="https://releasebot.io/updates/anthropic" target="_blank">Anthropic</a> · <a href="https://llm-stats.com" target="_blank">LLM Stats</a> · <a href="https://newsletter.pragmaticengineer.com" target="_blank">Pragmatic Engineer</a>
+  </p>
+</footer>
+
+</body>
+</html>

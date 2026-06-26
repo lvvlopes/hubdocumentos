@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar IA · 25 de junho de 2026</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0f14;
+      --surface:   #161b24;
+      --border:    #242b38;
+      --accent:    #3b82f6;
+      --accent2:   #8b5cf6;
+      --accent3:   #10b981;
+      --accent4:   #f59e0b;
+      --accent5:   #ef4444;
+      --text:      #e2e8f0;
+      --muted:     #7d8fa8;
+      --pill-bg:   rgba(59,130,246,.12);
+      --radius:    12px;
+      --card-gap:  28px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0f1620 0%, #111827 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 0 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(59,130,246,.07) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(139,92,246,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-block;
+      background: var(--pill-bg);
+      border: 1px solid rgba(59,130,246,.3);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+    header h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #f1f5f9 30%, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    header p.subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 22px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .meta-row span { display: flex; align-items: center; gap: 6px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent3); display: inline-block; }
+
+    /* ── Layout ── */
+    main { max-width: 1120px; margin: 0 auto; padding: 48px 24px 80px; }
+
+    /* ── Stats Bar ── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      text-align: center;
+    }
+    .stat-card .val {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-card .lbl { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Card ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--card-gap);
+      margin-bottom: 56px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--c-accent, var(--accent));
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+    .card:hover {
+      border-color: rgba(255,255,255,.1);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.4);
+    }
+
+    .card-header { display: flex; align-items: flex-start; gap: 14px; }
+    .card-icon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.04);
+    }
+    .card-meta { flex: 1; min-width: 0; }
+    .card-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+      background: var(--pill-bg);
+      color: var(--c-accent, var(--accent));
+      border: 1px solid var(--c-accent, var(--accent));
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -.01em;
+      color: #f1f5f9;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #94a3b8;
+      line-height: 1.65;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 4px;
+    }
+    .source-chip {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--muted);
+    }
+    .source-chip svg { width: 12px; height: 12px; }
+
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-accent, var(--accent));
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      transition: background .15s;
+    }
+    .read-more:hover { background: rgba(255,255,255,.08); }
+    .read-more svg { width: 12px; height: 12px; }
+
+    /* ── Impact badge ── */
+    .impact {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #94a3b8;
+      padding: 8px 12px;
+      background: rgba(255,255,255,.03);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .impact strong { color: var(--text); }
+
+    /* ── Featured card ── */
+    .card-featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 32px;
+      padding: 32px;
+    }
+    .card-featured .card-body { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+    .card-featured .card-icon { width: 56px; height: 56px; font-size: 28px; }
+    .card-featured h2 { font-size: 1.3rem; }
+    @media (max-width: 640px) {
+      .card-featured { flex-direction: column; }
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ HEADER -->
+<header>
+  <div class="header-badge">Edição diária · Inteligência Artificial</div>
+  <h1>Radar IA</h1>
+  <p class="subtitle">As principais notícias de inteligência artificial das últimas 24 horas, curadas para empresários e engenheiros de software.</p>
+  <div class="meta-row">
+    <span><span class="dot"></span> Atualizado em 25 de junho de 2026</span>
+    <span>·</span>
+    <span>10 histórias selecionadas</span>
+    <span>·</span>
+    <span>Fontes: TechCrunch, CNBC, Axios, Bloomberg e outras</span>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ MAIN -->
+<main>
+
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <div class="val" style="color:#ef4444">GPT-5.6</div>
+      <div class="lbl">Modelo sob restrição do governo EUA</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" style="color:#3b82f6">US$ 13B</div>
+      <div class="lbl">Amazon investe em cloud / IA na Índia</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" style="color:#10b981">1.000×</div>
+      <div class="lbl">Redução de energia prometida pela Unconventional AI</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" style="color:#f59e0b">US$ 320M</div>
+      <div class="lbl">Funding p/ treinar IA com videogames</div>
+    </div>
+    <div class="stat-card">
+      <div class="val" style="color:#8b5cf6">46%</div>
+      <div class="lbl">Devs preferem Claude Code em 2026</div>
+    </div>
+  </div>
+
+  <!-- ─── CAPA / DESTAQUE ─── -->
+  <div class="section-title">🔥 Destaque do dia</div>
+  <div class="card-grid" style="margin-bottom:56px">
+
+    <!-- CARD FEATURED: OpenAI / GPT-5.6 -->
+    <div class="card card-featured" style="--c-accent:#ef4444">
+      <div class="card-icon">🏛️</div>
+      <div class="card-body">
+        <div>
+          <span class="card-tag" style="--c-accent:#ef4444">Política &amp; Regulação</span>
+          <h2>Casa Branca exige acesso controlado ao GPT-5.6 por preocupações de segurança cibernética</h2>
+        </div>
+        <p>
+          O governo Trump pediu à OpenAI que não lance o GPT-5.6 ao público em geral — ao menos por ora. A Casa Branca quer aprovar clientes individualmente antes de qualquer liberação ampla. O modelo seria tão poderoso quanto o <strong>Mythos</strong>, codinome do modelo restrito da Anthropic com capacidades ofensivas em cibersegurança. Esta é a primeira vez que o governo americano interfere preventivamente no lançamento de um modelo de IA comercial. O CEO Sam Altman disse à equipe que a administração "aprovará acesso cliente a cliente" durante o período de preview, com expectativa de abertura gradual nas semanas seguintes.
+        </p>
+        <div class="impact">
+          💡 <strong>Para engenheiros:</strong> Empresas e startups que já eram parceiras da OpenAI podem ter acesso prioritário. Fique de olho nas comunicações da OpenAI — o seu acesso ao modelo mais poderoso pode depender de cadastro prévio.
+        </div>
+        <div class="card-footer">
+          <span class="source-chip">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            TechCrunch · Axios · CNN
+          </span>
+          <a class="read-more" href="https://techcrunch.com/2026/06/25/the-white-house-is-asking-openai-to-slow-roll-the-release-of-its-new-model-over-safety-concerns/" target="_blank" rel="noopener">
+            Ler completo
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── INFRAESTRUTURA & INVESTIMENTOS ─── -->
+  <div class="section-title">🏗️ Infraestrutura &amp; Investimentos</div>
+  <div class="card-grid">
+
+    <!-- Amazon India -->
+    <div class="card" style="--c-accent:#f59e0b">
+      <div class="card-header">
+        <div class="card-icon">☁️</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#f59e0b">Cloud &amp; Infra</span>
+          <h2>Amazon aumenta aposta na Índia com US$ 13 bi adicionais em IA e cloud</h2>
+        </div>
+      </div>
+      <p>
+        Em reunião com o primeiro-ministro Narendra Modi em Nova Delhi, o CEO Andy Jassy anunciou mais US$ 13 bilhões para expandir data centers da AWS em Mumbai e Hyderabad até 2030. O total acumulado chega a US$ 48 bilhões no período, e US$ 88 bilhões desde 2010 — tornando a Índia um dos maiores mercados globais de infraestrutura para IA.
+      </p>
+      <div class="impact">
+        💡 <strong>Para empresários:</strong> A massiva expansão de data centers significa preços de cloud mais competitivos na Ásia. Empresas que operam em regiões aws-ap-south podem esperar mais capacidade e, no longo prazo, redução de latência e custo.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">TechCrunch · Bloomberg · CNBC</span>
+        <a class="read-more" href="https://techcrunch.com/2026/06/25/amazon-ups-india-bet-with-fresh-13b-ai-infrastructure-investment/" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Netris / a16z -->
+    <div class="card" style="--c-accent:#3b82f6">
+      <div class="card-header">
+        <div class="card-icon">🌐</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#3b82f6">Funding</span>
+          <h2>Netris levanta US$ 15M da a16z para automatizar implantação de data centers de IA</h2>
+        </div>
+      </div>
+      <p>
+        A startup de automação de redes Netris recebeu investimento Série A liderado pela Andreessen Horowitz (a16z) para ajudar neoclouds — provedores de cloud focados em IA — a colocarem data centers no ar mais rapidamente. Com a explosão da demanda por GPUs, o gargalo passou a ser o tempo de configuração de rede; o Netris resolve exatamente isso via automação de infraestrutura de datacenter.
+      </p>
+      <div class="impact">
+        💡 <strong>Para engenheiros:</strong> Se sua empresa está avaliando montar infra de IA própria ou neocloud, ferramentas como Netris podem reduzir drasticamente o tempo de provisionamento de redes de alta velocidade para clusters de GPU.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">TechCrunch</span>
+        <a class="read-more" href="https://techcrunch.com/2026/06/25/netris-raises-15m-series-a-from-a16z-to-help-ai-neoclouds-go-live-faster/" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── MODELOS & TECNOLOGIA ─── -->
+  <div class="section-title">🤖 Modelos &amp; Tecnologia</div>
+  <div class="card-grid">
+
+    <!-- Unconventional AI -->
+    <div class="card" style="--c-accent:#10b981">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#10b981">Eficiência Energética</span>
+          <h2>Ex-chefe de IA do Databricks lança arquitetura que promete IA 1.000× mais eficiente</h2>
+        </div>
+      </div>
+      <p>
+        Naveen Rao fundou a <strong>Unconventional AI</strong> e apresentou o modelo <strong>Un-0</strong>, o primeiro sistema de geração de imagens construído sobre uma arquitetura de <em>computação por osciladores</em> — radicalmente diferente das GPUs convencionais. Em testes, a qualidade rivaliza com Stable Diffusion. O plano é liberar esquemáticos do chip em breve e eventualmente fornecer capacidade de inferência como provedor de compute.
+      </p>
+      <div class="impact">
+        💡 <strong>Para todos:</strong> Se funcionar em escala, essa tecnologia pode derrubar o custo e o consumo de energia da inferência de IA em ordens de magnitude — mudando completamente a equação de viabilidade para empresas e startups.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">TechCrunch</span>
+        <a class="read-more" href="https://techcrunch.com/2026/06/25/databricks-former-ai-chief-thinks-he-can-cut-ais-power-bill-by-1000x/" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Microsoft MAI -->
+    <div class="card" style="--c-accent:#0ea5e9">
+      <div class="card-header">
+        <div class="card-icon">🪟</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#0ea5e9">Modelos Proprietários</span>
+          <h2>Microsoft lança MAI-Code-1-Flash e MAI-Thinking-1 — 10× mais baratos que o GPT-5.5</h2>
+        </div>
+      </div>
+      <p>
+        No Build 2026, a Microsoft revelou seus próprios modelos de IA: o <strong>MAI-Code-1-Flash</strong> (geração de código) e o <strong>MAI-Thinking-1</strong> (raciocínio avançado de baixo custo por token). Em benchmarks com a McKinsey, os modelos MAI superaram o GPT-5.5 em qualidade com projeção de 10× melhor custo-eficiência, sinalizando que a Microsoft está reduzindo sua dependência da OpenAI.
+      </p>
+      <div class="impact">
+        💡 <strong>Para engenheiros:</strong> Acesso via Azure / Microsoft Foundry. Se você usa Azure OpenAI Service, vale testar os modelos MAI para tarefas de geração de código — podem ser significativamente mais baratos sem perda de qualidade.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">CNBC · Euronews</span>
+        <a class="read-more" href="https://www.cnbc.com/2026/06/02/microsoft-unveils-new-ai-models-lessen-reliance-on-openai-lower-costs.html" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- GLM-5.2 open source -->
+    <div class="card" style="--c-accent:#8b5cf6">
+      <div class="card-header">
+        <div class="card-icon">🔓</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#8b5cf6">Open Source</span>
+          <h2>Zhipu AI lança GLM-5.2 com MIT License — 1M tokens de contexto e arquitetura MoE</h2>
+        </div>
+      </div>
+      <p>
+        A Zhipu AI (China) liberou o <strong>GLM-5.2</strong> sob licença MIT no Hugging Face. O modelo usa Mixture-of-Experts (MoE) com janela de contexto de 1 milhão de tokens — oferecendo aos desenvolvedores uma alternativa open-source robusta a APIs pagas. Em benchmarks de código e execução em terminal, é competitivo com modelos fechados de última geração.
+      </p>
+      <div class="impact">
+        💡 <strong>Para engenheiros:</strong> Com MIT license e 1M tokens de contexto, o GLM-5.2 é ideal para self-hosting em casos de uso com dados sensíveis, ou como base para fine-tuning corporativo sem royalties.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">LLM Stats · devflokers</span>
+        <a class="read-more" href="https://llm-stats.com/llm-updates" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── STARTUPS & PESQUISA ─── -->
+  <div class="section-title">🚀 Startups &amp; Pesquisa</div>
+  <div class="card-grid">
+
+    <!-- General Intuition -->
+    <div class="card" style="--c-accent:#f59e0b">
+      <div class="card-header">
+        <div class="card-icon">🎮</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#f59e0b">Funding · Agentes</span>
+          <h2>General Intuition levanta US$ 320M para treinar agentes de IA com 200M horas de gameplay</h2>
+        </div>
+      </div>
+      <p>
+        A <strong>General Intuition</strong> fechou uma rodada de US$ 320 milhões (valuation de US$ 2,3 bi), com participação de Khosla Ventures, General Catalyst, Jeff Bezos e Eric Schmidt. A aposta: centenas de milhões de horas de gameplay com <em>labels de ação</em> (qual botão foi pressionado e quando) ensinam raciocínio espacial-temporal a agentes de IA — habilidade fundamental para robótica e sistemas autônomos.
+      </p>
+      <div class="impact">
+        💡 <strong>Para todos:</strong> Uma nova classe de dado de treinamento além de texto. Se der certo em robótica, a abordagem pode se expandir para agentes que operam em ambientes 3D — incluindo software de simulação industrial.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">TechCrunch · CryptoBriefing</span>
+        <a class="read-more" href="https://techcrunch.com/2026/06/25/general-intuitions-2-3b-bet-that-video-games-can-train-ai-agents-for-the-real-world/" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Anthropic / Google talent -->
+    <div class="card" style="--c-accent:#ef4444">
+      <div class="card-header">
+        <div class="card-icon">🧠</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#ef4444">Mercado de Talentos</span>
+          <h2>Google perde mais quatro pesquisadores de elite para OpenAI e Anthropic</h2>
+        </div>
+      </div>
+      <p>
+        Noam Shazeer (co-inventor da atenção multi-cabeça) vai para a OpenAI. Jonas Adler, Alexander Pritzel e o Prêmio Nobel John Jumper vão para a Anthropic. As saídas abalaram investidores e aumentam a pressão sobre o Google em um momento em que a Anthropic e a OpenAI estão prestes a abrir capital, atraindo talentos com perspectiva de IPO.
+      </p>
+      <div class="impact">
+        💡 <strong>Para empresários:</strong> A guerra de talentos em IA está no pico. Se você recruta engenheiros de ML, saiba que o mercado está extremamente aquecido — e que participação acionária pré-IPO é hoje o principal atrativo.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">Bloomberg · TechCrunch</span>
+        <a class="read-more" href="https://techcrunch.com/2026/06/24/ai-researchers-continue-to-leave-google-for-its-rivals/" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── DEVTOOLS & PRODUTIVIDADE ─── -->
+  <div class="section-title">🛠️ DevTools &amp; Produtividade</div>
+  <div class="card-grid">
+
+    <!-- Claude Code líder -->
+    <div class="card" style="--c-accent:#8b5cf6">
+      <div class="card-header">
+        <div class="card-icon">💜</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#8b5cf6">Ferramentas de Código</span>
+          <h2>Claude Code domina: 46% dos devs preferem a ferramenta — Cursor tem 19%, Copilot 9%</h2>
+        </div>
+      </div>
+      <p>
+        Segundo o relatório <em>2026 Agentic Coding Trends</em> da Anthropic, o Claude Code é a ferramenta de IA para código mais amada entre desenvolvedores. A adoção de agentes de IA para codificação chegou a <strong>55%</strong> dos devs e o ecossistema evoluiu de simples autocomplete para <em>agentes que operam em codebases ao longo do tempo</em> — revisando PRs, gerenciando issues e executando tarefas de forma autônoma.
+      </p>
+      <div class="impact">
+        💡 <strong>Para engenheiros .NET/Python:</strong> Se você ainda não usa agentes de codificação no dia a dia, o relatório sugere que você está ficando para trás. Claude Code tem integração nativa com terminal e funciona especialmente bem em projetos Python e C#.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">Anthropic Report · Pragmatic Engineer</span>
+        <a class="read-more" href="https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf" target="_blank" rel="noopener">
+          Ler relatório
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Anthropic / Google compute -->
+    <div class="card" style="--c-accent:#10b981">
+      <div class="card-header">
+        <div class="card-icon">🤝</div>
+        <div class="card-meta">
+          <span class="card-tag" style="--c-accent:#10b981">Parcerias</span>
+          <h2>Anthropic expande parceria com Google e Broadcom para compute de próxima geração</h2>
+        </div>
+      </div>
+      <p>
+        A Anthropic anunciou extensão de sua parceria com Google Cloud e Broadcom para garantir <strong>vários gigawatts</strong> de capacidade de computação de nova geração. O acordo vem poucos dias após a empresa registrar seu IPO confidencialmente, depois de levantar US$ 65 bilhões em Série H — avaliação de US$ 965 bilhões. O Claude Opus 4.8 lidera benchmarks de coding com janela de contexto de 1 milhão de tokens por padrão.
+      </p>
+      <div class="impact">
+        💡 <strong>Para empresários:</strong> A Anthropic caminha para ser a segunda empresa de IA a abrir capital (após OpenAI). Avaliar o ecossistema de parceiros e a estabilidade financeira do seu fornecedor de IA já é critério de due diligence empresarial.
+      </div>
+      <div class="card-footer">
+        <span class="source-chip">Anthropic Newsroom</span>
+        <a class="read-more" href="https://www.anthropic.com/news/google-broadcom-partnership-compute" target="_blank" rel="noopener">
+          Ler completo
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 3v2H7v14h14v-7h2v7a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2h7zm7 0v6h-2V6.41l-7.29 7.3-1.42-1.42L18.59 5H15V3h6z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer>
+  <p>
+    <strong>Radar IA</strong> · Curado automaticamente em 25 de junho de 2026<br />
+    Fontes:
+    <a href="https://techcrunch.com/category/artificial-intelligence/" target="_blank" rel="noopener">TechCrunch</a> ·
+    <a href="https://www.cnbc.com" target="_blank" rel="noopener">CNBC</a> ·
+    <a href="https://www.axios.com" target="_blank" rel="noopener">Axios</a> ·
+    <a href="https://www.bloomberg.com" target="_blank" rel="noopener">Bloomberg</a> ·
+    <a href="https://www.anthropic.com/news" target="_blank" rel="noopener">Anthropic Newsroom</a>
+  </p>
+  <p style="margin-top:8px;font-size:11px">
+    Este relatório é gerado automaticamente com curadoria de IA. Verifique as fontes originais para informações completas.
+  </p>
+</footer>
+
+</body>
+</html>

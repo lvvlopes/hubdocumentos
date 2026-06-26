@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radar IA — 10 de junho de 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0d1117;
+      --surface:    #161b22;
+      --border:     #21262d;
+      --accent:     #58a6ff;
+      --accent2:    #3fb950;
+      --accent3:    #d29922;
+      --accent4:    #f85149;
+      --accent5:    #bc8cff;
+      --text:       #e6edf3;
+      --muted:      #8b949e;
+      --tag-bg:     #1f2937;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(88,166,255,.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .brand-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent5) 100%);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .brand h1 { font-size: 1.55rem; font-weight: 700; color: var(--text); }
+    .brand p  { font-size: .8rem; color: var(--muted); margin-top: .15rem; }
+    .header-meta {
+      text-align: right;
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .header-meta span {
+      display: inline-block;
+      background: rgba(88,166,255,.12);
+      color: var(--accent);
+      border: 1px solid rgba(88,166,255,.25);
+      border-radius: 20px;
+      padding: .2rem .75rem;
+      font-weight: 600;
+      letter-spacing: .03em;
+      font-size: .75rem;
+      margin-bottom: .35rem;
+    }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    /* ── Summary bar ── */
+    .summary-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: .85rem;
+      margin-bottom: 2.5rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+    .stat-card .label { font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .stat-card .value { font-size: 1.35rem; font-weight: 700; }
+    .stat-card .sub   { font-size: .72rem; color: var(--muted); }
+    .c-blue   { color: var(--accent); }
+    .c-green  { color: var(--accent2); }
+    .c-yellow { color: var(--accent3); }
+    .c-red    { color: var(--accent4); }
+    .c-purple { color: var(--accent5); }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .09em;
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── News grid ── */
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.35rem 1.4rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      transition: border-color .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .card.blue::before   { background: var(--accent); }
+    .card.green::before  { background: var(--accent2); }
+    .card.yellow::before { background: var(--accent3); }
+    .card.red::before    { background: var(--accent4); }
+    .card.purple::before { background: var(--accent5); }
+
+    .card:hover {
+      border-color: rgba(88,166,255,.35);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: .7rem;
+    }
+    .card-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+    .bg-blue   { background: rgba(88,166,255,.13); }
+    .bg-green  { background: rgba(63,185,80,.13); }
+    .bg-yellow { background: rgba(210,153,34,.13); }
+    .bg-red    { background: rgba(248,81,73,.13); }
+    .bg-purple { background: rgba(188,140,255,.13); }
+
+    .card-title {
+      font-size: .95rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+    }
+    .card-source {
+      font-size: .7rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    .card-body {
+      font-size: .85rem;
+      color: #c9d1d9;
+      line-height: 1.6;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-top: auto;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+    .tag {
+      font-size: .67rem;
+      font-weight: 600;
+      padding: .18rem .55rem;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .tag.blue   { background: rgba(88,166,255,.12);  color: var(--accent); }
+    .tag.green  { background: rgba(63,185,80,.12);   color: var(--accent2); }
+    .tag.yellow { background: rgba(210,153,34,.12);  color: var(--accent3); }
+    .tag.red    { background: rgba(248,81,73,.12);   color: var(--accent4); }
+    .tag.purple { background: rgba(188,140,255,.12); color: var(--accent5); }
+
+    .read-link {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      white-space: nowrap;
+    }
+    .read-link:hover { text-decoration: underline; }
+    .read-link svg { width: 12px; height: 12px; }
+
+    /* ── Featured (wide) card ── */
+    .card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .card.featured .card-body { font-size: .88rem; }
+    @media (max-width: 640px) {
+      .card.featured { grid-template-columns: 1fr; }
+    }
+
+    /* ── Insight box ── */
+    .insight-box {
+      background: rgba(88,166,255,.06);
+      border: 1px solid rgba(88,166,255,.2);
+      border-radius: 12px;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 2.5rem;
+      font-size: .85rem;
+      color: #c9d1d9;
+      line-height: 1.65;
+    }
+    .insight-box strong { color: var(--accent); }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-icon">🤖</div>
+      <div>
+        <h1>Radar IA</h1>
+        <p>Principais notícias de Inteligência Artificial para empresários e engenheiros de software</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <span>Edição diária</span>
+      <div>Atualizado em 10 de junho de 2026</div>
+      <div>Fontes: TechCrunch · CNBC · Fortune · The Verge · MIT · Stanford HAI</div>
+    </div>
+  </div>
+</header>
+
+<!-- ─── MAIN ─── -->
+<main>
+
+  <!-- Stat bar -->
+  <div class="summary-bar">
+    <div class="stat-card">
+      <div class="label">Mercado de IA 2026</div>
+      <div class="value c-blue">$347 B</div>
+      <div class="sub">Projeção global (USD)</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Anthropic — Avaliação</div>
+      <div class="value c-green">$965 B</div>
+      <div class="sub">IPO confidencial na SEC</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">OpenAI — Avaliação</div>
+      <div class="value c-yellow">$852 B</div>
+      <div class="sub">IPO S-1 enviado à SEC</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Claude Code — Crescimento</div>
+      <div class="value c-purple">6×</div>
+      <div class="sub">Adoção Apr/25 → Jan/26</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Novos modelos LLM</div>
+      <div class="value c-red">~1 a cada 2 dias</div>
+      <div class="sub">Ritmo atual do setor</div>
+    </div>
+  </div>
+
+  <!-- Insight box -->
+  <div class="insight-box">
+    <strong>📌 Contexto para tomada de decisão:</strong> A semana marcou dois IPOs confidenciais históricos (Anthropic + OpenAI) e a abertura do ecossistema Apple para IAs de terceiros. O setor de ferramentas de código com IA está em consolidação, com Claude Code e Cursor avançando sobre o GitHub Copilot. Para software engineers e empresários, o momento de escolher e fixar o stack de IA na empresa é <strong>agora</strong>.
+  </div>
+
+  <!-- ── SEÇÃO: MERCADO & NEGÓCIOS ── -->
+  <div class="section-title">🏦 Mercado &amp; Negócios</div>
+  <div class="news-grid">
+
+    <!-- Card 1 — OpenAI IPO -->
+    <div class="card yellow featured">
+      <div style="display:flex;flex-direction:column;gap:.75rem;">
+        <div class="card-header">
+          <div class="card-icon bg-yellow">📄</div>
+          <div>
+            <div class="card-title">OpenAI protocola S-1 confidencial na SEC — IPO pode vir ainda em 2026</div>
+            <div class="card-source">CNBC · Fortune · Inc. — 8–10 jun 2026</div>
+          </div>
+        </div>
+        <div class="card-body">
+          A OpenAI enviou confidencialmente seu rascunho de S-1 à SEC, colocando-se oficialmente em fila para o que pode ser uma das maiores estreias em bolsa da história da tecnologia. A empresa tem valuation de <strong>US$ 852 bilhões</strong>, mais de US$ 20 bilhões em ARR (receita recorrente anual) e crescimento de 3× ao ano desde 2023. Porém, internamente projeta prejuízo de US$ 14 bilhões em 2026 e não espera lucratividade até 2029 — reflexo do peso de GPUs e data centers. O IPO não tem data definida; a empresa afirma querer manter "opção" de abertura após revisão da SEC.
+        </div>
+        <div class="card-footer">
+          <div class="tags">
+            <span class="tag yellow">IPO</span>
+            <span class="tag yellow">OpenAI</span>
+            <span class="tag">Wall Street</span>
+          </div>
+          <a class="read-link" href="https://www.cnbc.com/2026/06/08/openai-confidentially-files-for-ipo-prepping-wall-street-for-ai-debut.html" target="_blank" rel="noopener">
+            Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.75rem;">
+        <div class="card-header">
+          <div class="card-icon bg-green">🦋</div>
+          <div>
+            <div class="card-title">Anthropic também protocolou S-1 confidencial — avaliação supera a da OpenAI</div>
+            <div class="card-source">TechCrunch · Fortune · Anthropic — 1 jun 2026</div>
+          </div>
+        </div>
+        <div class="card-body">
+          Uma semana antes da OpenAI, a Anthropic enviou seu S-1 à SEC, avaliada em <strong>US$ 965 bilhões</strong> — ultrapassando a rival em capitalização. A empresa reportou ARR de US$ 47 bilhões em maio (vs. US$ 10 bilhões no ano anterior), impulsionado pelo Claude. A Anthropic afirma que a apresentação "dá a opção" de abertura de capital, sem data definida. O debut pode superar a marca de US$ 1 trilhão se os mercados cooperarem.
+        </div>
+        <div class="card-footer">
+          <div class="tags">
+            <span class="tag green">IPO</span>
+            <span class="tag green">Anthropic</span>
+            <span class="tag">Claude</span>
+          </div>
+          <a class="read-link" href="https://techcrunch.com/2026/06/01/anthropic-files-to-go-public/" target="_blank" rel="noopener">
+            Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 — Casa Branca -->
+    <div class="card blue">
+      <div class="card-header">
+        <div class="card-icon bg-blue">🏛️</div>
+        <div>
+          <div class="card-title">Casa Branca assina ordem executiva sobre inovação e segurança em IA</div>
+          <div class="card-source">White House — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        A administração americana publicou a ordem executiva "Promoting Advanced Artificial Intelligence Innovation and Security", reforçando o compromisso dos EUA em liderar o desenvolvimento de IA enquanto estabelece diretrizes de segurança para sistemas avançados. Empresas que desenvolvem modelos de ponta deverão seguir novos protocolos de reporte ao governo. Impacto direto para multinacionais com produtos de IA no mercado americano.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag blue">Regulação</span>
+          <span class="tag blue">EUA</span>
+          <span class="tag">Política</span>
+        </div>
+        <a class="read-link" href="https://www.whitehouse.gov/presidential-actions/2026/06/promoting-advanced-artificial-intelligence-innovation-and-security/" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SEÇÃO: PLATAFORMAS & MODELOS ── -->
+  <div class="section-title">🧠 Plataformas &amp; Modelos</div>
+  <div class="news-grid">
+
+    <!-- Apple WWDC -->
+    <div class="card green">
+      <div class="card-header">
+        <div class="card-icon bg-green">🍎</div>
+        <div>
+          <div class="card-title">Apple abre iOS 27 para Claude, ChatGPT e Gemini substituírem a Siri</div>
+          <div class="card-source">TechCrunch · AI Weekly — 8 jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        No WWDC 2026, a Apple lançou o framework <strong>Extensions</strong> no iOS 27 que transforma o ecossistema iPhone em um marketplace aberto de IAs. O usuário poderá escolher Claude, ChatGPT ou Gemini como motor padrão para Siri, Writing Tools e Image Playground. A Siri foi reconstruída com um modelo Gemini customizado de 1,2 trilhão de parâmetros (licença estimada em US$ 1 bilhão/ano com Google). Para desenvolvedores, a Apple publicou a Extensions API — novas oportunidades de distribuição via App Store.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag green">Apple</span>
+          <span class="tag green">iOS 27</span>
+          <span class="tag">Gemini</span>
+          <span class="tag">Claude</span>
+        </div>
+        <a class="read-link" href="https://techcrunch.com/2026/06/08/wwdc-2026-what-to-expect-from-siris-highly-anticipated-revamp-to-apple-intelligence-and-ios-27/" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Microsoft MAI -->
+    <div class="card blue">
+      <div class="card-header">
+        <div class="card-icon bg-blue">🪟</div>
+        <div>
+          <div class="card-title">Microsoft lança família MAI — próprios modelos de código para reduzir dependência da OpenAI</div>
+          <div class="card-source">CNBC — 2 jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        No Microsoft Build 2026, a empresa apresentou o <strong>MAI-Code-1-Flash</strong>, seu primeiro modelo que converte descrições em linguagem natural em código-fonte. O Foundry (marketplace interno) agora conta com mais de 11.000 modelos, incluindo GPT-5.5, Claude Opus 4.8, Gemini e toda a família MAI. A estratégia é clara: diminuir o custo e a dependência exclusiva da OpenAI, entregando opções mais baratas a desenvolvedores enterprise.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag blue">Microsoft</span>
+          <span class="tag blue">MAI</span>
+          <span class="tag">Dev Tools</span>
+        </div>
+        <a class="read-link" href="https://www.cnbc.com/2026/06/02/microsoft-unveils-new-ai-models-lessen-reliance-on-openai-lower-costs.html" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Claude Opus 4.8 / Fable 5 -->
+    <div class="card purple">
+      <div class="card-header">
+        <div class="card-icon bg-purple">🌟</div>
+        <div>
+          <div class="card-title">Claude Opus 4.8 e Claude Fable 5: Anthropic lança dois novos modelos</div>
+          <div class="card-source">LLM Stats · llm-stats.com — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <strong>Claude Opus 4.8:</strong> 88,6% no SWE-bench Verified, 74,6% no Terminal-Bench 2.1 e workflows de subagentes paralelos com modo rápido 2,5×. Preço: $5/$25 por milhão de tokens.<br><br>
+        <strong>Claude Fable 5:</strong> modelo "Mythos-class" focado em criação narrativa e código, alcançando 95% no SWE-bench Verified e 80% no SWE-bench Pro. Preço: $10/$50 por milhão de tokens — posicionado como alternativa leve para agentic coding.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag purple">Anthropic</span>
+          <span class="tag purple">Claude</span>
+          <span class="tag">LLM</span>
+        </div>
+        <a class="read-link" href="https://llm-stats.com/ai-news" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Google DeepMind -->
+    <div class="card blue">
+      <div class="card-header">
+        <div class="card-icon bg-blue">🔬</div>
+        <div>
+          <div class="card-title">Google DeepMind: AlphaEvolve, TurboQuant e Gemma 4 — eficiência como nova fronteira</div>
+          <div class="card-source">crescendo.ai · Google DeepMind — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <strong>AlphaEvolve:</strong> agente de código baseado em Gemini + algoritmos evolutivos descobre estruturas matemáticas inéditas em teoria da complexidade.<br><br>
+        <strong>TurboQuant (ICLR 2026):</strong> algoritmo que reduz o overhead de memória do KV cache via PolarQuant + compressão Johnson-Lindenstrauss — relevante para reduzir custos de inferência em produção.<br><br>
+        <strong>Gemma 4:</strong> série open-source (Apache 2.0) para raciocínio avançado e workflows agênticos — "maior inteligência por parâmetro" segundo o Google.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag blue">Google</span>
+          <span class="tag blue">DeepMind</span>
+          <span class="tag">Open Source</span>
+        </div>
+        <a class="read-link" href="https://www.crescendo.ai/news/latest-ai-news-and-updates" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SEÇÃO: FERRAMENTAS PARA DEVS ── -->
+  <div class="section-title">💻 Ferramentas para Engenheiros de Software</div>
+  <div class="news-grid">
+
+    <!-- Claude Code vs Copilot -->
+    <div class="card purple">
+      <div class="card-header">
+        <div class="card-icon bg-purple">⌨️</div>
+        <div>
+          <div class="card-title">Claude Code ultrapassa GitHub Copilot — mercado de coding AI se consolida em 3 players</div>
+          <div class="card-source">Pragmatic Engineer · CosmicJS · VaaSBlock — 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        O Stack Overflow Developer Survey 2026 mostra o GitHub Copilot caindo de 67% para 51% de share, enquanto <strong>Claude Code</strong> alcança o 1º lugar em preferência entre devs com +10 anos de experiência (46%) vs. Copilot (9%). O Cursor atingiu US$ 2 bilhões em ARR em menos de 24 meses. O cenário tende a se estabilizar em três players: Copilot (enterprise legacy), Cursor (IDE-centric) e Claude Code (agentic workflows).
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag purple">Claude Code</span>
+          <span class="tag">Cursor</span>
+          <span class="tag">Copilot</span>
+        </div>
+        <a class="read-link" href="https://pasqualepillitteri.it/en/news/3392/github-copilot-cursor-claude-code-ai-coding-showdown-2026" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Microsoft vs OpenAI coding -->
+    <div class="card yellow">
+      <div class="card-header">
+        <div class="card-icon bg-yellow">⚔️</div>
+        <div>
+          <div class="card-title">Microsoft e Google entram no ring de coding AI contra Anthropic e OpenAI</div>
+          <div class="card-source">CNBC — 1 jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        A Microsoft lançou modelos próprios de código enquanto o Google compete com Gemini para coding. Os dois gigantes têm interesse em romper a dependência de APIs pagas de terceiros e oferecer opções mais baratas via Azure e Google Cloud. Para empresas que já usam infraestrutura Microsoft ou GCP, isso pode significar <strong>redução de custo significativa</strong> no desenvolvimento orientado por IA em breve.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag yellow">Microsoft</span>
+          <span class="tag yellow">Google</span>
+          <span class="tag">Coding AI</span>
+        </div>
+        <a class="read-link" href="https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Agentes IA nos workflows -->
+    <div class="card green">
+      <div class="card-header">
+        <div class="card-icon bg-green">🤖</div>
+        <div>
+          <div class="card-title">Agentes autônomos de IA entram nos fluxos corporativos — menos demos, mais sistemas reais</div>
+          <div class="card-source">mean.ceo · crescendo.ai — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        A tendência de junho é clara: a IA migrou de demonstrações para sistemas de negócios reais. Agentes que interpretam objetivos, acessam bases de dados autorizadas e executam sequências de tarefas com mínima intervenção humana estão sendo adotados em escala. Para engenheiros, isso exige domínio de orchestração de agentes (LangGraph, CrewAI, Claude Agents SDK) e revisão de arquiteturas para suportar chamadas assíncronas com fallback humano.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag green">Agentes IA</span>
+          <span class="tag green">Automação</span>
+          <span class="tag">Enterprise</span>
+        </div>
+        <a class="read-link" href="https://blog.mean.ceo/latest-ai-developments-news-june-2026/" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── SEÇÃO: REGULAÇÃO ── -->
+  <div class="section-title">⚖️ Regulação &amp; Compliance</div>
+  <div class="news-grid">
+
+    <!-- EU AI Act -->
+    <div class="card red">
+      <div class="card-header">
+        <div class="card-icon bg-red">🇪🇺</div>
+        <div>
+          <div class="card-title">EU AI Act: acordo de simplificação prorroga prazo de conformidade para dezembro de 2027</div>
+          <div class="card-source">Consilium EU · Holland &amp; Knight · InsidePrivacy — mai/jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Em 7 de maio, o Parlamento e Conselho Europeus fecharam o "AI Act Omnibus" — pacote de simplificações que posterga para <strong>dezembro de 2027</strong> as obrigações para sistemas de IA de alto risco (Anexo III). PMEs com até 750 funcionários e €150 M de faturamento recebem framework simplificado, multas reduzidas e acesso a sandboxes regulatórias. Nova proibição a partir de dezembro de 2026: aplicativos "nudifier" sem consentimento explícito. Para empresas com produtos de IA na Europa, rever o roadmap de compliance é urgente.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag red">EU AI Act</span>
+          <span class="tag red">Compliance</span>
+          <span class="tag">PME</span>
+        </div>
+        <a class="read-link" href="https://www.consilium.europa.eu/en/press/press-releases/2026/05/07/artificial-intelligence-council-and-parliament-agree-to-simplify-and-streamline-rules/" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- IA e cognição humana -->
+    <div class="card yellow">
+      <div class="card-header">
+        <div class="card-icon bg-yellow">🧪</div>
+        <div>
+          <div class="card-title">MIT: uso excessivo de IA pode enfraquecer capacidade crítica de detectar desinformação</div>
+          <div class="card-source">MIT Media Lab — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        Pesquisadores do MIT Media Lab publicaram estudo mostrando que, assim como o GPS enfraqueceu a navegação humana, o uso intensivo de IA pode reduzir a capacidade das pessoas de identificar notícias falsas de forma autônoma. O estudo é um alerta para empresas e equipes de produto que dependem de IA para curadoria de conteúdo: a dependência excessiva pode criar vulnerabilidades a longo prazo. A recomendação é manter etapas de revisão humana em fluxos críticos.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag yellow">MIT</span>
+          <span class="tag yellow">Pesquisa</span>
+          <span class="tag">Cognição</span>
+        </div>
+        <a class="read-link" href="https://news.mit.edu/topic/artificial-intelligence2" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Infraestrutura / Energia -->
+    <div class="card green">
+      <div class="card-header">
+        <div class="card-icon bg-green">⚡</div>
+        <div>
+          <div class="card-title">Startup do MIT reduz consumo de energia e água no resfriamento de chips de IA</div>
+          <div class="card-source">MIT News · Stanford HAI — jun 2026</div>
+        </div>
+      </div>
+      <div class="card-body">
+        A Ferveret, fundada por dois pesquisadores do MIT, desenvolveu tecnologia que reduz significativamente a energia e a água usadas para resfriar os chips que alimentam sistemas de IA. Com data centers consumindo proporções crescentes da rede elétrica global, soluções de eficiência energética tornam-se críticas — e podem impactar custos de cloud computing para empresas que escalam workloads de IA.
+      </div>
+      <div class="card-footer">
+        <div class="tags">
+          <span class="tag green">Infraestrutura</span>
+          <span class="tag green">Energia</span>
+          <span class="tag">MIT</span>
+        </div>
+        <a class="read-link" href="https://news.mit.edu/topic/artificial-intelligence2" target="_blank" rel="noopener">
+          Ler mais <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5z"/><path d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0v-5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p>Gerado automaticamente em <strong>10 de junho de 2026</strong> · Fontes:
+    <a href="https://techcrunch.com" target="_blank">TechCrunch</a> ·
+    <a href="https://www.cnbc.com" target="_blank">CNBC</a> ·
+    <a href="https://fortune.com" target="_blank">Fortune</a> ·
+    <a href="https://www.crescendo.ai/news/latest-ai-news-and-updates" target="_blank">crescendo.ai</a> ·
+    <a href="https://llm-stats.com/ai-news" target="_blank">LLM Stats</a> ·
+    <a href="https://news.mit.edu" target="_blank">MIT News</a> ·
+    <a href="https://hai.stanford.edu" target="_blank">Stanford HAI</a>
+  </p>
+  <p style="margin-top:.5rem;color:#484f58;">Radar IA — curadoria para empresários e engenheiros de software</p>
+</footer>
+
+</body>
+</html>

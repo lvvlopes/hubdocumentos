@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Documentos</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2a2f45;
+    --accent: #6366f1;
+    --accent2: #818cf8;
+    --accent-glow: rgba(99,102,241,.18);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --html-tag: #34d399;
+    --pdf-tag: #f87171;
+    --sidebar-w: 280px;
+    --topbar-h: 60px;
+    --radius: 10px;
+    --trans: .18s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    height: var(--topbar-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 14px;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .topbar-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), #a855f7);
+    border-radius: 9px;
+    display: grid; place-items: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .topbar-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -.3px;
+    background: linear-gradient(90deg, #e2e8f0, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .topbar-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+  .topbar-spacer { flex: 1; }
+  .topbar-badge {
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    color: var(--accent2);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: .5px;
+  }
+  #reload-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all var(--trans);
+    display: flex; align-items: center; gap: 6px;
+  }
+  #reload-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .sidebar-header {
+    padding: 16px 16px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .folders-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px 0;
+  }
+  .folders-list::-webkit-scrollbar { width: 4px; }
+  .folders-list::-webkit-scrollbar-track { background: transparent; }
+  .folders-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .folder-item {
+    cursor: pointer;
+    padding: 9px 16px;
+    display: flex; align-items: center; gap: 10px;
+    border-radius: 8px;
+    margin: 1px 6px;
+    transition: all var(--trans);
+    user-select: none;
+    position: relative;
+  }
+  .folder-item:hover { background: var(--surface2); }
+  .folder-item.active {
+    background: var(--accent-glow);
+    border: 1px solid rgba(99,102,241,.3);
+  }
+  .folder-item.active .folder-icon { color: var(--accent2); }
+  .folder-item.active .folder-name { color: var(--text); }
+  .folder-icon { font-size: 17px; flex-shrink: 0; color: var(--text-muted); transition: color var(--trans); }
+  .folder-name { font-size: 13.5px; font-weight: 500; color: var(--text-dim); flex: 1; transition: color var(--trans); }
+  .folder-count {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    min-width: 22px;
+    text-align: center;
+  }
+  .folder-item.active .folder-count {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* ── FILES PANEL ── */
+  .files-panel {
+    width: 240px;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .files-header {
+    padding: 14px 14px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .files-header-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .files-header-path {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-family: monospace;
+  }
+  .files-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 8px 0;
+  }
+  .files-list::-webkit-scrollbar { width: 4px; }
+  .files-list::-webkit-scrollbar-track { background: transparent; }
+  .files-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .file-item {
+    cursor: pointer;
+    padding: 8px 14px;
+    display: flex; align-items: flex-start; gap: 10px;
+    border-radius: 7px;
+    margin: 1px 5px;
+    transition: all var(--trans);
+    user-select: none;
+  }
+  .file-item:hover { background: var(--surface); }
+  .file-item.active { background: var(--surface); box-shadow: inset 2px 0 0 var(--accent); }
+  .file-icon {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: grid; place-items: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+    letter-spacing: .5px;
+  }
+  .file-icon.html { background: rgba(52,211,153,.12); color: var(--html-tag); border: 1px solid rgba(52,211,153,.25); }
+  .file-icon.pdf  { background: rgba(248,113,113,.12); color: var(--pdf-tag);  border: 1px solid rgba(248,113,113,.25); }
+  .file-meta { flex: 1; min-width: 0; }
+  .file-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-dim);
+    word-break: break-word;
+    line-height: 1.4;
+    transition: color var(--trans);
+  }
+  .file-item.active .file-name, .file-item:hover .file-name { color: var(--text); }
+  .file-ext-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin-top: 3px;
+  }
+  .file-ext-badge.html { background: rgba(52,211,153,.15); color: var(--html-tag); }
+  .file-ext-badge.pdf  { background: rgba(248,113,113,.15); color: var(--pdf-tag); }
+
+  /* empty state */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    text-align: center;
+    gap: 8px;
+  }
+  .empty-state .icon { font-size: 36px; opacity: .4; }
+  .empty-state p { font-size: 12.5px; line-height: 1.5; }
+
+  /* ── VIEWER ── */
+  .viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    overflow: hidden;
+  }
+  .viewer-bar {
+    height: 44px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .viewer-bar-title {
+    font-size: 13px;
+    color: var(--text-dim);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: monospace;
+  }
+  .viewer-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 5px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all var(--trans);
+    text-decoration: none;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .viewer-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
+
+  .viewer-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  #doc-frame {
+    width: 100%; height: 100%;
+    border: none;
+    background: #fff;
+    display: none;
+  }
+  #doc-frame.visible { display: block; }
+
+  .welcome-screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px;
+  }
+  .welcome-screen .big-icon {
+    font-size: 72px;
+    opacity: .15;
+    line-height: 1;
+  }
+  .welcome-screen h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-dim);
+    opacity: .6;
+  }
+  .welcome-screen p {
+    font-size: 14px;
+    opacity: .5;
+    max-width: 340px;
+    line-height: 1.6;
+  }
+  .welcome-screen.hidden { display: none; }
+
+  /* loading overlay */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px;
+    z-index: 5;
+    transition: opacity var(--trans);
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { font-size: 13px; color: var(--text-muted); }
+
+  /* scrollbar global */
+  * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+  /* animations */
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .folder-item, .file-item { animation: fadeIn .2s ease both; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <div class="topbar-logo">📁</div>
+  <div>
+    <div class="topbar-title">Hub de Documentos</div>
+    <div class="topbar-sub">Centralizador de HTML &amp; PDF</div>
+  </div>
+  <div class="topbar-spacer"></div>
+  <span class="topbar-badge" id="total-badge">0 arquivos</span>
+  <button id="reload-btn" onclick="loadFiles()">↺ Atualizar</button>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR: Pastas -->
+  <aside class="sidebar">
+    <div class="sidebar-header">Pastas</div>
+    <div class="folders-list" id="folders-list">
+      <div class="empty-state">
+        <div class="icon">⏳</div>
+        <p>Carregando...</p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FILES PANEL -->
+  <div class="files-panel">
+    <div class="files-header">
+      <div class="files-header-title">
+        <span id="files-folder-icon">📂</span>
+        <span id="files-folder-name">Selecione uma pasta</span>
+      </div>
+      <div class="files-header-path" id="files-folder-path">—</div>
+    </div>
+    <div class="files-list" id="files-list">
+      <div class="empty-state">
+        <div class="icon">👈</div>
+        <p>Selecione uma pasta para ver os arquivos</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEWER -->
+  <div class="viewer">
+    <div class="viewer-bar">
+      <span class="viewer-bar-title" id="viewer-title">Nenhum arquivo aberto</span>
+      <a class="viewer-btn" id="open-external" href="#" target="_blank" style="display:none">↗ Abrir em nova aba</a>
+    </div>
+    <div class="viewer-content">
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="big-icon">🗂️</div>
+        <h2>Selecione um arquivo</h2>
+        <p>Escolha uma pasta na barra lateral e clique em um arquivo para visualizá-lo aqui.</p>
+      </div>
+      <div class="loading-overlay hidden" id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Carregando documento...</p>
+      </div>
+      <iframe id="doc-frame" title="Visualizador de Documento"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let allData = [];
+let activeFolder = null;
+let activeFile = null;
+
+async function loadFiles() {
+  try {
+    const res = await fetch('/api/files');
+    allData = await res.json();
+    renderFolders();
+    updateBadge();
+    // auto-select first folder
+    if (allData.length > 0 && !activeFolder) {
+      selectFolder(allData[0].folder);
+    }
+  } catch (e) {
+    document.getElementById('folders-list').innerHTML =
+      `<div class="empty-state"><div class="icon">⚠️</div><p>Erro ao carregar arquivos.<br>Verifique se o servidor está rodando.</p></div>`;
+  }
+}
+
+function updateBadge() {
+  const total = allData.reduce((s, f) => s + f.files.length, 0);
+  document.getElementById('total-badge').textContent = `${total} arquivo${total !== 1 ? 's' : ''}`;
+}
+
+function folderEmoji(name) {
+  const n = name.toLowerCase();
+  if (n.includes('ia') || n.includes('ai')) return '🤖';
+  if (n.includes('relat') || n.includes('report')) return '📊';
+  if (n.includes('news') || n.includes('noticia')) return '📰';
+  if (n.includes('doc')) return '📄';
+  if (n.includes('video') || n.includes('media')) return '🎬';
+  if (n.includes('financ') || n.includes('finance')) return '💰';
+  return '📁';
+}
+
+function renderFolders() {
+  const el = document.getElementById('folders-list');
+  if (allData.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">🗂️</div><p>Nenhuma pasta com HTML ou PDF encontrada.</p></div>`;
+    return;
+  }
+  el.innerHTML = allData.map((f, i) => `
+    <div class="folder-item ${activeFolder === f.folder ? 'active' : ''}"
+         onclick="selectFolder('${escQ(f.folder)}')"
+         style="animation-delay:${i * 0.04}s">
+      <span class="folder-icon">${folderEmoji(f.folder)}</span>
+      <span class="folder-name">${esc(f.folder)}</span>
+      <span class="folder-count">${f.files.length}</span>
+    </div>
+  `).join('');
+}
+
+function selectFolder(name) {
+  activeFolder = name;
+  const folder = allData.find(f => f.folder === name);
+  renderFolders();
+
+  document.getElementById('files-folder-icon').textContent = folderEmoji(name);
+  document.getElementById('files-folder-name').textContent = name;
+  document.getElementById('files-folder-path').textContent = `./${name}/`;
+
+  const el = document.getElementById('files-list');
+  if (!folder || folder.files.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>Nenhum arquivo encontrado nesta pasta.</p></div>`;
+    return;
+  }
+  el.innerHTML = folder.files.map((f, i) => `
+    <div class="file-item ${activeFile === f.path ? 'active' : ''}"
+         onclick="openFile('${escQ(f.path)}', '${escQ(f.name)}')"
+         style="animation-delay:${i * 0.035}s">
+      <div class="file-icon ${f.ext}">${f.ext.toUpperCase()}</div>
+      <div class="file-meta">
+        <div class="file-name">${esc(f.name)}</div>
+        <span class="file-ext-badge ${f.ext}">${f.ext}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openFile(filePath, fileName) {
+  activeFile = filePath;
+
+  // re-render to update active state
+  const folder = allData.find(f => f.folder === activeFolder);
+  if (folder) {
+    document.querySelectorAll('.file-item').forEach((el, i) => {
+      el.classList.toggle('active', folder.files[i]?.path === filePath);
+    });
+  }
+
+  document.getElementById('welcome-screen').classList.add('hidden');
+  document.getElementById('viewer-title').textContent = filePath;
+
+  const extLink = document.getElementById('open-external');
+  extLink.href = filePath;
+  extLink.style.display = 'flex';
+
+  const frame = document.getElementById('doc-frame');
+  const loading = document.getElementById('loading-overlay');
+
+  loading.classList.remove('hidden');
+  frame.classList.remove('visible');
+
+  frame.onload = () => {
+    loading.classList.add('hidden');
+    frame.classList.add('visible');
+  };
+  frame.onerror = () => {
+    loading.classList.add('hidden');
+    frame.classList.add('visible');
+  };
+  frame.src = filePath;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escQ(s) {
+  return s.replace(/'/g,"\\'").replace(/\\/g,'\\\\');
+}
+
+// initial load
+loadFiles();
+</script>
+</body>
+</html>

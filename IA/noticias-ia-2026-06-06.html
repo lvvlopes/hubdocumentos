@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notícias de IA — 6 de junho de 2026</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface2: #1c2128;
+      --border: #30363d;
+      --accent: #58a6ff;
+      --accent2: #3fb950;
+      --accent3: #f78166;
+      --accent4: #d2a8ff;
+      --accent5: #ffa657;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --tag-bg: #21262d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a1f2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(88,166,255,0.15), transparent);
+      pointer-events: none;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(88,166,255,0.1);
+      border: 1px solid rgba(88,166,255,0.3);
+      border-radius: 2rem;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    header h1 span { color: var(--accent); }
+    header p.subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .meta-item .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* ── Summary Stats ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 3rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .stat-card .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      display: block;
+    }
+    .stat-card .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Section Header ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .section-header .line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Cards grid ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: border-color 0.2s, transform 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: 14px 14px 0 0;
+    }
+    .card.blue::before   { background: var(--accent); }
+    .card.green::before  { background: var(--accent2); }
+    .card.red::before    { background: var(--accent3); }
+    .card.purple::before { background: var(--accent4); }
+    .card.orange::before { background: var(--accent5); }
+
+    .card:hover {
+      border-color: rgba(88,166,255,0.4);
+      transform: translateY(-2px);
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+    .card-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .card-icon.blue   { background: rgba(88,166,255,0.12); }
+    .card-icon.green  { background: rgba(63,185,80,0.12); }
+    .card-icon.red    { background: rgba(247,129,102,0.12); }
+    .card-icon.purple { background: rgba(210,168,255,0.12); }
+    .card-icon.orange { background: rgba(255,166,87,0.12); }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .card-body {
+      font-size: 0.9rem;
+      color: #b1bac4;
+      line-height: 1.65;
+    }
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .tag {
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .tag.hot { border-color: rgba(247,129,102,0.4); color: var(--accent3); }
+    .tag.new { border-color: rgba(63,185,80,0.4); color: var(--accent2); }
+    .tag.trending { border-color: rgba(88,166,255,0.4); color: var(--accent); }
+
+    .card-impact {
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      border-left: 3px solid var(--border);
+    }
+    .card-impact strong {
+      color: var(--text);
+      display: block;
+      margin-bottom: 0.25rem;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Featured card (full width) ── */
+    .card.featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+    .card.featured .card-content { flex: 1; display: flex; flex-direction: column; gap: 0.85rem; }
+    .card.featured .card-sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .sidebar-stat {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .sidebar-stat .num { font-size: 1.5rem; font-weight: 700; }
+    .sidebar-stat .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+    .num.blue   { color: var(--accent); }
+    .num.green  { color: var(--accent2); }
+    .num.orange { color: var(--accent5); }
+
+    /* ── Alert banner ── */
+    .alert {
+      background: rgba(247,129,102,0.08);
+      border: 1px solid rgba(247,129,102,0.3);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 3rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 1.5rem; flex-shrink: 0; line-height: 1; }
+    .alert-title { font-weight: 600; margin-bottom: 0.3rem; }
+    .alert-body { font-size: 0.88rem; color: #b1bac4; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .card.featured { flex-direction: column; }
+      .card.featured .card-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; }
+      .sidebar-stat { flex: 1; min-width: 120px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">
+    <span class="dot"></span>
+    Atualizado automaticamente
+  </div>
+  <h1>Radar <span>IA</span> &mdash; Últimas 24h</h1>
+  <p class="subtitle">Principais notícias de Inteligência Artificial selecionadas para engenheiros de software e empresários</p>
+  <div class="meta-row">
+    <div class="meta-item"><span class="dot"></span> 6 de junho de 2026</div>
+    <div class="meta-item">🌐 Fontes: TechCrunch &middot; CNBC &middot; GitHub Blog &middot; NVIDIA &middot; Anthropic</div>
+    <div class="meta-item">⚙️ Gerado automaticamente por IA</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Stats Bar -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-num" style="color:#58a6ff">US$ 965B</span>
+      <div class="stat-label">Valuation da Anthropic (pré-IPO)</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:#3fb950">US$ 65B</span>
+      <div class="stat-label">Rodada Series H da Anthropic</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:#ffa657">46%</span>
+      <div class="stat-label">Market share do Claude Code entre devs</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:#d2a8ff">40%</span>
+      <div class="stat-label">Apps empresariais com agentes IA até fim de 2026</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:#f78166">100&times;</span>
+      <div class="stat-label">Aumento no custo do GitHub Copilot (casos extremos)</div>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">Ação urgente para equipes de engenharia: GitHub Copilot agora cobra por token</div>
+      <div class="alert-body">A partir de 1º de junho de 2026, o GitHub Copilot migrou para cobrança por uso (tokens). Alguns usuários relataram contas subindo de US$ 29/mês para US$ 750/mês. Apenas autocompletar código permanece ilimitado — todas as chamadas a modelos via chat e agentes agora consomem créditos. Revise os limites de gastos da sua organização imediatamente.</div>
+    </div>
+  </div>
+
+  <!-- Section: Top Stories -->
+  <div class="section-header">
+    <h2>Destaques da semana</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="cards-grid">
+
+    <!-- FEATURED: Anthropic IPO -->
+    <div class="card featured blue">
+      <div class="card-content">
+        <div class="card-head">
+          <div class="card-icon blue">🚀</div>
+          <div>
+            <div class="card-title" style="font-size:1.15rem">Anthropic supera OpenAI em valor de mercado e protocola IPO confidencial na SEC</div>
+            <div class="card-tags" style="margin-top:0.5rem">
+              <span class="tag hot">🔥 Breaking</span>
+              <span class="tag trending">Negócios</span>
+              <span class="tag">IPO</span>
+            </div>
+          </div>
+        </div>
+        <p class="card-body">A Anthropic — criadora do Claude — protocolou na SEC, em 1º de junho de 2026, um prospecto preliminar de IPO (Form S-1) de forma confidencial. A oferta pública pode ocorrer já em outubro de 2026. O movimento vem logo após a empresa fechar uma rodada Series H de <strong>US$ 65 bilhões</strong>, que avaliou a companhia em <strong>US$ 965 bilhões</strong> pós-money — superando a OpenAI (US$ 852B) e tornando-a a empresa privada de IA mais valiosa do mundo.</p>
+        <p class="card-body">A receita anualizada atingiu <strong>US$ 47 bilhões</strong> em maio de 2026, um crescimento de mais de 5× em relação ao final de 2025 (US$ 9B). O principal motor: adoção corporativa e o <strong>Claude Code</strong>. Número de ações e faixa de preço ainda não foram definidos.</p>
+        <div class="card-impact">
+          <strong>💡 Impacto para empresários e engenheiros</strong>
+          O IPO da Anthropic pode abrir ao público investimentos diretos na principal rival da OpenAI. Para equipes técnicas, sinaliza que o Claude e suas APIs devem receber investimentos massivos nos próximos 12–18 meses. Quem ainda não avaliou o Claude como alternativa ao GPT-4 deve revisitar essa decisão.
+        </div>
+      </div>
+      <div class="card-sidebar">
+        <div class="sidebar-stat">
+          <div class="num blue">US$ 965B</div>
+          <div class="lbl">Valuation</div>
+        </div>
+        <div class="sidebar-stat">
+          <div class="num green">US$ 47B</div>
+          <div class="lbl">Receita anualizada</div>
+        </div>
+        <div class="sidebar-stat">
+          <div class="num orange">out/26</div>
+          <div class="lbl">IPO previsto</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GitHub Copilot Token Billing -->
+    <div class="card red">
+      <div class="card-head">
+        <div class="card-icon red">💸</div>
+        <div class="card-title">GitHub Copilot abandona mensalidade fixa — migra para cobrança por token</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag hot">⚠️ Impacto imediato</span>
+        <span class="tag">DevTools</span>
+        <span class="tag">Custos</span>
+      </div>
+      <p class="card-body">Desde 1º de junho de 2026, o Copilot passou a cobrar por créditos de IA (1 crédito = US$ 0,01). O Copilot Pro (US$ 10/mês) inclui US$ 10 em créditos; o Business inclui US$ 19/user/mês. <strong>Autocompletar código permanece ilimitado</strong>, mas toda interação via chat e agentes consome tokens. Alguns usuários relataram contas de US$ 29 subindo para US$ 750 em um mês.</p>
+      <div class="card-impact">
+        <strong>💡 O que fazer agora</strong>
+        Configure limites de gasto no painel do GitHub. Avalie substituir o Copilot Chat pelo Claude Code (46% de market share) ou Cursor (19%). Compare o custo real do seu time antes e depois da migração.
+      </div>
+    </div>
+
+    <!-- Claude Code dominance -->
+    <div class="card green">
+      <div class="card-head">
+        <div class="card-icon green">🏆</div>
+        <div class="card-title">Claude Code se torna a ferramenta de IA mais usada por engenheiros em apenas 8 meses</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag new">📈 Crescimento</span>
+        <span class="tag trending">Produtividade</span>
+        <span class="tag">Coding</span>
+      </div>
+      <p class="card-body">Lançado em maio de 2025, o <strong>Claude Code</strong> já detém <strong>46% de market share</strong> entre engenheiros de software — muito à frente do Cursor (19%) e do GitHub Copilot (9%). 95% dos devs usam ferramentas de IA pelo menos semanalmente, e 75% já utilizam IA em mais da metade do seu trabalho. 70% dos profissionais usam entre 2 e 4 ferramentas de IA simultaneamente.</p>
+      <div class="card-impact">
+        <strong>💡 Impacto para equipes de engenharia</strong>
+        O relatório de tendências agentic de 2026 (Anthropic) indica que Claude Code lidera não por ser o mais barato, mas por desempenho em tarefas complexas de refactoring, geração de testes e arquitetura. Vale integrar ao seu CI/CD pipeline.
+      </div>
+    </div>
+
+    <!-- NVIDIA Rubin + Nemotron -->
+    <div class="card orange">
+      <div class="card-head">
+        <div class="card-icon orange">⚡</div>
+        <div class="card-title">NVIDIA lança plataforma Rubin e Nemotron 3 Ultra — custo de inferência cai 10×</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag new">🆕 Lançamento</span>
+        <span class="tag">Hardware</span>
+        <span class="tag">Open Weights</span>
+      </div>
+      <p class="card-body">A NVIDIA lançou a <strong>plataforma Rubin</strong>, que promete reduzir o custo de inferência em <strong>10×</strong> e o número de GPUs para treinar modelos MoE em <strong>4×</strong> em relação à Blackwell. A CoreWeave começa integração no 2º semestre de 2026. O <strong>Nemotron 3 Ultra (550B params, 55B ativos)</strong> está disponível no Hugging Face — 5× mais rápido e 30% mais barato para tarefas agentic. O chip <strong>RTX Spark (ARM)</strong> chegará em laptops Dell, HP, ASUS, Lenovo e MSI no outono.</p>
+      <div class="card-impact">
+        <strong>💡 Relevância para engenheiros</strong>
+        O Nemotron 3 Ultra é open weights e otimizado para agentes longos — ideal para rodar LLMs em infra própria com custo reduzido. O Rubin vai baratear APIs de terceiros nos próximos meses.
+      </div>
+    </div>
+
+    <!-- Anthropic Opus 4.8 -->
+    <div class="card purple">
+      <div class="card-head">
+        <div class="card-icon purple">🧠</div>
+        <div class="card-title">Anthropic Opus 4.8 — contexto padrão de 1 milhão de tokens para tarefas de código</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag new">🆕 Atualização</span>
+        <span class="tag">LLM</span>
+        <span class="tag">Context Window</span>
+      </div>
+      <p class="card-body">A Anthropic anunciou com o Claude Opus 4.8 um <strong>contexto padrão de 1 milhão de tokens</strong> — a maior janela de contexto padrão disponível hoje — focado em tarefas de codificação complexas dentro de uma única conversa. Isso permite manter contexto de repositórios inteiros de código sem truncamento, eliminando uma das principais limitações de assistentes de IA para projetos grandes.</p>
+      <div class="card-impact">
+        <strong>💡 Caso de uso prático</strong>
+        Com 1M tokens você pode enviar um repositório inteiro, logs de CI, especificações de produto e histórico de PRs em uma única chamada. Especialmente útil para engenheiros trabalhando em monorepos ou revisões de arquitetura abrangentes.
+      </div>
+    </div>
+
+    <!-- Microsoft vs Google in coding AI -->
+    <div class="card blue">
+      <div class="card-head">
+        <div class="card-icon blue">⚔️</div>
+        <div class="card-title">Microsoft e Google entram na disputa por modelos de IA para codificação</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag trending">Competição</span>
+        <span class="tag">Big Tech</span>
+        <span class="tag">Coding AI</span>
+      </div>
+      <p class="card-body">A CNBC reporta que <strong>Microsoft e Google</strong> estão lançando modelos de IA voltados especificamente para codificação, entrando diretamente em competição com Anthropic (Claude Code) e OpenAI (Codex). O Gemini 3.5 Flash aparece em rastreadores de releases de junho de 2026. O OpenAI Codex, apesar de recente, já atingiu 60% do uso do Cursor em poucos meses. A guerra por dominar o fluxo de trabalho do desenvolvedor está mais acirrada do que nunca.</p>
+      <div class="card-impact">
+        <strong>💡 O que acompanhar</strong>
+        Para CTOs e tech leads: o ecossistema de ferramentas de IA para dev mudará radicalmente em 6–12 meses. Evite lock-in em uma única ferramenta; mantenha flexibilidade no seu toolchain.
+      </div>
+    </div>
+
+    <!-- Agentes de IA nas empresas -->
+    <div class="card green">
+      <div class="card-head">
+        <div class="card-icon green">🤖</div>
+        <div class="card-title">Gartner: 40% das aplicações empresariais terão agentes de IA até o final de 2026</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag trending">Tendência</span>
+        <span class="tag">Agentes IA</span>
+        <span class="tag">Enterprise</span>
+      </div>
+      <p class="card-body">Segundo a Gartner, <strong>40% das aplicações empresariais</strong> estarão integradas a agentes de IA até o final de 2026 — contra apenas 5% em 2025. 68% das empresas globais já têm planos de integrar agentes autônomos em suas operações. Em processos críticos como finanças e supply chain, a redução de custos varia entre 26–31%. ROI mensurável é esperado em 6–9 meses para processos bem definidos.</p>
+      <div class="card-impact">
+        <strong>💡 Impacto para empresários</strong>
+        O mercado de agentes não é mais experimental — é produção. Priorize um processo interno onde a IA possa atuar com supervisão humana e meça o ROI em 90 dias. 40% dos projetos agentic serão cancelados até 2027; qualidade de dados e escopo claro são os diferenciais.
+      </div>
+    </div>
+
+    <!-- Anthropic Glasswing -->
+    <div class="card purple">
+      <div class="card-head">
+        <div class="card-icon purple">🔐</div>
+        <div class="card-title">Anthropic expande Project Glasswing para 150+ organizações em 15 países — foco em segurança de IA</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">Segurança</span>
+        <span class="tag">Cybersecurity</span>
+        <span class="tag new">Expansão</span>
+      </div>
+      <p class="card-body">Em 2 de junho, a Anthropic expandiu o <strong>Project Glasswing</strong> para aproximadamente 150 organizações em mais de 15 países. O projeto — focado em cibersegurança baseada em IA — abre um novo mercado no cruzamento entre LLMs e segurança corporativa. Posiciona a Anthropic como referência em IA confiável para ambientes regulados (saúde, finanças, governo).</p>
+      <div class="card-impact">
+        <strong>💡 Relevância para empresas</strong>
+        Se sua empresa atua em setores regulados ou lida com dados sensíveis, este é o sinal de que IA e segurança não são mais domínios separados. Avalie parcerias ou certificações via Glasswing para ganhar credenciais de compliance com IA.
+      </div>
+    </div>
+
+    <!-- ChatGPT Dreaming Memory -->
+    <div class="card blue">
+      <div class="card-head">
+        <div class="card-icon blue">💭</div>
+        <div class="card-title">OpenAI atualiza sistema de memória do ChatGPT — perfis de usuário mais coerentes</div>
+      </div>
+      <div class="card-tags">
+        <span class="tag">OpenAI</span>
+        <span class="tag">UX</span>
+        <span class="tag">Personalização</span>
+      </div>
+      <p class="card-body">O sistema de memória "Dreaming" do ChatGPT foi atualizado para construir <strong>perfis coerentes de usuário</strong> a partir do histórico de conversas, substituindo o modelo anterior de bullets isolados. O resultado é um assistente que "lembra" melhor o contexto do usuário ao longo do tempo, oferecendo respostas mais personalizadas sem necessidade de recontextualização manual.</p>
+      <div class="card-impact">
+        <strong>💡 Impacto para empresas</strong>
+        Para produtos que usam a API da OpenAI, vale estudar como replicar esse padrão de memória persistente nos seus próprios assistentes. A tendência de LLMs com estado ("stateful AI") será dominante em 2026–2027.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Section: Para ficar de olho -->
+  <div class="section-header">
+    <h2>No radar &mdash; próximos passos</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="cards-grid" style="margin-bottom:2rem">
+    <div class="card orange">
+      <div class="card-head">
+        <div class="card-icon orange">📅</div>
+        <div class="card-title">AI Summit Brasil 2026 — São Paulo, julho e setembro</div>
+      </div>
+      <p class="card-body">O maior congresso de IA e tecnologias emergentes da América Latina acontece em duas edições: <strong>22–23 de julho</strong> e <strong>2–3 de setembro</strong>, em São Paulo. Focado em C-Level, tomadores de decisão e líderes de inovação. Oportunidade para networking e atualização estratégica sobre IA no contexto do mercado brasileiro.</p>
+    </div>
+    <div class="card green">
+      <div class="card-head">
+        <div class="card-icon green">📊</div>
+        <div class="card-title">Mercado de IA deve atingir US$ 2,48 trilhões até 2034 (CAGR 26,6%)</div>
+      </div>
+      <p class="card-body">O segmento de software deve dominar com <strong>44,94% de participação</strong> em 2026. O crescimento é puxado por agentes autônomos, modelos de linguagem, ferramentas de produtividade e plataformas verticais. Para empresários: a janela de construção de produtos verticais de IA ainda está aberta — a oportunidade não é replicar o ChatGPT, mas resolver problemas específicos de indústria 10× melhor que workflows humanos.</p>
+    </div>
+    <div class="card red">
+      <div class="card-head">
+        <div class="card-icon red">🖥️</div>
+        <div class="card-title">NVIDIA RTX Spark — IA diretamente nos PCs pessoais (outono de 2026)</div>
+      </div>
+      <p class="card-body">O chip RTX Spark (ARM) da NVIDIA chega em laptops de Dell, HP, ASUS, Lenovo e MSI no outono de 2026, permitindo rodar modelos de IA localmente sem depender de cloud. Junto com o Vera CPU para data centers (adotado por OpenAI, Anthropic e SpaceX), a NVIDIA consolida presença em toda a stack de IA — do edge ao hyperscale.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>Gerado em 6 de junho de 2026 por IA (Claude) &middot; Fontes:
+    <a href="https://techcrunch.com/2026/06/01/anthropic-files-to-go-public/" target="_blank">TechCrunch</a> &middot;
+    <a href="https://github.blog/news-insights/company-news/github-copilot-is-moving-to-usage-based-billing/" target="_blank">GitHub Blog</a> &middot;
+    <a href="https://nvidianews.nvidia.com/news/rubin-platform-ai-supercomputer" target="_blank">NVIDIA Newsroom</a> &middot;
+    <a href="https://www.cnbc.com/2026/06/01/microsoft-and-google-take-on-anthropic-and-openai-in-ai-coding-models.html" target="_blank">CNBC</a> &middot;
+    <a href="https://newsletter.pragmaticengineer.com/p/ai-tooling-2026" target="_blank">Pragmatic Engineer</a> &middot;
+    <a href="https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf" target="_blank">Anthropic Agentic Coding Report</a>
+  </p>
+  <p style="margin-top:0.5rem;color:#484f58">Este resumo é gerado automaticamente e pode conter imprecisões. Verifique as fontes originais para decisões de negócio.</p>
+</footer>
+
+</body>
+</html>
