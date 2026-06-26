@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+// On Vercel: __dirname = /var/task/api, public/ is at /var/task/public
+const PUBLIC = path.join(__dirname, '..', 'public');
 
 const EXCLUDE = new Set([
   'api', 'node_modules', '.git', '.claude', '.vercel',
-  'public', '__pycache__', '.venv', 'venv', 'env',
+  '__pycache__', '.venv', 'venv', 'env',
 ]);
 
 function scanFiles(dirPath, folderName) {
@@ -24,7 +25,7 @@ function scanFiles(dirPath, folderName) {
       }
     }
   } catch (e) { /* ignore */ }
-  return files.sort((a, b) => b.name.localeCompare(a.name)); // newest first
+  return files.sort((a, b) => b.name.localeCompare(a.name));
 }
 
 module.exports = (req, res) => {
@@ -33,11 +34,11 @@ module.exports = (req, res) => {
 
   const result = [];
   try {
-    const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+    const entries = fs.readdirSync(PUBLIC, { withFileTypes: true });
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
       if (EXCLUDE.has(entry.name) || entry.name.startsWith('.')) continue;
-      const files = scanFiles(path.join(ROOT, entry.name), entry.name);
+      const files = scanFiles(path.join(PUBLIC, entry.name), entry.name);
       if (files.length > 0) {
         result.push({ folder: entry.name, files });
       }
