@@ -93,6 +93,56 @@
   }
   #reload-btn:hover { border-color: var(--accent); color: var(--accent2); background: var(--accent-glow); }
 
+  #generate-btn {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border: none;
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all var(--trans);
+    display: flex; align-items: center; gap: 7px;
+    box-shadow: 0 0 18px rgba(99,102,241,.3);
+    white-space: nowrap;
+  }
+  #generate-btn:hover { filter: brightness(1.12); box-shadow: 0 0 28px rgba(99,102,241,.5); }
+  #generate-btn:disabled { opacity: .55; cursor: not-allowed; filter: none; }
+  #generate-btn .btn-spinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+  }
+  #generate-btn.loading .btn-spinner { display: block; }
+  #generate-btn.loading .btn-label { display: none; }
+
+  /* toast */
+  #toast {
+    position: fixed;
+    bottom: 24px; right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    z-index: 999;
+    display: flex; align-items: center; gap: 10px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all .3s cubic-bezier(.4,0,.2,1);
+    max-width: 340px;
+  }
+  #toast.show { transform: none; opacity: 1; }
+  #toast.success { border-color: rgba(52,211,153,.4); }
+  #toast.error   { border-color: rgba(248,113,113,.4); }
+  #toast .toast-icon { font-size: 18px; flex-shrink: 0; }
+
   /* ── LAYOUT ── */
   .layout {
     display: flex;
@@ -384,6 +434,10 @@
   <div class="topbar-spacer"></div>
   <span class="topbar-badge" id="total-badge">0 arquivos</span>
   <button id="reload-btn" onclick="loadFiles()">↺ Atualizar</button>
+  <button id="generate-btn" onclick="generateNews()">
+    <div class="btn-spinner"></div>
+    <span class="btn-label">🤖 Buscar Notícias IA</span>
+  </button>
 </header>
 
 <!-- LAYOUT -->
@@ -438,6 +492,9 @@
   </div>
 
 </div>
+
+<!-- Toast notification -->
+<div id="toast"><span class="toast-icon"></span><span id="toast-msg"></span></div>
 
 <script>
 let allData = [];
@@ -560,6 +617,39 @@ function esc(s) {
 }
 function escQ(s) {
   return s.replace(/'/g,"\\'").replace(/\\/g,'\\\\');
+}
+
+function showToast(msg, type = 'success', icon = '') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.querySelector('.toast-icon').textContent = icon;
+  toast.className = `show ${type}`;
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => { toast.className = ''; }, 5000);
+}
+
+async function generateNews() {
+  const btn = document.getElementById('generate-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  showToast('Buscando notícias de IA… pode levar até 30s', 'info', '⏳');
+
+  try {
+    const res = await fetch('/api/generate', { method: 'POST' });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || 'Erro ao gerar notícias.', 'error', '❌');
+      return;
+    }
+
+    showToast(`${data.count} notícias geradas! Aguarde ~30s para o Vercel redeployar e clique em Atualizar.`, 'success', '✅');
+  } catch (e) {
+    showToast('Erro de conexão: ' + e.message, 'error', '❌');
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
 }
 
 // initial load
