@@ -189,30 +189,22 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // 1. Call OpenAI Responses API with web search
-    const aiResp = await httpsPost('api.openai.com', '/v1/responses', {
+    // 1. Call OpenAI Chat Completions with gpt-4o-search-preview (web search nativo)
+    const aiResp = await httpsPost('api.openai.com', '/v1/chat/completions', {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_KEY}`,
     }, {
       model: 'gpt-4o-search-preview',
-      tools: [{ type: 'web_search_preview' }],
-      input: PROMPT,
+      web_search_options: {},
+      messages: [{ role: 'user', content: PROMPT }],
     });
 
     if (aiResp.status !== 200) {
       return res.status(502).json({ error: 'Erro na API OpenAI', detail: aiResp.body });
     }
 
-    // Extract text from response output
-    const outputItems = aiResp.body.output || [];
-    let rawText = '';
-    for (const item of outputItems) {
-      if (item.type === 'message' && Array.isArray(item.content)) {
-        for (const c of item.content) {
-          if (c.type === 'output_text') rawText += c.text;
-        }
-      }
-    }
+    // Extract text from chat completions response
+    const rawText = aiResp.body.choices?.[0]?.message?.content || '';
 
     // Parse JSON from the text (handle markdown code blocks)
     const jsonMatch = rawText.match(/\{[\s\S]*\}/);
