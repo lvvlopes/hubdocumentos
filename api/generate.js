@@ -30,23 +30,23 @@ const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 
 // ── Prompt ────────────────────────────────────────────────────────
 
-const SYSTEM = `Você é um curador de notícias de tecnologia especializado em inteligência artificial.
-Retorne SOMENTE um objeto JSON válido e bem formado.
-REGRAS CRÍTICAS para o JSON:
-- Sem markdown, sem blocos de código, sem texto antes ou depois do JSON
-- Todos os valores de string devem estar em UMA única linha (sem quebras de linha dentro das strings)
-- Use \\n para representar parágrafos dentro das strings, nunca uma quebra de linha real
-- Escape aspas dentro de strings com \\\"
-- Não use vírgula após o último elemento de arrays ou objetos`;
+const SEARCH_PROMPT = `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology, Ars Technica, InfoQ) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
-const USER_PROMPT = `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology, Ars Technica, InfoQ) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
+Para cada notícia encontrada, escreva em texto livre:
+- TÍTULO: título da notícia
+- FONTE: nome do portal
+- URL: link original completo
+- RESUMO: 3 parágrafos explicando o que aconteceu, impacto prático para empresários e engenheiros de software
+- TAGS: categorias relevantes dentre: LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal
 
-Foco: notícias práticas e relevantes para empresários e engenheiros de software — novos modelos, APIs, ferramentas, integrações, casos de uso reais, movimentos de mercado importantes.
+Traga entre 8 e 12 notícias. Foque em novidades concretas e relevantes.`;
 
-Retorne EXATAMENTE neste formato (8 a 12 notícias), cada string em UMA linha:
-{"articles":[{"title":"Título aqui","summary":"Parágrafo 1.\\n\\nParágrafo 2.\\n\\nParágrafo 3.","source":"Portal","url":"https://url.com","tags":["LLM","Ferramentas"]}]}
+const STRUCT_SYSTEM = `Você converte texto de notícias para JSON estruturado.
+Responda APENAS com JSON válido usando response_format json_object.
+Schema obrigatório: {"articles":[{"title":"...","summary":"...","source":"...","url":"...","tags":["..."]}]}`;
 
-Tags válidas (1-3 por artigo): LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal.`;
+const STRUCT_PROMPT = (text) =>
+  `Converta as notícias abaixo para o JSON estruturado. Cada summary deve ter 2-3 parágrafos separados por \\n\\n.\n\n${text}`;
 
 // ── JSON extractor robusto ────────────────────────────────────────
 
@@ -163,25 +163,41 @@ module.exports = async (req, res) => {
 
     const existingUrls = new Set(existingArticles.map(a => a.url));
 
-    // 2. Call OpenAI
-    const aiResp = await post('api.openai.com', '/v1/chat/completions', {
+    // 2a. Busca notícias como texto livre (search model)
+    const searchResp = await post('api.openai.com', '/v1/chat/completions', {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_KEY}`,
     }, {
       model: 'gpt-4o-search-preview',
       web_search_options: {},
+      messages: [{ role: 'user', content: SEARCH_PROMPT }],
+    });
+
+    if (searchResp.status !== 200)
+      return res.status(502).json({ error: 'Erro na busca (OpenAI search)', detail: searchResp.body });
+
+    const newsText = searchResp.body.choices?.[0]?.message?.content || '';
+    if (!newsText) return res.status(502).json({ error: 'Resposta vazia do modelo de busca' });
+
+    // 2b. Estrutura em JSON garantido (gpt-4o com response_format)
+    const structResp = await post('api.openai.com', '/v1/chat/completions', {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_KEY}`,
+    }, {
+      model: 'gpt-4o',
+      response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: SYSTEM },
-        { role: 'user',   content: USER_PROMPT },
+        { role: 'system', content: STRUCT_SYSTEM },
+        { role: 'user',   content: STRUCT_PROMPT(newsText) },
       ],
     });
 
-    if (aiResp.status !== 200)
-      return res.status(502).json({ error: 'Erro na API OpenAI', detail: aiResp.body });
+    if (structResp.status !== 200)
+      return res.status(502).json({ error: 'Erro ao estruturar JSON (OpenAI)', detail: structResp.body });
 
-    const rawText = aiResp.body.choices?.[0]?.message?.content || '';
-    const parsed = extractAndParseJson(rawText);
-    if (!parsed) return res.status(502).json({ error: 'JSON inválido na resposta da OpenAI', raw: rawText.slice(0, 600) });
+    const rawJson = structResp.body.choices?.[0]?.message?.content || '';
+    const parsed = extractAndParseJson(rawJson);
+    if (!parsed) return res.status(502).json({ error: 'JSON inválido após estruturação', raw: rawJson.slice(0, 600) });
     const newArticles = (parsed.articles || []).filter(a => a.url && !existingUrls.has(a.url));
 
     const allArticles = [...existingArticles, ...newArticles];
