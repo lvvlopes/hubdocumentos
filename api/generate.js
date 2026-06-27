@@ -31,26 +31,57 @@ const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 // ── Prompt ────────────────────────────────────────────────────────
 
 const SYSTEM = `Você é um curador de notícias de tecnologia especializado em inteligência artificial.
-Retorne SOMENTE um objeto JSON válido, sem markdown, sem blocos de código, sem texto extra.`;
+Retorne SOMENTE um objeto JSON válido e bem formado.
+REGRAS CRÍTICAS para o JSON:
+- Sem markdown, sem blocos de código, sem texto antes ou depois do JSON
+- Todos os valores de string devem estar em UMA única linha (sem quebras de linha dentro das strings)
+- Use \\n para representar parágrafos dentro das strings, nunca uma quebra de linha real
+- Escape aspas dentro de strings com \\\"
+- Não use vírgula após o último elemento de arrays ou objetos`;
 
 const USER_PROMPT = `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology, Ars Technica, InfoQ) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
 Foco: notícias práticas e relevantes para empresários e engenheiros de software — novos modelos, APIs, ferramentas, integrações, casos de uso reais, movimentos de mercado importantes.
 
-Retorne exatamente neste formato JSON (entre 8 e 12 notícias):
-{
-  "articles": [
-    {
-      "title": "Título original da notícia",
-      "summary": "Resumo completo em 3-4 parágrafos. Explique o que aconteceu, o impacto prático e por que importa para quem desenvolve ou usa software com IA.",
-      "source": "Nome do portal",
-      "url": "https://url-real-da-noticia.com",
-      "tags": ["LLM", "Ferramentas"]
-    }
-  ]
-}
+Retorne EXATAMENTE neste formato (8 a 12 notícias), cada string em UMA linha:
+{"articles":[{"title":"Título aqui","summary":"Parágrafo 1.\\n\\nParágrafo 2.\\n\\nParágrafo 3.","source":"Portal","url":"https://url.com","tags":["LLM","Ferramentas"]}]}
 
-Tags válidas (use 1-3 por artigo): LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal.`;
+Tags válidas (1-3 por artigo): LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal.`;
+
+// ── JSON extractor robusto ────────────────────────────────────────
+
+function extractAndParseJson(text) {
+  // 1. Remove blocos markdown
+  text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+  // 2. Localiza o objeto raiz { ... }
+  const start = text.indexOf('{');
+  const end   = text.lastIndexOf('}');
+  if (start === -1 || end === -1) return null;
+  let jsonStr = text.slice(start, end + 1);
+
+  // 3. Primeira tentativa — parse direto
+  try { return JSON.parse(jsonStr); } catch (_) {}
+
+  // 4. Limpeza: remove quebras de linha e tabs DENTRO de strings
+  //    (substitui newlines literais dentro de valores por \n escapado)
+  jsonStr = jsonStr.replace(/"((?:[^"\\]|\\.)*)"/gs, (match, inner) => {
+    const cleaned = inner
+      .replace(/\r\n/g, '\\n')
+      .replace(/\r/g,   '\\n')
+      .replace(/\n/g,   '\\n')
+      .replace(/\t/g,   '\\t');
+    return `"${cleaned}"`;
+  });
+
+  // 5. Remove trailing commas antes de ] ou }
+  jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1');
+
+  // 6. Segunda tentativa
+  try { return JSON.parse(jsonStr); } catch (_) {}
+
+  return null;
+}
 
 // ── HTML builder (for backward compat, kept minimal) ──────────────
 
@@ -149,10 +180,8 @@ module.exports = async (req, res) => {
       return res.status(502).json({ error: 'Erro na API OpenAI', detail: aiResp.body });
 
     const rawText = aiResp.body.choices?.[0]?.message?.content || '';
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return res.status(502).json({ error: 'JSON não encontrado na resposta', raw: rawText.slice(0, 400) });
-
-    const parsed = JSON.parse(jsonMatch[0]);
+    const parsed = extractAndParseJson(rawText);
+    if (!parsed) return res.status(502).json({ error: 'JSON inválido na resposta da OpenAI', raw: rawText.slice(0, 600) });
     const newArticles = (parsed.articles || []).filter(a => a.url && !existingUrls.has(a.url));
 
     const allArticles = [...existingArticles, ...newArticles];
