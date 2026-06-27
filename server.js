@@ -1,97 +1,88 @@
 const http = require('http');
-const fs = require('fs');
+const fs   = require('fs');
 const path = require('path');
-const url = require('url');
+const url  = require('url');
 
-const ROOT = __dirname;
-const PORT = 3000;
+const ROOT   = path.join(__dirname, 'public');
+const API_DIR = path.join(__dirname, 'api');
+const PORT   = 3000;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
   '.pdf':  'application/pdf',
+  '.json': 'application/json',
   '.css':  'text/css',
   '.js':   'application/javascript',
-  '.json': 'application/json',
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
   '.svg':  'image/svg+xml',
   '.ico':  'image/x-icon',
 };
 
-function scanDir(rootPath) {
-  const result = [];
-  try {
-    const entries = fs.readdirSync(rootPath, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.name.startsWith('.') || entry.name === 'node_modules') continue;
-      if (entry.isDirectory()) {
-        const files = scanFiles(path.join(rootPath, entry.name), entry.name);
-        if (files.length > 0) {
-          result.push({ folder: entry.name, files });
-        }
-      }
-    }
-  } catch (e) { /* ignore */ }
-  return result;
-}
+// Load API handlers
+const apiFiles    = require('./api/files');
+const apiGenerate = require('./api/generate');
 
-function scanFiles(dirPath, folderName) {
-  const files = [];
-  try {
-    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-    for (const entry of entries) {
-      if (entry.isFile()) {
-        const ext = path.extname(entry.name).toLowerCase();
-        if (ext === '.html' || ext === '.pdf') {
-          files.push({
-            name: entry.name,
-            path: `/${folderName}/${entry.name}`,
-            ext: ext.replace('.', ''),
-          });
-        }
-      }
-    }
-  } catch (e) { /* ignore */ }
-  return files.sort((a, b) => a.name.localeCompare(b.name));
+// Minimal mock for local generate (no GitHub/OpenAI)
+function localGenerate(req, res) {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ error: 'Geração local desativada. Use o Vercel.' }));
 }
 
 const server = http.createServer((req, res) => {
-  const parsed = url.parse(req.url);
-  let pathname = decodeURIComponent(parsed.pathname);
+  const { pathname } = url.parse(req.url);
+  const decoded = decodeURIComponent(pathname);
 
-  // API endpoint
-  if (pathname === '/api/files') {
-    const data = scanDir(ROOT);
-    res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
-    res.end(JSON.stringify(data));
-    return;
+  // API routes
+  if (decoded === '/api/files') {
+    return apiFiles(req, { status: () => ({ json: (d) => { res.writeHead(200,{'Content-Type':'application/json'}); res.end(JSON.stringify(d)); } }), setHeader: () => {}, status(c) { return { json: (d) => { res.writeHead(c,{'Content-Type':'application/json'}); res.end(JSON.stringify(d)); }}; } });
+  }
+  if (decoded === '/api/generate' && req.method === 'POST') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));
   }
 
-  // Serve hub
-  if (pathname === '/' || pathname === '/index.html') {
-    pathname = '/hub.html';
-  }
-
-  const filePath = path.join(ROOT, pathname);
-
-  // Security: stay within ROOT
-  if (!filePath.startsWith(ROOT)) {
-    res.writeHead(403); res.end('Forbidden'); return;
-  }
+  // Static files from public/
+  let filePath = path.join(ROOT, decoded === '/' ? '/index.html' : decoded);
+  if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }
 
   fs.readFile(filePath, (err, data) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('Not found');
-      return;
-    }
-    const ext = path.extname(filePath).toLowerCase();
-    const mime = MIME[ext] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': mime });
+    if (err) { res.writeHead(404, {'Content-Type':'text/plain'}); return res.end('Not found'); }
+    const ext  = path.extname(filePath).toLowerCase();
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
     res.end(data);
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`\n  Hub de Documentos rodando em: http://localhost:${PORT}\n`);
+// Wire up api/files properly
+const origFilesHandler = apiFiles;
+server.removeAllListeners('request');
+server.on('request', (req, res) => {
+  const { pathname } = url.parse(req.url);
+  const p = decodeURIComponent(pathname);
+
+  const mockRes = (statusCode) => ({
+    _code: statusCode,
+    setHeader() {},
+    status(c) { return mockRes(c); },
+    json(d) { res.writeHead(this._code || 200, {'Content-Type':'application/json','Access-Control-Allow-Origin':'*'}); res.end(JSON.stringify(d)); },
+  });
+
+  if (p === '/api/files') return origFilesHandler(req, mockRes(200));
+  if (p === '/api/generate' && req.method === 'POST') {
+    res.writeHead(200, {'Content-Type':'application/json'});
+    return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));
+  }
+
+  let filePath = path.join(ROOT, p === '/' ? '/index.html' : p);
+  if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) { res.writeHead(404); return res.end('Not found'); }
+    const ext = path.extname(filePath).toLowerCase();
+    res.writeHead(200, { 'Content-Type': MIME[ext] || 'application/octet-stream' });
+    res.end(data);
+  });
 });
+
+server.listen(PORT, () => console.log(`\n  Hub rodando em: http://localhost:${PORT}\n`));
