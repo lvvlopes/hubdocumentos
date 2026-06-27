@@ -1,51 +1,30 @@
 const fs = require('fs');
 const path = require('path');
 
-// On Vercel: __dirname = /var/task/api, public/ is at /var/task/public
-const PUBLIC = path.join(__dirname, '..', 'public');
-
-const EXCLUDE = new Set([
-  'api', 'node_modules', '.git', '.claude', '.vercel',
-  '__pycache__', '.venv', 'venv', 'env',
-]);
-
-function scanFiles(dirPath, folderName) {
-  const files = [];
-  try {
-    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isFile()) continue;
-      const ext = path.extname(entry.name).toLowerCase();
-      if (ext === '.html' || ext === '.pdf') {
-        files.push({
-          name: entry.name,
-          path: `/${folderName}/${entry.name}`,
-          ext: ext.replace('.', ''),
-        });
-      }
-    }
-  } catch (e) { /* ignore */ }
-  return files.sort((a, b) => b.name.localeCompare(a.name));
-}
+const DATA_DIR = path.join(__dirname, '..', 'public', 'data');
 
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
 
-  const result = [];
+  const editions = [];
   try {
-    const entries = fs.readdirSync(PUBLIC, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      if (EXCLUDE.has(entry.name) || entry.name.startsWith('.')) continue;
-      const files = scanFiles(path.join(PUBLIC, entry.name), entry.name);
-      if (files.length > 0) {
-        result.push({ folder: entry.name, files });
-      }
-    }
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
+    const files = fs.readdirSync(DATA_DIR)
+      .filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
+      .sort((a, b) => b.localeCompare(a)); // newest first
 
-  res.status(200).json(result);
+    for (const file of files) {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
+        editions.push({
+          date: data.date,
+          file,
+          count: (data.articles || []).length,
+          generated_at: data.generated_at,
+        });
+      } catch (_) { /* skip malformed */ }
+    }
+  } catch (_) { /* data dir may not exist yet */ }
+
+  res.status(200).json(editions);
 };
