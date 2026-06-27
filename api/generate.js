@@ -184,7 +184,7 @@ module.exports = async (req, res) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${OPENAI_KEY}`,
     }, {
-      model: 'gpt-4o',
+      model: 'gpt-5.5',
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: STRUCT_SYSTEM },
