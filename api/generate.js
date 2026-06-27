@@ -2,7 +2,7 @@ const https = require('https');
 
 module.exports.config = { maxDuration: 60 };
 
-// ── HTTP helpers ───────────────────────────────────────────────────
+// ── HTTP helper ────────────────────────────────────────────────────
 
 function request(method, hostname, path, headers, body) {
   return new Promise((resolve, reject) => {
@@ -24,84 +24,136 @@ function request(method, hostname, path, headers, body) {
   });
 }
 
-const get  = (h, p, hdrs)    => request('GET',  h, p, hdrs);
 const post = (h, p, hdrs, b) => request('POST', h, p, hdrs, b);
+const get  = (h, p, hdrs)    => request('GET',  h, p, hdrs);
 const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 
-// ── Prompt ────────────────────────────────────────────────────────
+// ── Prompts por categoria ──────────────────────────────────────────
 
-const SEARCH_PROMPT = `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology, Ars Technica, InfoQ) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
+const CATEGORIES = {
+  ia: {
+    label: 'Notícias IA',
+    searchPrompt: `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
-Para cada notícia encontrada, escreva em texto livre:
-- TÍTULO: título da notícia
-- FONTE: nome do portal
-- URL: link original completo
-- RESUMO: 3 parágrafos explicando o que aconteceu, impacto prático para empresários e engenheiros de software
-- TAGS: categorias relevantes dentre: LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal
+Foco: novos modelos de linguagem, lançamentos de APIs, benchmarks, movimentos estratégicos de empresas de IA (OpenAI, Anthropic, Google, Meta, Mistral, etc.), pesquisas relevantes.
 
-Traga entre 8 e 12 notícias. Foque em novidades concretas e relevantes.`;
+Para cada notícia escreva:
+TÍTULO: ...
+FONTE: ...
+URL: ...
+RESUMO: 3 parágrafos sobre o que aconteceu e impacto para quem usa IA
+TAGS: escolha de LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal
 
-const STRUCT_SYSTEM = `Você converte texto de notícias para JSON estruturado.
-Responda APENAS com JSON válido usando response_format json_object.
-Schema obrigatório: {"articles":[{"title":"...","summary":"...","source":"...","url":"...","tags":["..."]}]}`;
+Traga 8 a 10 notícias.`,
+    tags: 'LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal',
+  },
 
-const STRUCT_PROMPT = (text) =>
-  `Converta as notícias abaixo para o JSON estruturado. Cada summary deve ter 2-3 parágrafos separados por \\n\\n.\n\n${text}`;
+  dev: {
+    label: 'Dev de Software',
+    searchPrompt: `Busque nas últimas 24 horas nos principais portais (GitHub Blog, Dev.to, InfoQ, The New Stack, Ars Technica, Hacker News top stories, Stack Overflow Blog) notícias sobre o USO DE INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
 
-// ── JSON extractor robusto ────────────────────────────────────────
+Foco: ferramentas de geração de código (GitHub Copilot, Cursor, Windsurf, Cline, etc.), IA para testes automatizados, debugging com IA, code review com IA, novos recursos em IDEs, integrações de LLM em pipelines de dev, aumento de produtividade do desenvolvedor, novas APIs e SDKs relevantes, frameworks de agentes para código.
+
+Para cada notícia escreva:
+TÍTULO: ...
+FONTE: ...
+URL: ...
+RESUMO: 3 parágrafos focando no impacto prático para desenvolvedores e engenheiros de software
+TAGS: escolha de Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps
+
+Traga 8 a 10 notícias.`,
+    tags: 'Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps',
+  },
+
+  projetos: {
+    label: 'Projetos de Software',
+    searchPrompt: `Busque nas últimas 24 horas notícias sobre USO DE INTELIGÊNCIA ARTIFICIAL NA GESTÃO E GERENCIAMENTO DE PROJETOS DE SOFTWARE.
+
+Público-alvo: gerente de projetos de software que lidera equipe de desenvolvimento no setor de previdência privada complementar (seguros, benefícios, regulação SUSEP/PREVIC, compliance, sistemas core de gestão de benefícios).
+
+Busque nos portais: PMI blog, ProjectManagement.com, CIO, InfoQ, TechRepublic, Harvard Business Review Tech, Gartner blogs, McKinsey Digital.
+
+Foco: IA para estimativa e planejamento de projetos, automação de status reports, gestão de backlog com IA, ferramentas de IA para líderes técnicos (Jira AI, Linear, GitHub Projects), IA para gestão de risco em projetos, análise preditiva de cronograma, gestão de equipes distribuídas com IA, metodologias ágeis potencializadas por IA, compliance e rastreabilidade com IA, impactos de IA em equipes de desenvolvimento financeiro/seguros.
+
+Para cada notícia escreva:
+TÍTULO: ...
+FONTE: ...
+URL: ...
+RESUMO: 3 parágrafos focando no valor prático para um gerente de projetos de software no setor financeiro/previdência
+TAGS: escolha de Planejamento, Estimativa, Agile, Risco, Equipes, Compliance, FinTech, Automação, Ferramentas, Liderança
+
+Traga 8 a 10 notícias.`,
+    tags: 'Planejamento, Estimativa, Agile, Risco, Equipes, Compliance, FinTech, Automação, Ferramentas, Liderança',
+  },
+};
+
+const STRUCT_SYSTEM = `Você converte um texto de notícias em JSON estruturado e válido.
+Responda APENAS com um objeto JSON. Sem markdown, sem blocos de código, sem texto extra.`;
+
+const STRUCT_USER = (text, tags) =>
+  `Converta as notícias abaixo para JSON com este formato exato:
+{"articles":[{"title":"...","summary":"parágrafo 1\\n\\nparágrafo 2\\n\\nparágrafo 3","source":"...","url":"https://...","tags":["tag1","tag2"]}]}
+
+Tags permitidas: ${tags}
+Use 1 a 3 tags por artigo. Se não encontrar URL real, omita o artigo.
+
+NOTÍCIAS:
+${text}`;
+
+// ── JSON extractor robusto ─────────────────────────────────────────
 
 function extractAndParseJson(text) {
-  // 1. Remove blocos markdown
   text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-
-  // 2. Localiza o objeto raiz { ... }
   const start = text.indexOf('{');
   const end   = text.lastIndexOf('}');
   if (start === -1 || end === -1) return null;
-  let jsonStr = text.slice(start, end + 1);
+  let s = text.slice(start, end + 1);
 
-  // 3. Primeira tentativa — parse direto
-  try { return JSON.parse(jsonStr); } catch (_) {}
+  try { return JSON.parse(s); } catch (_) {}
 
-  // 4. Limpeza: remove quebras de linha e tabs DENTRO de strings
-  //    (substitui newlines literais dentro de valores por \n escapado)
-  jsonStr = jsonStr.replace(/"((?:[^"\\]|\\.)*)"/gs, (match, inner) => {
-    const cleaned = inner
-      .replace(/\r\n/g, '\\n')
-      .replace(/\r/g,   '\\n')
-      .replace(/\n/g,   '\\n')
-      .replace(/\t/g,   '\\t');
-    return `"${cleaned}"`;
-  });
+  // Escapa quebras de linha dentro de strings
+  s = s.replace(/"((?:[^"\\]|\\.)*)"/gs, (match, inner) =>
+    `"${inner.replace(/\r\n/g,'\\n').replace(/\r/g,'\\n').replace(/\n/g,'\\n').replace(/\t/g,'\\t')}"`
+  );
+  s = s.replace(/,\s*([}\]])/g, '$1');
 
-  // 5. Remove trailing commas antes de ] ou }
-  jsonStr = jsonStr.replace(/,\s*([}\]])/g, '$1');
-
-  // 6. Segunda tentativa
-  try { return JSON.parse(jsonStr); } catch (_) {}
-
+  try { return JSON.parse(s); } catch (_) {}
   return null;
 }
 
-// ── HTML builder (for backward compat, kept minimal) ──────────────
+// ── Busca + estrutura para uma categoria ──────────────────────────
 
-function buildHtml(data) {
-  const { date, articles } = data;
-  const cards = articles.map(a => `
-  <article>
-    <p class="src">${a.source}</p>
-    <h2><a href="${a.url}" target="_blank">${a.title}</a></h2>
-    <p>${a.summary.replace(/\n/g,'<br>')}</p>
-    <p class="tags">${(a.tags||[]).map(t=>`<span>${t}</span>`).join('')}</p>
-  </article>`).join('');
-  return `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Notícias IA ${date}</title>
-<style>body{font-family:system-ui;max-width:860px;margin:0 auto;padding:2rem;background:#0f1117;color:#e2e8f0}
-article{background:#1a1d27;border:1px solid #2a2f45;border-radius:10px;padding:1.5rem;margin-bottom:1.2rem}
-.src{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:#64748b;margin-bottom:.5rem}
-h2{font-size:1.1rem;margin-bottom:.8rem}a{color:#818cf8}
-p{font-size:.88rem;line-height:1.75;color:#94a3b8}
-.tags span{font-size:.7rem;background:#1c2030;border:1px solid #2a2f45;border-radius:99px;padding:2px 8px;margin-right:4px;color:#64748b}
-</style></head><body><h1>Notícias IA — ${date}</h1>${cards}</body></html>`;
+async function fetchCategory(apiKey, category) {
+  const cfg = CATEGORIES[category];
+
+  const searchResp = await post('api.openai.com', '/v1/chat/completions', {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`,
+  }, {
+    model: 'gpt-4o-search-preview',
+    web_search_options: {},
+    messages: [{ role: 'user', content: cfg.searchPrompt }],
+  });
+
+  if (searchResp.status !== 200) throw new Error(`Search failed for ${category}: ${JSON.stringify(searchResp.body).slice(0,200)}`);
+  const newsText = searchResp.body.choices?.[0]?.message?.content || '';
+
+  const structResp = await post('api.openai.com', '/v1/chat/completions', {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`,
+  }, {
+    model: 'gpt-5.5',
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: STRUCT_SYSTEM },
+      { role: 'user',   content: STRUCT_USER(newsText, cfg.tags) },
+    ],
+  });
+
+  if (structResp.status !== 200) throw new Error(`Struct failed for ${category}: ${JSON.stringify(structResp.body).slice(0,200)}`);
+  const rawJson = structResp.body.choices?.[0]?.message?.content || '';
+  const parsed = extractAndParseJson(rawJson);
+  return parsed?.articles || [];
 }
 
 // ── GitHub helpers ────────────────────────────────────────────────
@@ -114,20 +166,6 @@ function ghHeaders(token) {
     'X-GitHub-Api-Version': '2022-11-28',
     'Content-Type': 'application/json',
   };
-}
-
-async function ghGetFile(token, owner, repo, filePath, branch) {
-  const r = await get('api.github.com', `/repos/${owner}/${repo}/contents/${filePath}?ref=${branch}`, ghHeaders(token));
-  return r; // .status 200 means exists, .body.sha + .body.content (base64)
-}
-
-async function ghPutFile(token, owner, repo, filePath, branch, content, sha, message) {
-  return put('api.github.com', `/repos/${owner}/${repo}/contents/${filePath}`, ghHeaders(token), {
-    message,
-    content: Buffer.from(content).toString('base64'),
-    branch,
-    ...(sha ? { sha } : {}),
-  });
 }
 
 // ── Main handler ──────────────────────────────────────────────────
@@ -148,81 +186,74 @@ module.exports = async (req, res) => {
   const jsonPath = `public/data/${today}.json`;
 
   try {
-    // 1. Fetch existing articles for today (if any)
-    let existingArticles = [];
-    let existingSha = null;
+    // 1. Buscar arquivo existente do dia
+    const hdrs = ghHeaders(GH_TOKEN);
+    const existingFile = await get('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}?ref=${GH_BRANCH}`, hdrs);
 
-    const existingFile = await ghGetFile(GH_TOKEN, owner, repoName, jsonPath, GH_BRANCH);
+    let existingData = { date: today, categories: { ia: [], dev: [], projetos: [] } };
+    let existingSha  = null;
+
     if (existingFile.status === 200) {
       existingSha = existingFile.body.sha;
       try {
-        const decoded = Buffer.from(existingFile.body.content, 'base64').toString('utf8');
-        existingArticles = JSON.parse(decoded).articles || [];
+        existingData = JSON.parse(Buffer.from(existingFile.body.content, 'base64').toString('utf8'));
+        // backward compat: migrate old "articles" flat format
+        if (existingData.articles && !existingData.categories) {
+          existingData.categories = { ia: existingData.articles, dev: [], projetos: [] };
+          delete existingData.articles;
+        }
+        existingData.categories = existingData.categories || { ia: [], dev: [], projetos: [] };
       } catch (_) {}
     }
 
-    const existingUrls = new Set(existingArticles.map(a => a.url));
+    // 2. Buscar as 3 categorias em paralelo
+    const results = await Promise.allSettled([
+      fetchCategory(OPENAI_KEY, 'ia'),
+      fetchCategory(OPENAI_KEY, 'dev'),
+      fetchCategory(OPENAI_KEY, 'projetos'),
+    ]);
 
-    // 2a. Busca notícias como texto livre (search model)
-    const searchResp = await post('api.openai.com', '/v1/chat/completions', {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_KEY}`,
-    }, {
-      model: 'gpt-4o-search-preview',
-      web_search_options: {},
-      messages: [{ role: 'user', content: SEARCH_PROMPT }],
-    });
+    const stats = { added: {}, existing: {}, errors: [] };
 
-    if (searchResp.status !== 200)
-      return res.status(502).json({ error: 'Erro na busca (OpenAI search)', detail: searchResp.body });
+    const catKeys = ['ia', 'dev', 'projetos'];
+    for (let i = 0; i < 3; i++) {
+      const key = catKeys[i];
+      const existing = existingData.categories[key] || [];
+      const existingUrls = new Set(existing.map(a => a.url));
 
-    const newsText = searchResp.body.choices?.[0]?.message?.content || '';
-    if (!newsText) return res.status(502).json({ error: 'Resposta vazia do modelo de busca' });
+      if (results[i].status === 'fulfilled') {
+        const newArticles = results[i].value.filter(a => a.url && !existingUrls.has(a.url));
+        existingData.categories[key] = [...existing, ...newArticles];
+        stats.added[key]    = newArticles.length;
+        stats.existing[key] = existing.length;
+      } else {
+        stats.errors.push(`${key}: ${results[i].reason?.message || 'erro desconhecido'}`);
+        stats.added[key]    = 0;
+        stats.existing[key] = existing.length;
+      }
+    }
 
-    // 2b. Estrutura em JSON garantido (gpt-4o com response_format)
-    const structResp = await post('api.openai.com', '/v1/chat/completions', {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_KEY}`,
-    }, {
-      model: 'gpt-5.5',
-      response_format: { type: 'json_object' },
-      messages: [
-        { role: 'system', content: STRUCT_SYSTEM },
-        { role: 'user',   content: STRUCT_PROMPT(newsText) },
-      ],
-    });
+    existingData.generated_at = new Date().toISOString();
+    existingData.date = today;
 
-    if (structResp.status !== 200)
-      return res.status(502).json({ error: 'Erro ao estruturar JSON (OpenAI)', detail: structResp.body });
-
-    const rawJson = structResp.body.choices?.[0]?.message?.content || '';
-    const parsed = extractAndParseJson(rawJson);
-    if (!parsed) return res.status(502).json({ error: 'JSON inválido após estruturação', raw: rawJson.slice(0, 600) });
-    const newArticles = (parsed.articles || []).filter(a => a.url && !existingUrls.has(a.url));
-
-    const allArticles = [...existingArticles, ...newArticles];
-    const now = new Date().toISOString();
-
-    // 3. Build payload
-    const jsonData = { date: today, generated_at: now, articles: allArticles };
-    const jsonContent = JSON.stringify(jsonData, null, 2);
-
-    // 4. Commit JSON to GitHub
-    const commitMsg = newArticles.length > 0
-      ? `feat: notícias IA ${today} (+${newArticles.length} novos artigos)`
+    // 3. Commit no GitHub
+    const totalAdded = Object.values(stats.added).reduce((s, n) => s + n, 0);
+    const commitMsg = totalAdded > 0
+      ? `feat: notícias ${today} (+${totalAdded} artigos em ${catKeys.filter(k => stats.added[k] > 0).join(', ')})`
       : `chore: verificação sem novos artigos ${today}`;
 
-    const commitResp = await ghPutFile(GH_TOKEN, owner, repoName, jsonPath, GH_BRANCH, jsonContent, existingSha, commitMsg);
+    const commitBody = {
+      message: commitMsg,
+      content: Buffer.from(JSON.stringify(existingData, null, 2)).toString('base64'),
+      branch: GH_BRANCH,
+      ...(existingSha ? { sha: existingSha } : {}),
+    };
+
+    const commitResp = await put('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}`, hdrs, commitBody);
     if (commitResp.status !== 200 && commitResp.status !== 201)
       return res.status(502).json({ error: 'Erro ao salvar no GitHub', detail: commitResp.body });
 
-    res.status(200).json({
-      ok: true,
-      date: today,
-      added: newArticles.length,
-      existing: existingArticles.length,
-      total: allArticles.length,
-    });
+    res.status(200).json({ ok: true, date: today, stats });
 
   } catch (err) {
     res.status(500).json({ error: err.message });

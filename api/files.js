@@ -11,20 +11,27 @@ module.exports = (req, res) => {
   try {
     const files = fs.readdirSync(DATA_DIR)
       .filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
-      .sort((a, b) => b.localeCompare(a)); // newest first
+      .sort((a, b) => b.localeCompare(a));
 
     for (const file of files) {
       try {
         const data = JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
+        const cats = data.categories || { ia: data.articles || [] };
+        const counts = {
+          ia:       (cats.ia       || []).length,
+          dev:      (cats.dev      || []).length,
+          projetos: (cats.projetos || []).length,
+        };
         editions.push({
           date: data.date,
           file,
-          count: (data.articles || []).length,
+          counts,
+          total: counts.ia + counts.dev + counts.projetos,
           generated_at: data.generated_at,
         });
-      } catch (_) { /* skip malformed */ }
+      } catch (_) {}
     }
-  } catch (_) { /* data dir may not exist yet */ }
+  } catch (_) {}
 
   res.status(200).json(editions);
 };
