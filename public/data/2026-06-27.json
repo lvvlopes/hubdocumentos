@@ -1,6 +1,6 @@
 {
   "date": "2026-06-27",
-  "generated_at": "2026-06-27T15:25:40.239Z",
+  "generated_at": "2026-06-27T15:27:28.473Z",
   "articles": [
     {
       "title": "Anthropic acredita que a IA só será segura se permanecer sob seu controle",
@@ -42,6 +42,66 @@
         "LLM",
         "Regulação",
         "Segurança"
+      ]
+    },
+    {
+      "title": "Anthropic lança modelos de IA semelhantes ao Mythos enquanto proibição de exportação persiste",
+      "summary": "A Anthropic lançou novos modelos de IA semelhantes ao Mythos em meio à continuidade de uma proibição de exportação que afeta suas operações. A iniciativa busca responder à crescente demanda por soluções avançadas de IA em mercados asiáticos, onde a empresa tenta ampliar sua presença.\n\nPara empresários, o movimento pode abrir oportunidades de integração de tecnologias de IA mais sofisticadas em produtos e processos. Para engenheiros de software, os novos modelos representam um campo para explorar arquiteturas, capacidades e aplicações voltadas a diferentes mercados.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/asian-ai-startups-launch-mythos-like-models-as-anthropics-export-ban-drags-on/",
+      "tags": [
+        "LLM",
+        "Empresas"
+      ]
+    },
+    {
+      "title": "OpenAI limita lançamento do GPT-5.6 após solicitação governamental",
+      "summary": "A OpenAI anunciou que limitará o lançamento do GPT-5.6 após uma solicitação governamental, mencionando preocupações relacionadas à segurança e ao impacto social da nova versão. A decisão evidencia o aumento da atenção regulatória sobre modelos avançados de inteligência artificial.\n\nEmpresários devem acompanhar as possíveis implicações legais, éticas e operacionais ao adotar novas tecnologias de IA. Já engenheiros de software precisam considerar requisitos de conformidade, segurança e mitigação de riscos durante o desenvolvimento e a implantação de sistemas baseados em modelos de linguagem.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/openai-limits-gpt-5-6-rollout-after-government-request-says-restrictions-shouldnt-be-the-norm/",
+      "tags": [
+        "LLM",
+        "Regulação"
+      ]
+    },
+    {
+      "title": "Patronus AI arrecada US$ 50 milhões para construir 'mundos digitais' que testam agentes de IA",
+      "summary": "A Patronus AI levantou US$ 50 milhões para desenvolver “mundos digitais” voltados a testar e aprimorar agentes de IA em ambientes simulados. Esses cenários permitem avaliar desempenho, robustez e segurança antes que os agentes sejam aplicados em contextos reais.\n\nPara empresas, a proposta oferece uma forma de validar soluções de IA com menor risco operacional. Para engenheiros de software, os ambientes simulados podem ajudar a identificar falhas, melhorar comportamentos dos agentes e acelerar ciclos de teste e correção.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/patronus-ai-lands-50m-to-build-digital-worlds-that-stress-test-ai-agents/",
+      "tags": [
+        "Agentes",
+        "Ferramentas"
+      ]
+    },
+    {
+      "title": "General Intuition aposta US$ 2,3 bilhões que videogames podem treinar agentes de IA para o mundo real",
+      "summary": "A General Intuition investiu US$ 2,3 bilhões na tese de que videogames podem ser usados para treinar agentes de IA em tarefas aplicáveis ao mundo real. A empresa vê a complexidade, a interatividade e a variedade dos jogos como elementos úteis para desenvolver habilidades em sistemas autônomos.\n\nEmpresários podem enxergar oportunidades de colaboração entre IA e indústria de jogos para criar soluções mais adaptáveis. Para engenheiros de software, a abordagem sugere novas metodologias de treinamento baseadas em simulações ricas, ambientes interativos e aprendizado por experiência.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/general-intuitions-2-3b-bet-that-video-games-can-train-ai-agents-for-the-real-world/",
+      "tags": [
+        "Agentes",
+        "Ferramentas"
+      ]
+    },
+    {
+      "title": "Ex-chefe de IA da Databricks acredita que pode reduzir o consumo de energia da IA em 1.000 vezes",
+      "summary": "O ex-chefe de IA da Databricks anunciou uma iniciativa que pretende reduzir o consumo de energia de sistemas de inteligência artificial em até 1.000 vezes. A proposta envolve o desenvolvimento de algoritmos mais eficientes e o uso de hardware especializado.\n\nPara empresários, avanços desse tipo podem diminuir custos operacionais e tornar aplicações de IA mais sustentáveis em larga escala. Para engenheiros de software, a iniciativa aponta para novas abordagens de otimização de desempenho, eficiência energética e desenho de sistemas computacionais mais econômicos.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/databricks-former-ai-chief-thinks-he-can-cut-ais-power-bill-by-1000x/",
+      "tags": [
+        "Hardware",
+        "Pesquisa"
+      ]
+    },
+    {
+      "title": "Netris levanta US$ 15 milhões da a16z para ajudar 'neoclouds' de IA a entrarem em operação mais rapidamente",
+      "summary": "A Netris arrecadou US$ 15 milhões em uma rodada Série A liderada pela a16z para acelerar a implementação de “neoclouds” de IA. Essas infraestruturas têm como objetivo facilitar a implantação, a operação e a escalabilidade de aplicações baseadas em inteligência artificial.\n\nEmpresários podem usar esse tipo de solução para reduzir o tempo de lançamento de produtos e serviços de IA. Para engenheiros de software, a notícia destaca novas ferramentas e abordagens para gerenciamento, orquestração e operação de recursos de nuvem voltados a cargas de trabalho intensivas.",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/06/27/netris-raises-15m-series-a-from-a16z-to-help-ai-neoclouds-go-live-faster/",
+      "tags": [
+        "Ferramentas",
+        "Empresas"
       ]
     }
   ]
