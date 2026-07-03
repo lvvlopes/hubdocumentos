@@ -130,7 +130,7 @@ async function fetchCategory(apiKey, category) {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${apiKey}`,
   }, {
-    model: 'gpt-4.5-nano-search-preview',
+    model: 'gpt-4o-mini-search-preview',
     web_search_options: {},
     messages: [{ role: 'user', content: cfg.searchPrompt }],
   });
@@ -142,7 +142,7 @@ async function fetchCategory(apiKey, category) {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${apiKey}`,
   }, {
-    model: 'gpt-4.5-nano',
+    model: 'gpt-4o-mini',
     response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: STRUCT_SYSTEM },
