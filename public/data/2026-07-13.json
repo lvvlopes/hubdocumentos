@@ -1,0 +1,171 @@
+{
+  "date": "2026-07-13",
+  "categories": {
+    "ia": [
+      {
+        "title": "Google anuncia Gemini 3.5 Flash, prometendo redução de custos em IA empresarial",
+        "summary": "O Google revelou o modelo de IA Gemini 3.5 Flash, que promete reduzir os custos de IA empresarial em mais de US$ 1 bilhão anuais. Este modelo combina alta performance com velocidade, permitindo que empresas economizem significativamente ao processar grandes volumes de dados. A introdução do Gemini 3.5 Flash representa um avanço significativo na economia de IA, oferecendo uma solução mais acessível e eficiente para as empresas.",
+        "source": "VentureBeat",
+        "url": "https://venturebeat.com/technology/google-says-gemini-3-5-flash-can-slash-enterprise-ai-costs-by-more-than-1-billion-a-year?utm_source=openai",
+        "tags": [
+          "LLM",
+          "Ferramentas",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "DeepSeek apresenta novo modelo de IA que 'fecha a lacuna' com modelos de ponta",
+        "summary": "A DeepSeek anunciou um novo modelo de IA que promete reduzir a diferença de desempenho entre modelos de IA avançados e os modelos existentes. Este desenvolvimento pode democratizar o acesso a tecnologias de ponta, permitindo que mais empresas e desenvolvedores utilizem modelos de alta qualidade em suas aplicações. A iniciativa da DeepSeek destaca a tendência crescente de tornar a IA mais acessível e eficiente para uma variedade de usuários.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/open-source-ai/?utm_source=openai",
+        "tags": [
+          "LLM",
+          "Open Source",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "Wikipedia solicita que empresas de IA utilizem sua API paga, evitando scraping",
+        "summary": "A Wikipedia pediu que as empresas de IA utilizem sua API paga em vez de realizar scraping em seu site. Essa medida visa proteger os dados da plataforma e garantir que as informações sejam acessadas de maneira controlada e sustentável. Para desenvolvedores e empresas que dependem de dados da Wikipedia, essa mudança pode exigir ajustes em suas estratégias de coleta de dados e integração de APIs.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/api/?utm_source=openai",
+        "tags": [
+          "Empresas",
+          "Regulação"
+        ]
+      },
+      {
+        "title": "Mistral aposta em 'construir sua própria IA' para competir com OpenAI e Anthropic",
+        "summary": "A Mistral está promovendo a ideia de \"construir sua própria IA\", oferecendo soluções que permitem que empresas desenvolvam modelos de IA personalizados. Essa abordagem visa fornecer maior controle e flexibilidade, permitindo que as organizações adaptem a IA às suas necessidades específicas. Para empresas que buscam soluções de IA mais alinhadas aos seus objetivos, a Mistral oferece uma alternativa viável aos modelos existentes de grandes empresas.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/llms/?utm_source=openai",
+        "tags": [
+          "LLM",
+          "Empresas",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "OpenAI lança chip Jalapeño, afastando-se da dependência da Nvidia",
+        "summary": "A OpenAI apresentou seu novo chip, chamado Jalapeño, marcando um movimento estratégico para reduzir a dependência da Nvidia. Este chip foi projetado para otimizar o desempenho de modelos de IA, oferecendo maior eficiência e controle sobre a infraestrutura. Para desenvolvedores e empresas que utilizam IA, a disponibilidade de hardware dedicado pode resultar em melhorias significativas no desempenho e na personalização de suas aplicações.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/ai/?utm_source=openai",
+        "tags": [
+          "Hardware",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "Waze adiciona novas funcionalidades impulsionadas por IA e atualizações de personalização",
+        "summary": "O Waze incorporou novas funcionalidades baseadas em IA, incluindo atualizações de personalização para melhorar a experiência do usuário. Essas melhorias permitem que o aplicativo ofereça rotas mais precisas e adaptadas às preferências individuais dos motoristas. Para os usuários, isso significa uma navegação mais eficiente e personalizada, aproveitando o poder da IA para otimizar trajetos e economizar tempo.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/?utm_source=openai",
+        "tags": [
+          "Ferramentas",
+          "Multimodal"
+        ]
+      },
+      {
+        "title": "OpenAI aposta em famílias enquanto o ChatGPT se aprofunda nos lares",
+        "summary": "A OpenAI está direcionando esforços para integrar o ChatGPT em ambientes domésticos, visando facilitar a interação familiar com a IA. Essa estratégia busca tornar a tecnologia mais acessível e útil no dia a dia das pessoas, promovendo uma adoção mais ampla da IA em contextos familiares. Para os usuários, isso pode resultar em assistentes virtuais mais integrados e personalizados, capazes de atender às necessidades específicas de cada membro da família.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/?utm_source=openai",
+        "tags": [
+          "Agentes",
+          "Multimodal"
+        ]
+      }
+    ],
+    "dev": [
+      {
+        "title": "Como a Geração de Código por IA Funciona",
+        "summary": "Este artigo explora as capacidades e benefícios da geração de código por IA, destacando como ferramentas como o GitHub Copilot utilizam modelos de linguagem para sugerir e completar trechos de código, melhorando a produtividade dos desenvolvedores. A integração de IA nos ambientes de desenvolvimento permite uma compreensão mais rápida de bases de código complexas e facilita a documentação e descrição de pull requests. A adoção de IA na geração de código está transformando a forma como os desenvolvedores abordam a infraestrutura de aplicativos e o processo de implantação.",
+        "source": "GitHub Blog",
+        "url": "https://github.blog/ai-and-ml/generative-ai/how-ai-code-generation-works/",
+        "tags": [
+          "Copilot",
+          "Produtividade"
+        ]
+      },
+      {
+        "title": "Como a Engenharia de Produto Assistida por IA Está Orquestrando o Claude Code ao Longo do Ciclo de Vida do Desenvolvimento de Software",
+        "summary": "Este artigo descreve como a integração de agentes de IA, como o Claude Code, pode ser orquestrada ao longo do ciclo de vida do desenvolvimento de software, desde a quebra de tickets até a gestão de merge requests e análise de CI. A proposta é que a IA seja invocada em etapas que exigem julgamento, como escrita de código e avaliação de revisões, enquanto etapas mecânicas sejam coordenadas por scripts determinísticos. Essa abordagem visa melhorar a latência, reduzir o consumo de tokens e aumentar a auditabilidade do processo de desenvolvimento.",
+        "source": "DEV Community",
+        "url": "https://dev.to/pixari/ai-assisted-product-engineering-orchestrating-claude-code-across-the-software-development-lifecycle-1k59",
+        "tags": [
+          "IDE",
+          "Produtividade",
+          "Agentes"
+        ]
+      },
+      {
+        "title": "SDLC na Era da IA com Desenvolvimento Orientado por Especificações",
+        "summary": "Este artigo discute como a inteligência artificial pode acelerar a geração de código, mas destaca que a parte mais cara da entrega de software é decidir o que o sistema deve fazer e controlar mudanças em arquitetura, segurança e operações. O desenvolvimento orientado por especificações oferece um controle mais robusto, permitindo que engenheiros e agentes de IA derivem código, testes, documentação e verificações de entrega a partir de especificações duráveis. Essa abordagem proporciona um plano de controle mais forte para o processo de desenvolvimento de software.",
+        "source": "DEV Community",
+        "url": "https://dev.to/hossein_esmati/sdlc-in-the-ai-era-with-spec-driven-development-48fn",
+        "tags": [
+          "IDE",
+          "Testes",
+          "Produtividade"
+        ]
+      },
+      {
+        "title": "Por Que Transcrições Não São Suficientes para Depuração de IA de Voz (E O Que Usar em Seu Lugar)",
+        "summary": "Este artigo aborda as limitações do uso de transcrições para depuração de sistemas de IA de voz, argumentando que elas não capturam padrões de latência, comportamento de ferramentas ou falhas de raciocínio. A proposta é utilizar uma abordagem de observabilidade de voz que rastreia toda a execução, incluindo áudio de entrada e saída com timestamps, eventos de ASR, caminhos de raciocínio de LLM e chamadas de ferramentas, geração de TTS e latência de round-trip, além de regressões de comportamento entre execuções. Essa abordagem oferece uma visão contínua de uma sessão, sem a necessidade de combinar logs de múltiplos sistemas.",
+        "source": "DEV Community",
+        "url": "https://dev.to/musu_priyam/why-transcripts-arent-enough-for-debugging-voice-ai-and-what-to-use-instead-4l62",
+        "tags": [
+          "Testes",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "Construí o Regdrift, uma CLI e GitHub Action para Detectar Mudanças Quebradoras em CMSIS-SVD",
+        "summary": "Este artigo apresenta o Regdrift, uma ferramenta de linha de comando e GitHub Action que compara dois arquivos CMSIS-SVD para verificar se há mudanças no mapa de registradores que possam afetar a funcionalidade do firmware. A ferramenta identifica mudanças como registradores movidos, renumeração de interrupções, alterações de acesso e comportamento de leitura/gravação alterado, classificando-as como `BREAKING`, `WARNING` ou `SAFE`. O objetivo é atuar como um gate de CI, ajudando desenvolvedores a detectar mudanças potencialmente problemáticas em arquivos SVD.",
+        "source": "DEV Community",
+        "url": "https://dev.to/pranav-s79/i-built-regdrift-a-cli-and-github-action-for-detecting-breaking-cmsis-svd-changes-51j3",
+        "tags": [
+          "Testes",
+          "Open Source",
+          "DevOps"
+        ]
+      }
+    ],
+    "projetos": [
+      {
+        "title": "CIOs devem repensar modelos operacionais para desbloquear IA em larga escala",
+        "summary": "Este artigo destaca a necessidade de os CIOs revisarem seus modelos operacionais para implementar a IA de forma eficaz. A IA exige clareza e colaboração entre equipes de TI e de negócios, o que é crucial para o sucesso na gestão de projetos de software. Para gerentes de projetos no setor financeiro, isso significa integrar a IA de maneira que melhore a eficiência e a precisão na estimativa e planejamento de projetos, além de otimizar a gestão de riscos e compliance.",
+        "source": "CIO",
+        "url": "https://www.cio.com/article/4195246/cios-must-rethink-operating-models-to-unlock-ai-at-scale.html?utm_source=openai",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Risco"
+        ]
+      },
+      {
+        "title": "A IA está liberando capital. A maioria das empresas não tem plano para o que vem a seguir",
+        "summary": "O artigo discute como a IA pode gerar economias significativas, mas muitas empresas não têm uma estratégia clara para reinvestir esses ganhos. Para gerentes de projetos de software no setor financeiro, é essencial não apenas implementar a IA para reduzir custos, mas também reinvestir esses recursos em ferramentas e treinamentos que aprimorem a gestão de projetos, especialmente em áreas como estimativa, planejamento e compliance.",
+        "source": "CIO",
+        "url": "https://www.cio.com/article/4195747/ai-is-freeing-up-capital-most-companies-have-no-plan-for-what-comes-next.html?utm_source=openai",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Compliance"
+        ]
+      },
+      {
+        "title": "Por que a IA precisa de inteligência contextual — não apenas modelos maiores",
+        "summary": "Este artigo enfatiza a importância da inteligência contextual na IA, argumentando que modelos maiores não são suficientes sem uma compreensão adequada do contexto. Para gerentes de projetos de software no setor financeiro, isso significa que a IA deve ser aplicada de forma que considere as especificidades do setor, melhorando a estimativa e o planejamento de projetos, além de otimizar a gestão de riscos e compliance.",
+        "source": "CIO",
+        "url": "https://www.cio.com/article/4195741/why-ai-needs-contextual-intelligence-not-just-bigger-models.html?utm_source=openai",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Risco"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-07-13T22:12:37.542Z"
+}
