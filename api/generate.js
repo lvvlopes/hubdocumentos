@@ -97,6 +97,15 @@ const STRUCT_USER = (text, tags) =>
 Tags permitidas: ${tags}
 Use 1 a 3 tags por artigo. Se não encontrar URL real, omita o artigo.
 
+IMPORTANTE — IDIOMA:
+O campo "title" e o campo "summary" devem estar SEMPRE em português do Brasil.
+Se o título original estiver em inglês, TRADUZA para português do Brasil de forma
+natural e jornalística (não traduza ao pé da letra).
+Mantenha em inglês apenas nomes próprios: empresas (OpenAI, Google), produtos
+(Copilot, Cursor), modelos (GPT-4o, Claude) e termos técnicos consagrados
+(prompt, benchmark, open source).
+O campo "source" mantém o nome original do portal (ex: TechCrunch).
+
 NOTÍCIAS:
 ${text}`;
 
