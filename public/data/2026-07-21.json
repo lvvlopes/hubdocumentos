@@ -64,6 +64,77 @@
           "LLM",
           "Empresas"
         ]
+      },
+      {
+        "title": "Google anuncia modelo de IA Gemini 3.5 Flash, prometendo redução de custos em mais de US$ 1 bilhão anuais para empresas",
+        "summary": "O Google revelou o modelo de IA Gemini 3.5 Flash, que promete reduzir significativamente os custos de IA para empresas. Sundar Pichai, CEO do Google, afirmou que empresas que processam cerca de um trilhão de tokens por dia no Google Cloud poderiam economizar mais de US$ 1 bilhão anualmente ao migrar 80% de suas cargas de trabalho para o Flash e outros modelos avançados. Essa inovação pode transformar a economia da IA empresarial, tornando-a mais acessível e eficiente.",
+        "source": "VentureBeat",
+        "url": "https://venturebeat.com/technology/google-says-gemini-3-5-flash-can-slash-enterprise-ai-costs-by-more-than-1-billion-a-year",
+        "tags": [
+          "Empresas",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "DeepSeek apresenta novo modelo de IA que \"fecha a lacuna\" com modelos de ponta",
+        "summary": "A DeepSeek, empresa focada em IA, apresentou um novo modelo que promete reduzir a diferença de desempenho entre modelos de IA avançados e os disponíveis no mercado. Este avanço pode democratizar o acesso a tecnologias de ponta, permitindo que mais empresas adotem soluções de IA sem comprometer a qualidade. A iniciativa destaca a crescente importância da inovação em IA para impulsionar a competitividade no setor.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/open-source-ai/",
+        "tags": [
+          "Open Source",
+          "Empresas",
+          "Pesquisa"
+        ]
+      },
+      {
+        "title": "OpenAI lança teclado de US$ 230 para Codex, apesar de disputa legal de hardware",
+        "summary": "A OpenAI lançou um teclado especializado de US$ 230 projetado para otimizar a interação com seu modelo de IA Codex. Este lançamento ocorre em meio a uma disputa legal relacionada a hardware, mas a empresa busca aprimorar a experiência do usuário e a eficiência no desenvolvimento de código. A iniciativa reflete a tendência de integração de hardware e software para maximizar o desempenho de modelos de IA.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/",
+        "tags": [
+          "Hardware",
+          "Ferramentas",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "Microsoft treina vendedores para promover alternativas à OpenAI e Anthropic",
+        "summary": "A Microsoft está treinando sua equipe de vendas para promover alternativas aos modelos de IA da OpenAI e Anthropic. Essa estratégia visa diversificar as opções disponíveis para os clientes e fortalecer a posição da Microsoft no mercado de IA. A iniciativa pode impactar a competitividade e a inovação no setor, oferecendo aos usuários mais escolhas e potencialmente melhores soluções.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/",
+        "tags": [
+          "Empresas"
+        ]
+      },
+      {
+        "title": "Aplicações de IA buscam otimizar operações em setores como petróleo e gás",
+        "summary": "Empresas estão adotando modelos de IA para otimizar operações em setores como petróleo e gás. Essas soluções buscam aumentar a eficiência e reduzir custos, aproveitando o potencial da IA para transformar processos industriais. Para os usuários, isso pode significar melhorias significativas em produtividade e competitividade no mercado.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/",
+        "tags": [
+          "Empresas",
+          "Pesquisa"
+        ]
+      },
+      {
+        "title": "OpenAI lança modelo de IA Codex com foco em desenvolvimento de código",
+        "summary": "A OpenAI lançou o modelo de IA Codex, projetado para auxiliar no desenvolvimento de código. Este modelo promete aumentar a produtividade dos desenvolvedores, oferecendo sugestões e automações inteligentes. Para os usuários, isso pode resultar em um desenvolvimento de software mais rápido e eficiente.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/category/artificial-intelligence/",
+        "tags": [
+          "Ferramentas",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "DeepMind apresenta modelo de IA capaz de realizar pesquisas profundas",
+        "summary": "A DeepMind apresentou um modelo de IA avançado capaz de realizar pesquisas profundas, oferecendo insights mais precisos e relevantes. Essa inovação pode transformar a forma como as empresas conduzem pesquisas e tomam decisões estratégicas. Para os usuários, isso significa acesso a informações mais precisas e úteis, melhorando a qualidade das decisões baseadas em dados.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/tag/deep-research/",
+        "tags": [
+          "Pesquisa",
+          "Empresas"
+        ]
       }
     ],
     "dev": [
@@ -194,8 +265,37 @@
           "Equipes",
           "Compliance"
         ]
+      },
+      {
+        "title": "A aplicação de software de inteligência artificial na gestão de projetos",
+        "summary": "Este artigo explora como softwares de inteligência artificial e sistemas especialistas podem auxiliar gerentes de projetos ao capturar e compartilhar experiências, além de transmitir informações-chave, como o PMBOK do PMI. Para gerentes de projetos no setor financeiro, isso significa a possibilidade de utilizar IA para melhorar a prática da gestão de projetos, oferecendo insights valiosos para a tomada de decisões. A aplicação de IA pode otimizar processos, aumentar a eficiência e reduzir erros, aspectos cruciais em ambientes regulados como o setor de previdência privada complementar.",
+        "source": "Project Management Institute (PMI)",
+        "url": "https://www.pmi.org/learning/library/application-artificial-intelligence-software-pm-5234",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Ferramentas"
+        ]
+      },
+      {
+        "title": "Google DORA Research: Desenvolvedores de Software Usam IA 'Pesadamente'",
+        "summary": "A pesquisa DORA do Google revela que 90% dos profissionais de desenvolvimento de software utilizam IA, com 65% usando-a de forma intensiva. Para gerentes de projetos no setor financeiro, isso indica uma tendência crescente de adoção de IA, o que pode levar a melhorias na produtividade e na qualidade do software desenvolvido. A integração de IA pode facilitar a automação de tarefas repetitivas, permitindo que as equipes se concentrem em atividades de maior valor agregado, essenciais em projetos de software para o setor de previdência privada complementar.",
+        "source": "TechRepublic",
+        "url": "https://www.techrepublic.com/article/news-dora-ai-report-2025/",
+        "tags": [
+          "Automação",
+          "Ferramentas",
+          "Equipes"
+        ]
+      },
+      {
+        "title": "Como Líderes de TI Usam IA Agente para Fluxos de Trabalho de Negócios",
+        "summary": "Este artigo destaca como líderes de TI estão utilizando IA agente para automatizar tarefas tediosas e impulsionar atividades críticas para os negócios. Para gerentes de projetos no setor financeiro, isso representa uma oportunidade de integrar IA para melhorar a eficiência na gestão de projetos, desde o planejamento até a execução, garantindo que os projetos atendam aos requisitos regulatórios e de compliance. A adoção de IA pode também facilitar a gestão de...",
+        "source": "CIO",
+        "url": "https://www.cio.com/article/3966870/how-it-leaders-use-agentic-ai-for-business-workflows.html",
+        "tags": []
       }
     ]
   },
-  "generated_at": "2026-07-21T03:14:20.834Z"
+  "generated_at": "2026-07-21T03:15:58.622Z"
 }
