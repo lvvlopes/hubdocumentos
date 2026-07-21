@@ -135,6 +135,16 @@
           "Pesquisa",
           "Empresas"
         ]
+      },
+      {
+        "title": "Pequenos Modelos de Linguagem Ganham Popularidade entre Pesquisadores",
+        "summary": "Pesquisadores estão adotando modelos de linguagem menores devido ao seu custo reduzido e maior transparência. Embora modelos maiores ofereçam maior capacidade, os menores permitem experimentação mais acessível e compreensão aprimorada dos processos internos dos modelos. Essa tendência pode democratizar a pesquisa em IA, tornando-a mais acessível a uma comunidade mais ampla.",
+        "source": "WIRED",
+        "url": "https://www.wired.com/story/why-researchers-are-turning-to-small-language-models/?utm_source=openai",
+        "tags": [
+          "Escolha de LLM",
+          "Pesquisa"
+        ]
       }
     ],
     "dev": [
@@ -211,6 +221,39 @@
           "API",
           "Framework",
           "Agentes"
+        ]
+      },
+      {
+        "title": "OpenAI apresenta Codex, seu primeiro agente de IA completo para codificação",
+        "summary": "A OpenAI lançou o Codex, um agente de IA projetado para auxiliar desenvolvedores em tarefas de programação. Integrado ao ChatGPT, o Codex permite que os usuários deleguem tarefas de codificação para a IA, que gera código pronto para produção e explica seu raciocínio durante o processo. Embora ofereça uma solução poderosa, a OpenAI enfatiza a importância da revisão manual do código gerado antes de sua integração e execução.",
+        "source": "Ars Technica",
+        "url": "https://arstechnica.com/ai/2025/05/openai-introduces-codex-its-first-full-fledged-ai-agent-for-coding/",
+        "tags": [
+          "Agentes",
+          "Produtividade",
+          "Code Review"
+        ]
+      },
+      {
+        "title": "GitHub Copilot X: A experiência de desenvolvedor impulsionada por IA",
+        "summary": "O GitHub Copilot X representa a evolução do Copilot, incorporando interfaces de chat e voz, suporte a pull requests e respostas a perguntas em documentos. Com a adoção do modelo GPT-4 da OpenAI, o Copilot X oferece uma experiência de desenvolvimento mais personalizada e eficiente, auxiliando os desenvolvedores em diversas etapas do ciclo de vida do software.",
+        "source": "GitHub Blog",
+        "url": "https://github.blog/news-insights/product-news/github-copilot-x-the-ai-powered-developer-experience/",
+        "tags": [
+          "Copilot",
+          "IDE",
+          "Produtividade"
+        ]
+      },
+      {
+        "title": "GitHub Copilot agora possui um modelo de IA melhorado e novas capacidades",
+        "summary": "O GitHub Copilot recebeu melhorias significativas em seu modelo de IA, resultando em sugestões de código de maior qualidade e maior rapidez. Além disso, foi desenvolvido um novo filtro de vulnerabilidades de segurança para identificar padrões de codificação inseguros, aumentando a segurança do código gerado. Essas atualizações visam aprimorar a experiência do desenvolvedor, tornando o Copilot uma ferramenta ainda mais eficaz no processo de desenvolvimento de software.",
+        "source": "GitHub Blog",
+        "url": "https://github.blog/ai-and-ml/github-copilot/github-copilot-now-has-a-better-ai-model-and-new-capabilities/",
+        "tags": [
+          "Copilot",
+          "IDE",
+          "API"
         ]
       }
     ],
@@ -297,5 +340,5 @@
       }
     ]
   },
-  "generated_at": "2026-07-21T03:15:58.622Z"
+  "generated_at": "2026-07-21T03:19:31.458Z"
 }
