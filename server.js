@@ -73,6 +73,10 @@ server.on('request', (req, res) => {
     res.writeHead(200, {'Content-Type':'application/json'});
     return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));
   }
+  if (p === '/api/instagram' && req.method === 'POST') {
+    res.writeHead(200, {'Content-Type':'application/json'});
+    return res.end(JSON.stringify({ error: 'Publicação disponível apenas no Vercel.' }));
+  }
 
   let filePath = path.join(ROOT, p === '/' ? '/index.html' : p);
   if (!filePath.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
