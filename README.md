@@ -16,6 +16,7 @@
 - [Estrutura de Pastas](#estrutura-de-pastas)
 - [Fluxo de Funcionamento](#fluxo-de-funcionamento)
 - [Configuração e Publicação](#configuração-e-publicação)
+- [Publicação no Instagram](#publicação-no-instagram)
 - [Variáveis de Ambiente](#variáveis-de-ambiente)
 - [API Reference](#api-reference)
 - [Desenvolvimento Local](#desenvolvimento-local)
@@ -54,6 +55,7 @@ Um hub web acessível de qualquer dispositivo, que usa a API da OpenAI para busc
 | **Deduplicação** | Ao acionar mais de uma vez no dia, só adiciona notícias ainda não existentes |
 | **Deploy automático** | Cada nova edição é commitada no GitHub e o Vercel redeploya automaticamente |
 | **Histórico permanente** | Todas as edições ficam disponíveis na barra lateral |
+| **Publicação no Instagram** | Botão em cada notícia que gera imagem via DALL-E e publica no Instagram com legenda editável e link para a fonte |
 
 ---
 
@@ -170,7 +172,8 @@ hubdocumentos/
 │
 ├── api/                         # Serverless Functions do Vercel
 │   ├── files.js                 # GET /api/files — lista edições disponíveis
-│   └── generate.js              # POST /api/generate — busca e salva notícias
+│   ├── generate.js              # POST /api/generate — busca e salva notícias
+│   └── instagram.js             # POST /api/instagram — gera imagem e publica no Instagram
 │
 ├── server.js                    # Servidor HTTP local (desenvolvimento)
 ├── vercel.json                  # Configuração de build e rotas do Vercel
@@ -195,8 +198,9 @@ Browser → POST /api/generate
   ├─► Verifica arquivo existente no GitHub (deduplicação)
   │
   ├─► Promise.all — 3 buscas paralelas:
-  │     ├─► gpt-4o-search-preview (busca web) → texto livre por categoria
-  │     └─► gpt-5.5 com response_format=json_object → JSON estruturado
+  │     ├─► gpt-4o-mini-search-preview (busca web) → texto livre por categoria
+  │     └─► gpt-4o-mini com response_format=json_object → JSON estruturado
+  │         (títulos e resumos sempre traduzidos para português do Brasil)
   │
   ├─► Merge com artigos existentes (filtra por URL duplicada)
   │
@@ -255,14 +259,71 @@ O Vercel já faz isso por padrão: qualquer `git push` para a branch `main` acio
 
 ---
 
+## Publicação no Instagram
+
+Cada card de notícia tem um botão **📷 Instagram** que publica a notícia no feed de uma conta Instagram profissional (Business/Creator).
+
+### Fluxo
+
+```
+Botão 📷 Instagram → modal com legenda pré-montada (editável, contador 2200 chars)
+  │
+  └─► POST /api/instagram { article, caption }
+        │
+        ├─► gpt-4o-mini: gera prompt visual em inglês a partir do título
+        ├─► DALL-E 2 (1024x1024): gera a imagem (~US$ 0,02/post)
+        │
+        └─► Instagram Graph API:
+              1. POST /{IG_ID}/media          → cria container (imagem + legenda)
+              2. aguarda ~3s (processamento)
+              3. POST /{IG_ID}/media_publish  → publica o post
+```
+
+### Legenda gerada automaticamente
+
+```
+{Título da notícia}
+
+{Primeiro parágrafo do resumo (máx. 550 chars)}
+
+🔗 Leia a notícia completa:
+{URL da fonte}
+
+📰 Fonte: {portal}
+
+{hashtags da categoria}
+```
+
+A legenda é editável no modal antes de publicar. Hashtags variam por categoria (IA, Dev, Projetos).
+
+### Pré-requisitos da conta
+
+1. Conta Instagram convertida para **Creator ou Business** (gratuito e reversível — mesma conta, mesmos seguidores)
+2. **Página do Facebook** vinculada ao Instagram (pode ser uma página vazia; serve só de ponte)
+3. **App na Meta for Developers** ([developers.facebook.com](https://developers.facebook.com)) tipo "Empresa/Negócios"
+
+### Como obter as credenciais
+
+1. No [Graph API Explorer](https://developers.facebook.com/tools/explorer), gere um token com as permissões: `pages_show_list`, `pages_read_engagement`, `instagram_basic`, `instagram_content_publish`
+2. **ID da conta**: consulta `me/accounts` → copie o id da Página → consulta `{ID_PAGINA}?fields=instagram_business_account` → o id retornado é o `INSTAGRAM_BUSINESS_ACCOUNT_ID`
+3. **Token longo** (~60 dias): troque o token curto via
+   `GET /oauth/access_token?grant_type=fb_exchange_token&client_id={APP_ID}&client_secret={APP_SECRET}&fb_exchange_token={TOKEN_CURTO}`
+   → o `access_token` retornado é o `INSTAGRAM_ACCESS_TOKEN`
+
+> ⚠️ **O token expira em ~60 dias.** Quando a publicação falhar com erro de token, repita o passo 3 e atualize a variável no Vercel (seguido de Redeploy).
+
+---
+
 ## Variáveis de Ambiente
 
 | Variável | Obrigatória | Descrição |
 |---|---|---|
-| `OPENAI_API_KEY` | ✅ Sim | Chave de API da OpenAI. Precisa ter acesso aos modelos `gpt-4o-search-preview` e `gpt-5.5` |
+| `OPENAI_API_KEY` | ✅ Sim | Chave de API da OpenAI. Usada pelos modelos `gpt-4o-mini-search-preview`, `gpt-4o-mini` e `dall-e-2` |
 | `GITHUB_TOKEN` | ✅ Sim | Personal Access Token do GitHub. Permissão mínima: `contents: read+write` no repositório |
 | `GITHUB_REPO` | ✅ Sim | Repositório de destino no formato `usuario/repositorio` |
 | `GITHUB_BRANCH` | ❌ Opcional | Branch de destino para os commits. Padrão: `main` |
+| `INSTAGRAM_ACCESS_TOKEN` | Para Instagram | Token de longa duração da Graph API (~60 dias) |
+| `INSTAGRAM_BUSINESS_ACCOUNT_ID` | Para Instagram | ID da conta Instagram profissional (formato `17841...`) |
 
 ---
 
@@ -324,6 +385,38 @@ Aciona a busca de notícias para o dia atual nas 3 categorias em paralelo e salv
 | 500 | Variáveis de ambiente não configuradas | Falta `OPENAI_API_KEY`, `GITHUB_TOKEN` ou `GITHUB_REPO` no Vercel |
 | 502 | Erro na busca (OpenAI search) | Modelo `gpt-4o-search-preview` indisponível ou cota excedida |
 | 502 | Erro ao salvar no GitHub | Token inválido ou sem permissão de escrita |
+
+---
+
+### `POST /api/instagram`
+
+Gera uma imagem via DALL-E baseada na notícia e publica no Instagram com a legenda informada.
+
+**Request:**
+```json
+{
+  "article": { "title": "...", "summary": "...", "source": "...", "url": "..." },
+  "caption": "Legenda completa do post (máx. 2200 caracteres)"
+}
+```
+
+**Resposta de sucesso:**
+```json
+{
+  "ok": true,
+  "postId": "17900000000000000",
+  "postUrl": "https://www.instagram.com/p/17900000000000000/"
+}
+```
+
+**Erros comuns:**
+
+| Código | Mensagem | Causa |
+|---|---|---|
+| 500 | Variáveis não configuradas | Falta `INSTAGRAM_ACCESS_TOKEN` ou `INSTAGRAM_BUSINESS_ACCOUNT_ID` |
+| 502 | DALL-E error | Cota OpenAI excedida ou prompt rejeitado |
+| 502 | Erro ao criar container | Token expirado/inválido, conta não é Business/Creator, ou permissão `instagram_content_publish` ausente |
+| 502 | Erro ao publicar | Limite de 25 posts via API por 24h atingido, ou container ainda processando |
 
 ---
 
@@ -416,8 +509,10 @@ O sistema usa a **URL** de cada artigo como chave única de deduplicação.
 | **Node.js** (built-in modules) | Servidor local e serverless functions na Vercel |
 | **Vercel** | Hospedagem, CDN, serverless functions, deploy automático via Git |
 | **GitHub** | Repositório de código e armazenamento dos dados (JSONs de edições) |
-| **OpenAI `gpt-4o-search-preview`** | Busca de notícias na web com contexto das últimas 24h |
-| **OpenAI `gpt-5.5`** | Estruturação do conteúdo em JSON válido com `response_format: json_object` |
+| **OpenAI `gpt-4o-mini-search-preview`** | Busca de notícias na web com contexto das últimas 24h |
+| **OpenAI `gpt-4o-mini`** | Estruturação do conteúdo em JSON válido (pt-BR) e geração de prompts visuais |
+| **OpenAI `dall-e-2`** | Geração das imagens para posts do Instagram |
+| **Instagram Graph API** | Publicação programática de posts (container → publish) |
 | **GitHub REST API** | Leitura e escrita dos arquivos JSON de edições via commits programáticos |
 
 ### Decisões de arquitetura
@@ -426,7 +521,7 @@ O sistema usa a **URL** de cada artigo como chave única de deduplicação.
 Os dados são imutáveis por edição, o volume é pequeno (< 100 artigos/dia) e o armazenamento no próprio repositório elimina qualquer custo de banco de dados e torna tudo rastreável via `git log`.
 
 **Por que duas chamadas à OpenAI?**
-O modelo `gpt-4o-search-preview` é otimizado para busca na web mas instável para gerar JSON válido. O `gpt-5.5` com `response_format: json_object` garante JSON sempre válido. Separar as responsabilidades elimina erros de parsing.
+O modelo `gpt-4o-mini-search-preview` é otimizado para busca na web mas instável para gerar JSON válido. O `gpt-4o-mini` com `response_format: json_object` garante JSON sempre válido. Separar as responsabilidades elimina erros de parsing. Os modelos `mini` foram escolhidos para reduzir o custo por busca.
 
 **Por que busca paralela com `Promise.all`?**
 As 3 categorias são independentes. Buscar em paralelo reduz o tempo total de ~90s para ~30-40s, ficando dentro do limite de 60s das funções serverless do Vercel Pro.
@@ -457,4 +552,4 @@ Se uma categoria retornar erro (campo `errors` na resposta), as outras duas são
 
 ---
 
-*Documentação gerada em junho de 2026.*
+*Documentação atualizada em julho de 2026.*
