@@ -35,6 +35,10 @@ const CATEGORIES = {
     label: 'Notícias IA',
     searchPrompt: `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
+Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: CNN Brasil (seção de IA/tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia.
+
+PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão (anúncios importantes, movimentos de grandes empresas, temas amplamente comentados). Descarte notícias menores ou de nicho.
+
 Foco: novos modelos de linguagem, lançamentos de APIs, benchmarks, movimentos estratégicos de empresas de IA (OpenAI, Anthropic, Google, Meta, Mistral, etc.), pesquisas relevantes.
 
 Para cada notícia escreva:
@@ -51,6 +55,10 @@ Traga 8 a 10 notícias.`,
   dev: {
     label: 'Dev de Software',
     searchPrompt: `Busque nas últimas 24 horas nos principais portais (GitHub Blog, Dev.to, InfoQ, The New Stack, Ars Technica, Hacker News top stories, Stack Overflow Blog) notícias sobre o USO DE INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
+
+Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: Tecnoblog, Canaltech, InfoMoney, CNN Brasil Tecnologia, Exame, iMasters, Olhar Digital.
+
+PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão na comunidade de desenvolvimento. Descarte notícias menores ou de nicho.
 
 Foco: ferramentas de geração de código (GitHub Copilot, Cursor, Windsurf, Cline, etc.), IA para testes automatizados, debugging com IA, code review com IA, novos recursos em IDEs, integrações de LLM em pipelines de dev, aumento de produtividade do desenvolvedor, novas APIs e SDKs relevantes, frameworks de agentes para código.
 
@@ -72,6 +80,10 @@ Traga 8 a 10 notícias.`,
 Público-alvo: gerente de projetos de software que lidera equipe de desenvolvimento no setor de previdência privada complementar (seguros, benefícios, regulação SUSEP/PREVIC, compliance, sistemas core de gestão de benefícios).
 
 Busque nos portais: PMI blog, ProjectManagement.com, CIO, InfoQ, TechRepublic, Harvard Business Review Tech, Gartner blogs, McKinsey Digital.
+
+Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: InfoMoney, Exame, CNN Brasil, IT Forum, CIO Brasil, MIT Sloan Review Brasil, Você RH/Exame.
+
+PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão para gestão de projetos e tecnologia. Descarte notícias menores ou de nicho.
 
 Foco: IA para estimativa e planejamento de projetos, automação de status reports, gestão de backlog com IA, ferramentas de IA para líderes técnicos (Jira AI, Linear, GitHub Projects), IA para gestão de risco em projetos, análise preditiva de cronograma, gestão de equipes distribuídas com IA, metodologias ágeis potencializadas por IA, compliance e rastreabilidade com IA, impactos de IA em equipes de desenvolvimento financeiro/seguros.
 
