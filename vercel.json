@@ -4,10 +4,12 @@
     { "src": "public/**/*", "use": "@vercel/static" },
     { "src": "api/files.js", "use": "@vercel/node" },
     { "src": "api/generate.js", "use": "@vercel/node" },
-    { "src": "api/instagram.js", "use": "@vercel/node", "config": { "includeFiles": "assets/**" } }
+    { "src": "api/instagram.js", "use": "@vercel/node", "config": { "includeFiles": "assets/**" } },
+    { "src": "api/version.js", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/files", "dest": "/api/files.js" },
+    { "src": "/api/version", "dest": "/api/version.js" },
     { "src": "/api/generate", "dest": "/api/generate.js" },
     { "src": "/api/instagram", "dest": "/api/instagram.js" },
     { "src": "/", "dest": "/public/index.html" },

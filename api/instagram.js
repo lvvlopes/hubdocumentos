@@ -72,6 +72,12 @@ async function generateImage(apiKey, article) {
 
 const FONT_PATH = path.join(__dirname, '..', 'assets', 'fonts', 'Montserrat-Bold.ttf');
 
+const CATEGORY_LABELS = {
+  ia:       'NOTÍCIAS IA',
+  dev:      'NOTÍCIAS DEV',
+  projetos: 'NOTÍCIAS PROJETO SOFTWARE',
+};
+
 async function composeCard(bgB64, article) {
   const { default: satori } = await import('satori');
   const fontData = fs.readFileSync(FONT_PATH);
@@ -93,12 +99,12 @@ async function composeCard(bgB64, article) {
       position: 'absolute', top: 0, left: 0, width: '1024px', height: '1024px',
       backgroundColor: 'rgba(8, 6, 30, 0.52)',
     }),
-    // rótulo NOTÍCIA
+    // rótulo da categoria
     el('div', {
       display: 'flex', padding: '10px 28px', border: '2px solid rgba(255,255,255,0.85)',
-      borderRadius: '6px', color: '#ffffff', fontSize: '26px', letterSpacing: '10px',
+      borderRadius: '6px', color: '#ffffff', fontSize: '26px', letterSpacing: '6px',
       marginBottom: '48px', fontFamily: 'Montserrat',
-    }, 'NOTÍCIA'),
+    }, CATEGORY_LABELS[article.category] || 'NOTÍCIA'),
     // título
     el('div', {
       display: 'flex', color: '#ffffff', fontSize: `${fontSize}px`, fontFamily: 'Montserrat',

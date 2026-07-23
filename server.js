@@ -73,6 +73,11 @@ server.on('request', (req, res) => {
     res.writeHead(200, {'Content-Type':'application/json'});
     return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));
   }
+  if (p === '/api/version') {
+    const pkg = require('./package.json');
+    res.writeHead(200, {'Content-Type':'application/json'});
+    return res.end(JSON.stringify({ version: pkg.version, commit: 'local', deployedAt: null }));
+  }
   if (p === '/api/instagram' && req.method === 'POST') {
     res.writeHead(200, {'Content-Type':'application/json'});
     return res.end(JSON.stringify({ error: 'Publicação disponível apenas no Vercel.' }));

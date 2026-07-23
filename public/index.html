@@ -269,6 +269,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   <div class="logo">
     <div class="logo-icon">🤖</div>
     <span class="logo-text">AI News Hub</span>
+    <span id="app-version" style="font-size:10px;font-weight:600;color:var(--text-muted,#8b8b9e);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:2px 8px;border-radius:20px;margin-left:4px"></span>
   </div>
   <div class="sep"></div>
   <span class="stat">Edições: <strong id="s-eds">—</strong></span>
@@ -329,6 +330,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
     <h3>📷 Publicar no Instagram</h3>
     <div class="ig-sub">A imagem será gerada automaticamente com base na notícia.</div>
     <div id="ig-title" style="font-size:13px;font-weight:600;line-height:1.4"></div>
+    <label>Link da notícia</label>
+    <div style="display:flex;gap:8px">
+      <input id="ig-link" readonly onclick="this.select()" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:inherit;font-size:12px;padding:9px 11px;min-width:0">
+      <button onclick="copyIgLink()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:inherit;font-size:12px;font-weight:600;padding:0 14px;cursor:pointer;white-space:nowrap">📋 Copiar</button>
+    </div>
     <label>Legenda do post</label>
     <textarea id="ig-caption" oninput="igCount()"></textarea>
     <div class="ig-count" id="ig-count"></div>
@@ -390,6 +396,17 @@ function showToast(msg, type='info', icon='') {
   clearTimeout(t._t);
   t._t = setTimeout(() => t.className = '', 6500);
 }
+
+// ── Versão ────────────────────────────────────────────────────────
+async function loadVersion() {
+  try {
+    const r = await fetch('/api/version');
+    const v = await r.json();
+    document.getElementById('app-version').textContent =
+      `v${v.version}${v.commit ? ' · ' + v.commit : ''}`;
+  } catch (_) {}
+}
+loadVersion();
 
 // ── Editions ──────────────────────────────────────────────────────
 async function loadEditions() {
@@ -555,11 +572,20 @@ function openIg(i) {
   igArticle = visibleArticles[i];
   if (!igArticle) return;
   document.getElementById('ig-title').textContent = igArticle.title;
+  document.getElementById('ig-link').value = igArticle.url || '';
   document.getElementById('ig-caption').value = buildCaption(igArticle);
   igCount();
   document.getElementById('ig-go').disabled = false;
   document.getElementById('ig-go').textContent = 'Publicar';
   document.getElementById('ig-modal').classList.add('show');
+}
+
+async function copyIgLink() {
+  const el = document.getElementById('ig-link');
+  el.select();
+  try { await navigator.clipboard.writeText(el.value); }
+  catch (_) { document.execCommand('copy'); }
+  showToast('Link copiado!', 'success', '📋');
 }
 
 function closeIg() {
@@ -586,7 +612,7 @@ async function publishIg() {
     const r = await fetch('/api/instagram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ article: igArticle, caption }),
+      body: JSON.stringify({ article: { ...igArticle, category: currentCat }, caption }),
     });
     const d = await r.json();
 
