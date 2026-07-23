@@ -4,7 +4,7 @@
     { "src": "public/**/*", "use": "@vercel/static" },
     { "src": "api/files.js", "use": "@vercel/node" },
     { "src": "api/generate.js", "use": "@vercel/node" },
-    { "src": "api/instagram.js", "use": "@vercel/node" }
+    { "src": "api/instagram.js", "use": "@vercel/node", "config": { "includeFiles": "assets/**" } }
   ],
   "routes": [
     { "src": "/api/files", "dest": "/api/files.js" },

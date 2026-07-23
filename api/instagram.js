@@ -1,4 +1,7 @@
 const https = require('https');
+const fs    = require('fs');
+const path  = require('path');
+const { Resvg } = require('@resvg/resvg-js');
 
 module.exports.config = { maxDuration: 60 };
 
@@ -41,15 +44,7 @@ function fbPost(path, params, token) {
 // ── Gera imagem via DALL-E ─────────────────────────────────────────
 
 async function generateImage(apiKey, article) {
-  const imagePrompt = `Post quadrado para Instagram de um canal de notícias de tecnologia e IA.
-
-Design: arte digital moderna e escura, gradiente roxo/azul profundo, elementos abstratos de tecnologia (circuitos, nós luminosos, formas fluidas) como fundo, com contraste alto na área do texto.
-
-O elemento principal da imagem é a manchete abaixo, escrita EXATAMENTE como está, sem alterar nenhuma palavra, em tipografia sans-serif bold branca, grande, centralizada e perfeitamente legível (pode quebrar em várias linhas):
-
-"${article.title}"
-
-Adicione apenas um pequeno rótulo "NOTÍCIA" no topo. Nenhum outro texto além disso. Estilo profissional de painel editorial de notícias.`;
+  const imagePrompt = `Modern abstract digital art background for a tech news Instagram post. Dark deep purple and blue gradient, glowing circuit lines, luminous nodes, fluid organic shapes. Slightly darker in the center area. ABSOLUTELY NO TEXT, NO LETTERS, NO WORDS, NO TYPOGRAPHY of any kind. Professional, elegant, high contrast.`;
 
   // Gera a imagem com gpt-image-1 (qualidade "low" para reduzir custo)
   const imgResp = await httpsRequest('POST', 'api.openai.com', '/v1/images/generations', {
@@ -71,6 +66,58 @@ Adicione apenas um pequeno rótulo "NOTÍCIA" no topo. Nenhum outro texto além 
   const b64 = imgResp.body.data?.[0]?.b64_json;
   if (!b64) throw new Error('Imagem não retornada pela OpenAI.');
   return b64;
+}
+
+// ── Sobrepõe o título na imagem (texto 100% fiel, sem IA) ─────────
+
+const FONT_PATH = path.join(__dirname, '..', 'assets', 'fonts', 'Montserrat-Bold.ttf');
+
+async function composeCard(bgB64, article) {
+  const { default: satori } = await import('satori');
+  const fontData = fs.readFileSync(FONT_PATH);
+
+  const title = article.title || '';
+  // Tamanho de fonte adaptativo ao comprimento do título
+  const fontSize = title.length <= 55 ? 72 : title.length <= 90 ? 60 : 50;
+
+  const el = (type, style, children) => ({ type, props: { style, children } });
+
+  const tree = el('div', {
+    width: '1024px', height: '1024px', display: 'flex', flexDirection: 'column',
+    alignItems: 'center', justifyContent: 'center',
+    backgroundImage: `url(data:image/png;base64,${bgB64})`,
+    backgroundSize: '1024px 1024px',
+  }, [
+    // véu escuro para garantir contraste do texto
+    el('div', {
+      position: 'absolute', top: 0, left: 0, width: '1024px', height: '1024px',
+      backgroundColor: 'rgba(8, 6, 30, 0.52)',
+    }),
+    // rótulo NOTÍCIA
+    el('div', {
+      display: 'flex', padding: '10px 28px', border: '2px solid rgba(255,255,255,0.85)',
+      borderRadius: '6px', color: '#ffffff', fontSize: '26px', letterSpacing: '10px',
+      marginBottom: '48px', fontFamily: 'Montserrat',
+    }, 'NOTÍCIA'),
+    // título
+    el('div', {
+      display: 'flex', color: '#ffffff', fontSize: `${fontSize}px`, fontFamily: 'Montserrat',
+      textAlign: 'center', lineHeight: 1.25, padding: '0 70px', textWrap: 'balance',
+    }, title),
+    // fonte da notícia
+    el('div', {
+      display: 'flex', color: 'rgba(255,255,255,0.75)', fontSize: '26px',
+      fontFamily: 'Montserrat', marginTop: '52px', letterSpacing: '2px',
+    }, article.source ? `FONTE  ·  ${article.source.toUpperCase()}` : ''),
+  ]);
+
+  const svg = await satori(tree, {
+    width: 1024, height: 1024,
+    fonts: [{ name: 'Montserrat', data: fontData, weight: 700, style: 'normal' }],
+  });
+
+  const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1024 } }).render().asPng();
+  return Buffer.from(png).toString('base64');
 }
 
 // ── Hospeda a imagem no GitHub (Instagram exige URL pública) ───────
@@ -153,13 +200,16 @@ module.exports = async (req, res) => {
   if (!article?.title) return res.status(400).json({ error: 'Dados do artigo ausentes.' });
 
   try {
-    // 1. Gera imagem (base64)
-    const b64 = await generateImage(OPENAI_KEY, article);
+    // 1. Gera o fundo (base64, sem texto)
+    const bgB64 = await generateImage(OPENAI_KEY, article);
 
-    // 2. Hospeda no GitHub para obter URL pública
+    // 2. Sobrepõe título + rótulo + fonte com tipografia real
+    const b64 = await composeCard(bgB64, article);
+
+    // 3. Hospeda no GitHub para obter URL pública
     const imageUrl = await uploadImageToGitHub(GH_TOKEN, GH_REPO, GH_BRANCH, b64);
 
-    // 3. Publica no Instagram
+    // 4. Publica no Instagram
     const postId = await publishToInstagram(IG_TOKEN, IG_ACCOUNT, imageUrl, caption);
 
     res.status(200).json({
@@ -171,3 +221,6 @@ module.exports = async (req, res) => {
     res.status(502).json({ error: err.message });
   }
 };
+
+module.exports.config = { maxDuration: 60 };
+module.exports._composeCard = composeCard; // exposto para testes
