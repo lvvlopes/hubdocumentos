@@ -33,13 +33,16 @@ const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 const CATEGORIES = {
   ia: {
     label: 'Notícias IA',
-    searchPrompt: `Busque nos principais portais de tecnologia (TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology) as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
+    searchPrompt: `Busque nos principais portais de tecnologia DO BRASIL E DO MUNDO as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
-Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: CNN Brasil (seção de IA/tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia.
+Portais internacionais: TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology.
+Portais brasileiros: CNN Brasil (tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira.
 
-PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão (anúncios importantes, movimentos de grandes empresas, temas amplamente comentados). Descarte notícias menores ou de nicho.
+FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHEIROS DE SOFTWARE: oportunidades de negócio, ferramentas aplicáveis, mudanças de mercado, novos modelos e APIs, decisões estratégicas das empresas de IA.
 
-Foco: novos modelos de linguagem, lançamentos de APIs, benchmarks, movimentos estratégicos de empresas de IA (OpenAI, Anthropic, Google, Meta, Mistral, etc.), pesquisas relevantes.
+PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão. Descarte notícias menores ou de nicho.
+
+IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente ou deduza URLs.
 
 Para cada notícia escreva:
 TÍTULO: ...
@@ -109,6 +112,11 @@ const STRUCT_USER = (text, tags) =>
 Tags permitidas: ${tags}
 Use 1 a 3 tags por artigo. Se não encontrar URL real, omita o artigo.
 
+IMPORTANTE — CODIFICAÇÃO:
+Corrija caracteres corrompidos ou substituídos (ex: "c�digo", "gera��o") restaurando
+a acentuação correta em português ("código", "geração"). O JSON final deve conter
+apenas texto UTF-8 válido e bem acentuado.
+
 IMPORTANTE — IDIOMA:
 O campo "title" e o campo "summary" devem estar SEMPRE em português do Brasil.
 Se o título original estiver em inglês, TRADUZA para português do Brasil de forma
@@ -140,6 +148,36 @@ function extractAndParseJson(text) {
 
   try { return JSON.parse(s); } catch (_) {}
   return null;
+}
+
+// ── Validação de URLs (descarta links quebrados/inventados) ───────
+
+function checkUrl(rawUrl) {
+  return new Promise((resolve) => {
+    let u;
+    try { u = new URL(rawUrl); } catch { return resolve(false); }
+    if (u.protocol !== 'https:') return resolve(true); // http: mantém sem checar
+
+    const req = https.request({
+      hostname: u.hostname,
+      path: u.pathname + u.search,
+      method: 'HEAD',
+      timeout: 5000,
+      headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ai-news-hub)' },
+    }, (res) => {
+      res.resume();
+      // 404/410 = página não existe; 403/redirects/etc. mantém (muitos sites bloqueiam bots)
+      resolve(res.statusCode !== 404 && res.statusCode !== 410);
+    });
+    req.on('timeout', () => { req.destroy(); resolve(true); }); // lento ≠ quebrado
+    req.on('error', () => resolve(false)); // DNS/conexão falhou = quebrado
+    req.end();
+  });
+}
+
+async function filterValidUrls(articles) {
+  const checks = await Promise.all(articles.map(a => checkUrl(a.url)));
+  return articles.filter((_, i) => checks[i]);
 }
 
 // ── Busca + estrutura para uma categoria ──────────────────────────
@@ -174,7 +212,7 @@ async function fetchCategory(apiKey, category) {
   if (structResp.status !== 200) throw new Error(`Struct failed for ${category}: ${JSON.stringify(structResp.body).slice(0,200)}`);
   const rawJson = structResp.body.choices?.[0]?.message?.content || '';
   const parsed = extractAndParseJson(rawJson);
-  return parsed?.articles || [];
+  return filterValidUrls(parsed?.articles || []);
 }
 
 // ── GitHub helpers ────────────────────────────────────────────────
