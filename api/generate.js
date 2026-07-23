@@ -182,6 +182,10 @@ function ghHeaders(token) {
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  const ADMIN_PASS = process.env.ADMIN_PASSWORD;
+  if (ADMIN_PASS && req.headers['x-admin-key'] !== ADMIN_PASS)
+    return res.status(401).json({ error: 'Senha inválida.' });
+
   const OPENAI_KEY = process.env.OPENAI_API_KEY;
   const GH_TOKEN   = process.env.GITHUB_TOKEN;
   const GH_REPO    = process.env.GITHUB_REPO;

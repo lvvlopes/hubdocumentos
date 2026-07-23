@@ -603,6 +603,9 @@ async function publishIg() {
   const caption = document.getElementById('ig-caption').value;
   if (caption.length > 2200) return showToast('Legenda excede o limite de 2200 caracteres.', 'error', '⚠️');
 
+  const key = getAdminKey();
+  if (!key) return;
+
   const btn = document.getElementById('ig-go');
   btn.disabled = true;
   btn.textContent = 'Gerando imagem...';
@@ -610,11 +613,12 @@ async function publishIg() {
   try {
     const r = await fetch('/api/instagram', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
       body: JSON.stringify({ article: { ...igArticle, category: currentCat }, caption }),
     });
     const d = await r.json();
 
+    if (r.status === 401) { handleAuthError(); btn.disabled = false; btn.textContent = 'Publicar'; return; }
     if (!r.ok || d.error) throw new Error(d.error || 'Falha ao publicar.');
 
     closeIg();
@@ -631,15 +635,34 @@ function toggle(i, btn) {
   btn.textContent = el.classList.toggle('expanded') ? 'Ver menos ↑' : 'Ver mais ↓';
 }
 
+// ── Senha de administrador ────────────────────────────────────────
+function getAdminKey(force) {
+  let k = localStorage.getItem('adminKey');
+  if (!k || force) {
+    k = prompt('Senha de administrador:');
+    if (k) localStorage.setItem('adminKey', k);
+  }
+  return k || '';
+}
+
+function handleAuthError() {
+  localStorage.removeItem('adminKey');
+  showToast('Senha incorreta.', 'error', '🔒');
+}
+
 // ── Generate ──────────────────────────────────────────────────────
 async function generateNews() {
+  const key = getAdminKey();
+  if (!key) return;
+
   const btn = document.getElementById('gen-btn');
   btn.disabled = true; btn.classList.add('loading');
   showToast('Buscando nas 3 categorias em paralelo…<br><small>Pode levar até 50 segundos.</small>','info','⏳');
 
   try {
-    const r = await fetch('/api/generate', { method:'POST' });
+    const r = await fetch('/api/generate', { method:'POST', headers: { 'x-admin-key': key } });
     const d = await r.json();
+    if (r.status === 401) { handleAuthError(); return; }
     if (!r.ok) { showToast(`Erro: ${d.error||'falha'}`, 'error','❌'); return; }
 
     const s = d.stats || {};
