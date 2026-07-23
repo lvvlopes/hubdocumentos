@@ -207,7 +207,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Variáveis de ambiente não configuradas (OPENAI_API_KEY, GITHUB_TOKEN, GITHUB_REPO).' });
 
   const [owner, repoName] = GH_REPO.split('/');
-  const today = new Date().toISOString().slice(0, 10);
+  // Data no fuso de Brasília (UTC ficava 1 dia à frente após as 21h BRT)
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
   const jsonPath = `public/data/${today}.json`;
 
   try {
