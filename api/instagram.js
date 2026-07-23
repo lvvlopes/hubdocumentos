@@ -66,22 +66,53 @@ Retorne APENAS o prompt em inglês, sem explicações.`,
   const imagePrompt = promptResp.body.choices?.[0]?.message?.content?.trim() ||
     `Modern abstract tech illustration, dark purple-blue gradient background, glowing neural network nodes and circuits, futuristic digital art, no text, professional Instagram post`;
 
-  // Gera a imagem com DALL-E 2 (mais barato: $0.018 por imagem 512x512)
+  // Gera a imagem com gpt-image-1 (qualidade "low" para reduzir custo)
   const imgResp = await httpsRequest('POST', 'api.openai.com', '/v1/images/generations', {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${apiKey}`,
   }, {
-    model: 'dall-e-2',
+    model: 'gpt-image-1',
     prompt: imagePrompt,
     n: 1,
     size: '1024x1024',
+    quality: 'low',
   });
 
   if (imgResp.status !== 200) {
-    throw new Error(`DALL-E error: ${JSON.stringify(imgResp.body).slice(0, 200)}`);
+    throw new Error(`Erro na geração da imagem: ${JSON.stringify(imgResp.body).slice(0, 300)}`);
   }
 
-  return imgResp.body.data?.[0]?.url;
+  // gpt-image-1 retorna base64, não URL
+  const b64 = imgResp.body.data?.[0]?.b64_json;
+  if (!b64) throw new Error('Imagem não retornada pela OpenAI.');
+  return b64;
+}
+
+// ── Hospeda a imagem no GitHub (Instagram exige URL pública) ───────
+
+async function uploadImageToGitHub(token, repo, branch, b64) {
+  const [owner, repoName] = repo.split('/');
+  const imgPath = `public/ig/${Date.now()}.png`;
+
+  const resp = await httpsRequest('PUT', 'api.github.com',
+    `/repos/${owner}/${repoName}/contents/${imgPath}`, {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/vnd.github+json',
+      'User-Agent': 'ai-news-hub',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    }, {
+      message: `feat: imagem para post no Instagram`,
+      content: b64,
+      branch,
+    });
+
+  if (resp.status !== 200 && resp.status !== 201) {
+    throw new Error(`Erro ao hospedar imagem no GitHub: ${JSON.stringify(resp.body).slice(0, 300)}`);
+  }
+
+  // URL raw pública — disponível imediatamente, sem esperar redeploy do Vercel
+  return `https://raw.githubusercontent.com/${owner}/${repoName}/${branch}/${imgPath}`;
 }
 
 // ── Publica no Instagram ───────────────────────────────────────────
@@ -125,20 +156,25 @@ module.exports = async (req, res) => {
   const OPENAI_KEY  = process.env.OPENAI_API_KEY;
   const IG_TOKEN    = process.env.INSTAGRAM_ACCESS_TOKEN;
   const IG_ACCOUNT  = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
+  const GH_TOKEN    = process.env.GITHUB_TOKEN;
+  const GH_REPO     = process.env.GITHUB_REPO;
+  const GH_BRANCH   = process.env.GITHUB_BRANCH || 'main';
 
-  if (!OPENAI_KEY || !IG_TOKEN || !IG_ACCOUNT) {
-    return res.status(500).json({ error: 'Variáveis não configuradas: OPENAI_API_KEY, INSTAGRAM_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID' });
+  if (!OPENAI_KEY || !IG_TOKEN || !IG_ACCOUNT || !GH_TOKEN || !GH_REPO) {
+    return res.status(500).json({ error: 'Variáveis não configuradas: OPENAI_API_KEY, INSTAGRAM_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID, GITHUB_TOKEN, GITHUB_REPO' });
   }
 
   const { article, caption } = await readBody(req);
   if (!article?.title) return res.status(400).json({ error: 'Dados do artigo ausentes.' });
 
   try {
-    // 1. Gera imagem
-    const imageUrl = await generateImage(OPENAI_KEY, article);
-    if (!imageUrl) throw new Error('Imagem não gerada pelo DALL-E.');
+    // 1. Gera imagem (base64)
+    const b64 = await generateImage(OPENAI_KEY, article);
 
-    // 2. Publica no Instagram
+    // 2. Hospeda no GitHub para obter URL pública
+    const imageUrl = await uploadImageToGitHub(GH_TOKEN, GH_REPO, GH_BRANCH, b64);
+
+    // 3. Publica no Instagram
     const postId = await publishToInstagram(IG_TOKEN, IG_ACCOUNT, imageUrl, caption);
 
     res.status(200).json({
