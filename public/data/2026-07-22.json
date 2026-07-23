@@ -1,4 +1,4 @@
-{
+﻿{
   "date": "2026-07-22",
   "categories": {
     "ia": [
@@ -79,7 +79,7 @@
       },
       {
         "title": "GitLab pesquisa 1.500 desenvolvedores sobre o impacto da IA no desenvolvimento de software",
-        "summary": "Uma pesquisa recente da GitLab, envolvendo mais de 1.500 desenvolvedores e líderes de tecnologia, revelou que 60% afirmam que o retorno sobre investimento (ROI) da IA na codifica��ão já superou as expectativas, e 78% relatam que suas equipes estão escrevendo e comprometendo código mais rapidamente desde a adoção de ferramentas de IA. No entanto, a pesquisa também destaca a necessidade de controle e governança robustos para evitar o aumento da dívida técnica associado ao uso acelerado de IA.",
+        "summary": "Uma pesquisa recente da GitLab, envolvendo mais de 1.500 desenvolvedores e líderes de tecnologia, revelou que 60% afirmam que o retorno sobre investimento (ROI) da IA na codificação já superou as expectativas, e 78% relatam que suas equipes estão escrevendo e comprometendo código mais rapidamente desde a adoção de ferramentas de IA. No entanto, a pesquisa também destaca a necessidade de controle e governança robustos para evitar o aumento da dívida técnica associado ao uso acelerado de IA.",
         "source": "The New Stack",
         "url": "https://thenewstack.io/agentic-infrastructure-ai-governance/?utm_source=openai",
         "tags": [
@@ -100,7 +100,7 @@
         ]
       },
       {
-        "title": "Como a geração de c��digo por IA está transformando o desenvolvimento de software",
+        "title": "Como a geração de código por IA está transformando o desenvolvimento de software",
         "summary": "Ferramentas de geração de código baseadas em IA, como o GitHub Copilot, estão revolucionando a produção de software para empresas. Essas ferramentas não apenas auxiliam na geração de código, mas também desempenham papéis cruciais na detecção de vulnerabilidades, compreensão de bases de código desconhecidas e agilização da documentação e descrições de pull requests. À medida que os modelos de IA melhoram, a adoção dessas ferramentas se torna cada vez mais essencial para os desenvolvedores, comparando-se à transição de um datilógrafo para um computador.",
         "source": "GitHub Blog",
         "url": "https://github.blog/ai-and-ml/generative-ai/how-ai-code-generation-works/?utm_source=openai",
