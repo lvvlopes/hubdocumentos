@@ -261,6 +261,70 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .ig-go:disabled{opacity:.5;cursor:not-allowed}
 .t-icon{font-size:16px;flex-shrink:0;margin-top:1px}
 .t-txt{line-height:1.5}
+
+/* ── RESPONSIVO ── */
+@media (max-width: 900px){
+  .stat,.sep{display:none}
+}
+@media (max-width: 768px){
+  html,body{height:100dvh}
+
+  /* topbar compacta */
+  .topbar{padding:0 12px;gap:8px}
+  .logo-text{font-size:13px}
+  #gen-btn{padding:7px 11px;font-size:12px}
+  .btn-sm{padding:5px 8px}
+
+  /* sidebar vira faixa horizontal de edições */
+  .layout{flex-direction:column}
+  .sidebar{
+    width:100%;flex-direction:row;align-items:center;
+    border-right:none;border-bottom:1px solid var(--border);
+  }
+  .sidebar-head{
+    border-bottom:none;border-right:1px solid var(--border);
+    padding:10px 12px;white-space:nowrap;flex-shrink:0;
+  }
+  .editions{
+    display:flex;flex-direction:row;align-items:center;gap:2px;
+    overflow-x:auto;overflow-y:hidden;padding:6px 8px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .editions::-webkit-scrollbar{height:3px}
+  .ed-item{flex-shrink:0;padding:6px 10px;margin:0 2px}
+  .ed-label{white-space:nowrap}
+  .sidebar-empty{padding:10px 14px;white-space:nowrap}
+
+  /* abas e filtros com rolagem horizontal */
+  .cat-tabs{overflow-x:auto;padding:0 10px;-webkit-overflow-scrolling:touch}
+  .cat-tabs::-webkit-scrollbar{height:0}
+  .cat-tab{padding:0 12px;font-size:12px;flex-shrink:0}
+  .tag-bar{
+    flex-wrap:nowrap;overflow-x:auto;padding:9px 14px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .tag-bar::-webkit-scrollbar{height:0}
+  .tag-btn{flex-shrink:0;white-space:nowrap}
+
+  /* conteúdo */
+  .ed-header{padding:12px 14px 9px}
+  .articles-wrap{padding:14px 14px 30px}
+  .grid{grid-template-columns:1fr}
+  .card{padding:15px 16px}
+
+  /* rodapé do card empilha quando aperta */
+  .card-footer{flex-wrap:wrap}
+
+  /* toast e modal */
+  #toast{left:12px;right:12px;bottom:12px;max-width:none}
+  #ig-modal{padding:10px;align-items:flex-end}
+  .ig-box{max-height:92dvh;padding:18px;border-radius:14px 14px 0 0}
+  .ig-actions button{flex:1}
+}
+@media (max-width: 380px){
+  .logo-text{display:none}
+  #app-version{display:none}
+}
 </style>
 </head>
 <body>
