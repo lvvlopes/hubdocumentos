@@ -186,6 +186,13 @@ async function publishToInstagram(token, accountId, imageUrl, caption) {
   return publishResp.body.id;
 }
 
+// Comenta o link da notícia no post (fica isolado e fácil de localizar)
+async function commentLink(token, mediaId, url) {
+  try {
+    await fbPost(`/${mediaId}/comments`, { message: `🔗 ${url}` }, token);
+  } catch (_) { /* falha no comentário não impede o post */ }
+}
+
 // ── Handler ────────────────────────────────────────────────────────
 
 module.exports = async (req, res) => {
@@ -217,6 +224,9 @@ module.exports = async (req, res) => {
 
     // 4. Publica no Instagram
     const postId = await publishToInstagram(IG_TOKEN, IG_ACCOUNT, imageUrl, caption);
+
+    // 5. Comenta o link da notícia no post
+    if (article.url) await commentLink(IG_TOKEN, postId, article.url);
 
     res.status(200).json({
       ok: true,
