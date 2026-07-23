@@ -1,5 +1,7 @@
 {
   "version": "1.3.0",
+  "versionBase": "1.3",
+  "versionOffset": 54,
   "dependencies": {
     "agent-browser": "^0.27.0",
     "satori": "^0.12.2",

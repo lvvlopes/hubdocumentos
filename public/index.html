@@ -402,8 +402,7 @@ async function loadVersion() {
   try {
     const r = await fetch('/api/version');
     const v = await r.json();
-    document.getElementById('app-version').textContent =
-      `v${v.version}${v.commit ? ' · ' + v.commit : ''}`;
+    document.getElementById('app-version').textContent = `v${v.version}`;
   } catch (_) {}
 }
 loadVersion();
