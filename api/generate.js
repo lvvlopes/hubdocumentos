@@ -35,8 +35,8 @@ const CATEGORIES = {
     label: 'Notícias IA',
     searchPrompt: `Busque nos principais portais de tecnologia DO BRASIL E DO MUNDO as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
-Portais internacionais: TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology.
-Portais brasileiros: CNN Brasil (tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira.
+PRIORIZE notícias internacionais (do mundo): a maioria dos artigos deve vir de portais internacionais — TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology.
+Portais brasileiros: CNN Brasil (tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (mas apenas 1 ou 2; o restante deve ser internacional).
 
 FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHEIROS DE SOFTWARE: oportunidades de negócio, ferramentas aplicáveis, mudanças de mercado, novos modelos e APIs, decisões estratégicas das empresas de IA.
 
