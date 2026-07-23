@@ -1,0 +1,205 @@
+{
+  "date": "2026-07-23",
+  "categories": {
+    "ia": [
+      {
+        "title": "Cofundador da Databricks lança SkyPilot com aporte de US$ 20 milhões",
+        "summary": "Ion Stoica, cofundador da Databricks, lançou a SkyPilot, uma plataforma que permite executar sistemas de inteligência artificial em diferentes provedores de computação em nuvem. A empresa recebeu US$ 20 milhões em uma rodada inicial de investimento liderada pela Lux Capital, com participação da Coatue e da Amplify Partners. A SkyPilot promete integrar GPUs de diferentes nuvens, aumentando em mais de 10% o uso dos chips já contratados.",
+        "source": "exame.com",
+        "url": "https://exame.com/inteligencia-artificial/cofundador-da-databricks-lanca-skypilot-com-aporte-de-us-20-milhoes/?utm_source=openai",
+        "tags": [
+          "Ferramentas",
+          "Empresas",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "CEO da Nvidia diz que sua equipe substituiu a programação de códigos por agentes de IA autônomos",
+        "summary": "Jensen Huang, CEO da Nvidia, afirmou que os engenheiros de software da empresa preferem desenvolver agentes de inteligência artificial a escrever código tradicional em linguagens como Python. Essa mudança reflete uma tendência crescente de automação no desenvolvimento de software, onde agentes de IA autônomos estão assumindo tarefas anteriormente realizadas por programadores humanos. Essa abordagem pode aumentar a eficiência e reduzir erros no processo de desenvolvimento.",
+        "source": "exame.com",
+        "url": "https://exame.com/inteligencia-artificial/ceo-da-nvidia-diz-que-sua-equipe-substituiu-a-programacao-de-codigos-por-agentes-de-ia-autonomos/?utm_source=openai",
+        "tags": [
+          "Agentes",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "Meta diz que novo modelo de IA alcançou o GPT-5.5 em capacidades",
+        "summary": "A Meta anunciou que seu próximo modelo de IA, chamado internamente de Watermelon, alcançou o desempenho do GPT-5.5 da OpenAI. O modelo utiliza dez vezes mais computação que o anterior e se aproxima de rivais como OpenAI e Anthropic. Essa evolução pode trazer melhorias significativas em tarefas de processamento de linguagem natural, beneficiando empresas que dependem de IA para análise de dados e interação com clientes.",
+        "source": "exame.com",
+        "url": "https://exame.com/inteligencia-artificial/meta-diz-que-novo-modelo-de-ia-alcancou-gpt-5-5/?utm_source=openai",
+        "tags": [
+          "LLM",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "IBM alerta que boom da IA está pressionando orçamentos de software; ação desaba",
+        "summary": "A IBM afirmou que ficou para trás na adaptação à mudança dos investimentos corporativos, que migraram de software para infraestrutura de data centers, e projetou lucro do segundo trimestre abaixo das estimativas do mercado, no sinal mais claro até agora do impacto crescente da inteligência artificial sobre o setor. O alerta fez as ações da IBM despencarem mais de 25% nesta terça-feira e também pressionava outras ações do setor de softwares. Investidores do setor de software vêm demonstrando preocupação diante dos temores de que ferramentas de IA capazes de automatizar tarefas rotineiras possam representar uma ameaça existencial para a indústria. O anúncio mostrou que até mesmo o forte aumento dos investimentos com servidores, chips e equipamentos de rede para IA está reduzindo os orçamentos destinados a software.",
+        "source": "bol.uol.com.br",
+        "url": "https://www.bol.uol.com.br/tecnologia/2026/07/14/ibm-alerta-que-boom-da-ia-esta-pressionando-orcamentos-de-software-acao-desaba.amp.htm?utm_source=openai",
+        "tags": [
+          "Empresas",
+          "Regulação"
+        ]
+      },
+      {
+        "title": "Inteligência artificial chega ao chão de fábrica: especialistas da Siemens apresentam tecnologias inéditas para a indústria em Manaus",
+        "summary": "Especialistas da Siemens apresentaram tecnologias de inteligência artificial aplicadas ao chão de fábrica no Polo Industrial de Manaus. Durante o Siemens Day Aberto – Teste & Simulação, foram demonstradas soluções que utilizam IA, visão computacional e análise inteligente de dados para reduzir desperdícios, antecipar falhas, aumentar a produtividade e melhorar a qualidade da produção. O evento contou com palestras de especialistas da Siemens e de empresas parceiras, destacando a importância da transformação digital na indústria brasileira.",
+        "source": "onjornal.com",
+        "url": "https://onjornal.com/site/noticia/inteligencia-artificial-chega-ao-chao-de-fabrica--especialistas-da-siemens-apresentam-tecnologias-ineditas-para-a-industria-em-manaus-46173/?utm_source=openai",
+        "tags": [
+          "Ferramentas",
+          "Empresas",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "Uso de Inteligência Artificial por empresas brasileiras avança e atinge 17%, aponta pesquisa do Cetic.br",
+        "summary": "A 16ª edição da pesquisa TIC Empresas, conduzida pelo Cetic.br, revelou que a adoção de IA em empresas brasileiras cresceu de 13% em 2024 para 17% em 2025. Esse crescimento foi observado em empresas de diferentes tamanhos, incluindo pequenas empresas, onde a proporção passou de 10% para 15% no mesmo período. A pesquisa destaca a crescente presença da IA no ambiente corporativo brasileiro, indicando oportunidades para empresários e engenheiros de software explorarem soluções baseadas em IA para otimizar processos e aumentar a competitividade.",
+        "source": "nic.br",
+        "url": "https://nic.br/noticia/releases/uso-de-inteligencia-artificial-por-empresas-brasileiras-avanca-e-atinge-17-aponta-pesquisa-do-cetic-br/?utm_source=openai",
+        "tags": [
+          "Empresas",
+          "Pesquisa"
+        ]
+      },
+      {
+        "title": "LG Dual Inverter AI Voice vence prêmio Canaltech e une inteligência e economia",
+        "summary": "O ar-condicionado LG DUAL Inverter Voice foi reconhecido na 9ª edição do Prêmio Canaltech como “Campeã de Vendas do Magalu” em 2025. O selo reforça a popularidade dos modelos e a evolução da estratégia da LG em climatização residencial baseada em inteligência artificial, eficiência energética e durabilidade. A linha LG DUAL Inverter AI apresenta soluções diferentes de acordo com as necessidades dos consumidores, visando trazer mais conforto, eficiência e praticidade para o dia a dia dos usuários.",
+        "source": "canaltech.com.br",
+        "url": "https://canaltech.com.br/eletro/lg-dual-inverter-ai-voice-vence-premio-canaltech-e-une-inteligencia-e-economia/?utm_source=openai",
+        "tags": [
+          "Ferramentas",
+          "Empresas"
+        ]
+      }
+    ],
+    "dev": [
+      {
+        "title": "Oracle integra Claude Code e Codex ao desenvolvimento de agentes no Fusion",
+        "summary": "A Oracle anunciou uma nova experiência de desenvolvimento nativa em inteligência artificial para o Oracle AI Agent Studio for Fusion Applications, permitindo que clientes e parceiros criem e executem aplicações com agentes dentro do Oracle Fusion Cloud Applications. O AI Studio Skill possibilita a construção dessas aplicações utilizando ferramentas já familiares aos desenvolvedores, como Visual Studio Code, interfaces de linha de comando, fluxos baseados em Git e assistentes de programação com IA, incluindo o Claude Code, da Anthropic, e o Codex, da OpenAI. Essa integração promete acelerar o desenvolvimento de aplicações inteligentes, oferecendo aos desenvolvedores recursos avançados de IA diretamente em seus ambientes de trabalho habituais.",
+        "source": "Exame",
+        "url": "https://exame.com/inteligencia-artificial/oracle-leva-claude-code-e-codex-ao-desenvolvimento-de-agentes-no-fusion//",
+        "tags": [
+          "API",
+          "Framework",
+          "Agentes"
+        ]
+      },
+      {
+        "title": "GitLab revela que desenvolvedores estão validando código gerado por IA que não escreveram",
+        "summary": "O GitLab divulgou seu Relatório de Responsabilidade de IA, destacando que a principal preocupação dos desenvolvedores não é mais a velocidade de geração de código, mas sim a validação e compreensão do código gerado por IA. A pesquisa revelou que 60% dos desenvolvedores afirmam que o retorno sobre investimento (ROI) da IA na codificação já superou as expectativas, e 78% relatam que suas equipes estão escrevendo e comprometendo código mais rapidamente desde a adoção de ferramentas de IA. No entanto, a falta de controle sobre o código gerado por IA pode levar a dívidas técnicas e desafios na manutenção do código.",
+        "source": "The New Stack",
+        "url": "https://thenewstack.io/gitlab-ai-code-governance/",
+        "tags": [
+          "Produtividade",
+          "Open Source",
+          "DevOps"
+        ]
+      },
+      {
+        "title": "ClickHouse compartilha aprendizados após um ano utilizando agentes de IA na codificação",
+        "summary": "Alexey Milovidov, CTO da ClickHouse, compartilhou insights sobre o uso de agentes de IA na codificação de uma extensa base de código em C++. A empresa observou ganhos significativos de produtividade, especialmente em tarefas repetitivas como alterações em sistemas de build e resolução de conflitos de merge. Além disso, a integração de ferramentas como GitHub Copilot e bots de revisão de código resultou em uma melhoria na qualidade do código, permitindo que revisores humanos se concentrassem em aspectos arquiteturais enquanto os bots identificavam vazamentos de recursos e condições de corrida.",
+        "source": "The New Stack",
+        "url": "https://thenewstack.io/clickhouse-ai-coding-agents/",
+        "tags": [
+          "Copilot",
+          "Code Review",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "JetBrains alerta que agentes de IA podem repetir crise de ROI do cloud computing",
+        "summary": "A JetBrains anunciou o JetBrains Central, uma plataforma de governança e execução para fluxos de trabalho de agentes de IA, visando controlar o retorno sobre investimento (ROI) e a complexidade operacional à medida que as empresas escalam o uso de IA na codificação. O estudo da JetBrains revelou que 90% dos desenvolvedores já utilizam IA no trabalho, e 66% das empresas planejam adotar agentes de codificação nos próximos 12 meses. No entanto, apenas 13% relatam o uso de IA em todo o ciclo de vida do desenvolvimento de software, indicando a necessidade de uma governança eficaz para evitar uma crise de ROI semelhante à observada na adoção de cloud computing.",
+        "source": "The New Stack",
+        "url": "https://thenewstack.io/jetbrains-central-ai-agents/",
+        "tags": [
+          "Produtividade",
+          "Open Source",
+          "DevOps"
+        ]
+      },
+      {
+        "title": "GitHub explica como funciona a geração de código com IA",
+        "summary": "O GitHub detalhou o funcionamento da geração de código com IA, destacando como ferramentas como o GitHub Copilot utilizam modelos de linguagem para fornecer assistência contextualizada na codificação. Essas ferramentas permitem que os desenvolvedores autocompletem código, gerem documentação e descrições de pull requests, além de detectar vulnerabilidades e facilitar a compreensão de bases de código desconhecidas. A adoção dessas ferramentas está transformando a produção de software, oferecendo aos desenvolvedores recursos avançados de IA diretamente em seus ambientes de trabalho habituais.",
+        "source": "GitHub Blog",
+        "url": "https://github.blog/ai-and-ml/generative-ai/how-ai-code-generation-works/",
+        "tags": [
+          "Copilot",
+          "IDE",
+          "Produtividade"
+        ]
+      }
+    ],
+    "projetos": [
+      {
+        "title": "O uso de inteligência artificial no desenvolvimento de software: uma análise exploratória",
+        "summary": "Este estudo explora a aplicação da IA em diversas etapas do ciclo de desenvolvimento de software, destacando sua contribuição para a automação de tarefas, melhoria da qualidade do código e aumento da produtividade. Para um gerente de projetos de software no setor financeiro/previdência, isso significa a possibilidade de otimizar processos, reduzir erros e acelerar entregas, resultando em maior eficiência e competitividade. No entanto, o estudo também aponta desafios, como a confiabilidade das soluções geradas e a dependência das ferramentas de IA, que exigem uma abordagem crítica e consciente por parte dos desenvolvedores.",
+        "source": "Revista Colombiana de Ciências e Humanidades (REHCOL)",
+        "url": "https://www.rehcol.com/index.php/rehcol/article/view/133",
+        "tags": [
+          "Automação",
+          "Ferramentas",
+          "Estimativa"
+        ]
+      },
+      {
+        "title": "12 Ferramentas de IA para Gestão de Projetos em 2026",
+        "summary": "Este artigo apresenta uma seleção de ferramentas de IA que podem ser integradas às plataformas de gestão de projetos existentes, oferecendo funcionalidades como resumo de reuniões, geração de relatórios e sugestões para cronogramas. Para um gerente de projetos de software no setor financeiro/previdência, essas ferramentas podem facilitar a comunicação, melhorar a rastreabilidade e garantir o compliance, além de otimizar o planejamento e a estimativa de projetos. A IA atua como um copiloto, acelerando análises e decisões, mas a responsabilidade final continua sendo do gerente.",
+        "source": "Alura",
+        "url": "https://www.alura.com.br/artigos/ia-para-gestao-de-projetos",
+        "tags": [
+          "Automação",
+          "Ferramentas",
+          "Compliance"
+        ]
+      },
+      {
+        "title": "Agentes de IA no Gerenciamento de Projetos: Benefícios e Principais Casos de Uso",
+        "summary": "A Atlassian discute como agentes de IA podem ser integrados aos fluxos de trabalho de gerenciamento de projetos, atuando como ferramentas colaborativas que suportam planejamento, execução e entrega. Para um gerente de projetos de software no setor financeiro/previdência, isso significa a possibilidade de automatizar tarefas rotineiras, como acompanhamento de itens de ação e manutenção de documentação, liberando tempo para atividades estratégicas. Esses agentes podem ser incorporados a ferramentas como Jira, Confluence e Loom, melhorando a eficiência e a colaboração da equipe.",
+        "source": "Atlassian",
+        "url": "https://www.atlassian.com/agile/project-management/ai-agents",
+        "tags": [
+          "Automação",
+          "Ferramentas",
+          "Equipes"
+        ]
+      },
+      {
+        "title": "Como Utilizar IA no Gerenciamento de Projetos: Um Guia Completo",
+        "summary": "Este guia explora como a IA pode ser aplicada em diversas áreas do gerenciamento de projetos, incluindo agendamento, identificação de riscos e melhoria da colaboração da equipe. Para um gerente de projetos de software no setor financeiro/previdência, a IA pode ajudar a prever riscos e gargalos, permitindo ações preventivas e melhor alocação de recursos. Além disso, a IA pode facilitar a comunicação entre equipes distribuídas, melhorando a eficiência e a eficácia dos projetos.",
+        "source": "ProProfs Project",
+        "url": "https://www.proprofsproject.com/blog/ai-in-project-management/",
+        "tags": [
+          "Automação",
+          "Ferramentas",
+          "Risco"
+        ]
+      },
+      {
+        "title": "Licita IA | Inteligência Artificial para Contratações Públicas",
+        "summary": "A plataforma Licita IA utiliza IA para apoiar servidores na elaboração, revisão e acompanhamento de documentos de contratações públicas, garantindo padronização e rastreabilidade. Para um gerente de projetos de software no setor financeiro/previdência, isso significa a possibilidade de automatizar processos de compliance e garantir a conformidade com as regulamentações vigentes, reduzindo erros e aumentando a transparência. A IA atua de forma assistiva, mantendo a responsabilidade final com os gestores humanos.",
+        "source": "Licita IA",
+        "url": "https://licitaia.com.br/",
+        "tags": [
+          "Automação",
+          "Compliance",
+          "Ferramentas"
+        ]
+      },
+      {
+        "title": "Engenharias e Inteligência Artificial – Arquiteturas Cognitivas para Projetos, Tomada de Decisão, Gestão de Riscos e Soluções Sistêmicas",
+        "summary": "Este artigo discute a convergência entre engenharias e IA, destacando a importância das arquiteturas cognitivas na gestão de projetos, tomada de decisão e gestão de riscos. Para um gerente de projetos de software no setor financeiro/previdência, isso implica na necessidade de integrar IA para lidar com problemas complexos e.",
+        "source": "Observatório de la Economía Latinoamericana",
+        "url": "https://ojs.observatoriolatinoamericano.com/ojs/index.php/olel/article/view/10699",
+        "tags": [
+          "Automação",
+          "Risco",
+          "Liderança"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-07-23T11:24:02.548Z"
+}
