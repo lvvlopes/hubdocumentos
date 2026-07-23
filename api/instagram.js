@@ -41,30 +41,15 @@ function fbPost(path, params, token) {
 // ── Gera imagem via DALL-E ─────────────────────────────────────────
 
 async function generateImage(apiKey, article) {
-  // Gera um prompt contextual baseado no artigo
-  const promptResp = await httpsRequest('POST', 'api.openai.com', '/v1/chat/completions', {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${apiKey}`,
-  }, {
-    model: 'gpt-4o-mini',
-    messages: [{
-      role: 'user',
-      content: `Crie um prompt curto em inglês (máximo 150 palavras) para gerar uma imagem abstrata e impactante para o Instagram sobre esta notícia de tecnologia/IA:
+  const imagePrompt = `Post quadrado para Instagram de um canal de notícias de tecnologia e IA.
+
+Design: arte digital moderna e escura, gradiente roxo/azul profundo, elementos abstratos de tecnologia (circuitos, nós luminosos, formas fluidas) como fundo, com contraste alto na área do texto.
+
+O elemento principal da imagem é a manchete abaixo, escrita EXATAMENTE como está, sem alterar nenhuma palavra, em tipografia sans-serif bold branca, grande, centralizada e perfeitamente legível (pode quebrar em várias linhas):
+
 "${article.title}"
 
-Requisitos da imagem:
-- Estilo: arte digital moderna, gradiente escuro roxo/azul, elementos tecnológicos abstratos
-- SEM texto, SEM letras, SEM pessoas reais
-- Adequada para post profissional no Instagram
-- Visualmente chamativa e relacionada ao tema
-
-Retorne APENAS o prompt em inglês, sem explicações.`,
-    }],
-    max_tokens: 200,
-  });
-
-  const imagePrompt = promptResp.body.choices?.[0]?.message?.content?.trim() ||
-    `Modern abstract tech illustration, dark purple-blue gradient background, glowing neural network nodes and circuits, futuristic digital art, no text, professional Instagram post`;
+Adicione apenas um pequeno rótulo "NOTÍCIA" no topo. Nenhum outro texto além disso. Estilo profissional de painel editorial de notícias.`;
 
   // Gera a imagem com gpt-image-1 (qualidade "low" para reduzir custo)
   const imgResp = await httpsRequest('POST', 'api.openai.com', '/v1/images/generations', {
