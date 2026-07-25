@@ -41,10 +41,43 @@ function fbPost(path, params, token) {
   return httpsRequest('POST', 'graph.facebook.com', `/v19.0${path}?${qs}`, { 'Content-Length': '0' });
 }
 
-// ── Gera imagem via DALL-E ─────────────────────────────────────────
+// ── Identidade visual por categoria ────────────────────────────────
+
+const BRAND = process.env.INSTAGRAM_BRAND || 'IA EM FOCO';
+
+const THEMES = {
+  ia: {
+    label: 'NOTÍCIAS IA',
+    c1: '#818cf8', c2: '#a855f7', veil: 'rgba(10,10,31,0.60)',
+    imgHue: 'deep indigo, violet and blue',
+  },
+  dev: {
+    label: 'NOTÍCIAS DEV',
+    c1: '#34d399', c2: '#22d3ee', veil: 'rgba(4,20,15,0.60)',
+    imgHue: 'deep emerald green and teal cyan',
+  },
+  projetos: {
+    label: 'NOTÍCIAS PROJETO SOFTWARE',
+    c1: '#fbbf24', c2: '#fb923c', veil: 'rgba(26,15,2,0.60)',
+    imgHue: 'deep amber, gold and warm orange',
+  },
+};
+
+const themeFor = (cat) => THEMES[cat] || THEMES.ia;
+
+// Texto do selo: INSTAGRAM_SEAL, ou a 1ª palavra se curta, senão as iniciais
+const brandInitials = () => {
+  if (process.env.INSTAGRAM_SEAL) return process.env.INSTAGRAM_SEAL.toUpperCase();
+  const words = BRAND.split(/\s+/).filter(Boolean);
+  if (words[0] && words[0].length <= 3) return words[0].toUpperCase();
+  return words.map(w => w[0]).join('').slice(0, 2).toUpperCase();
+};
+
+// ── Gera o fundo abstrato via gpt-image-1 (tingido por categoria) ──
 
 async function generateImage(apiKey, article) {
-  const imagePrompt = `Modern abstract digital art background for a tech news Instagram post. Dark deep purple and blue gradient, glowing circuit lines, luminous nodes, fluid organic shapes. Slightly darker in the center area. ABSOLUTELY NO TEXT, NO LETTERS, NO WORDS, NO TYPOGRAPHY of any kind. Professional, elegant, high contrast.`;
+  const t = themeFor(article.category);
+  const imagePrompt = `Modern abstract digital art background for a professional tech news Instagram post. Dark ${t.imgHue} gradient, glowing circuit lines, luminous nodes, fluid organic shapes, subtle depth. Slightly darker toward the left and center for text contrast. ABSOLUTELY NO TEXT, NO LETTERS, NO WORDS, NO TYPOGRAPHY of any kind. Elegant, high-end, high contrast.`;
 
   // Gera a imagem com gpt-image-1 (qualidade "low" para reduzir custo)
   const imgResp = await httpsRequest('POST', 'api.openai.com', '/v1/images/generations', {
@@ -68,61 +101,68 @@ async function generateImage(apiKey, article) {
   return b64;
 }
 
-// ── Sobrepõe o título na imagem (texto 100% fiel, sem IA) ─────────
+// ── Sobrepõe a camada editorial (texto 100% fiel, layout Instagram) ─
 
-const FONT_PATH = path.join(__dirname, '..', 'assets', 'fonts', 'Montserrat-Bold.ttf');
+const FDIR = path.join(__dirname, '..', 'assets', 'fonts');
+const FONTS = [
+  { name: 'Montserrat', data: fs.readFileSync(path.join(FDIR, 'Montserrat-SemiBold.ttf')),  weight: 600, style: 'normal' },
+  { name: 'Montserrat', data: fs.readFileSync(path.join(FDIR, 'Montserrat-Bold.ttf')),      weight: 700, style: 'normal' },
+  { name: 'Montserrat', data: fs.readFileSync(path.join(FDIR, 'Montserrat-ExtraBold.ttf')), weight: 800, style: 'normal' },
+];
 
-const CATEGORY_LABELS = {
-  ia:       'NOTÍCIAS IA',
-  dev:      'NOTÍCIAS DEV',
-  projetos: 'NOTÍCIAS PROJETO SOFTWARE',
-};
+const S = 1080; // padrão de feed do Instagram
 
 async function composeCard(bgB64, article) {
   const { default: satori } = await import('satori');
-  const fontData = fs.readFileSync(FONT_PATH);
+  const t = themeFor(article.category);
 
   const title = article.title || '';
-  // Tamanho de fonte adaptativo ao comprimento do título
-  const fontSize = title.length <= 55 ? 72 : title.length <= 90 ? 60 : 50;
+  const fontSize = title.length <= 48 ? 74 : title.length <= 85 ? 62 : 52;
 
   const el = (type, style, children) => ({ type, props: { style, children } });
 
   const tree = el('div', {
-    width: '1024px', height: '1024px', display: 'flex', flexDirection: 'column',
-    alignItems: 'center', justifyContent: 'center',
+    width: `${S}px`, height: `${S}px`, display: 'flex', flexDirection: 'column',
+    justifyContent: 'space-between', padding: '86px 84px',
     backgroundImage: `url(data:image/png;base64,${bgB64})`,
-    backgroundSize: '1024px 1024px',
+    backgroundSize: `${S}px ${S}px`, fontFamily: 'Montserrat', position: 'relative',
   }, [
-    // véu escuro para garantir contraste do texto
-    el('div', {
-      position: 'absolute', top: 0, left: 0, width: '1024px', height: '1024px',
-      backgroundColor: 'rgba(8, 6, 30, 0.52)',
-    }),
-    // rótulo da categoria
-    el('div', {
-      display: 'flex', padding: '10px 28px', border: '2px solid rgba(255,255,255,0.85)',
-      borderRadius: '6px', color: '#ffffff', fontSize: '26px', letterSpacing: '6px',
-      marginBottom: '48px', fontFamily: 'Montserrat',
-    }, CATEGORY_LABELS[article.category] || 'NOTÍCIA'),
-    // título
-    el('div', {
-      display: 'flex', color: '#ffffff', fontSize: `${fontSize}px`, fontFamily: 'Montserrat',
-      textAlign: 'center', lineHeight: 1.25, padding: '0 70px', textWrap: 'balance',
-    }, title),
-    // fonte da notícia
-    el('div', {
-      display: 'flex', color: 'rgba(255,255,255,0.75)', fontSize: '26px',
-      fontFamily: 'Montserrat', marginTop: '52px', letterSpacing: '2px',
-    }, article.source ? `FONTE  ·  ${article.source.toUpperCase()}` : ''),
+    // véu escuro na cor do tema (contraste do texto)
+    el('div', { position: 'absolute', top: 0, left: 0, width: `${S}px`, height: `${S}px`,
+      backgroundColor: t.veil }),
+
+    // ── TOPO: selo + marca ──
+    el('div', { display: 'flex', alignItems: 'center', gap: '18px' }, [
+      el('div', { display: 'flex', width: '60px', height: '60px', borderRadius: '15px',
+        alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontSize: '25px',
+        fontWeight: 800, letterSpacing: '0.5px',
+        backgroundImage: `linear-gradient(135deg, ${t.c1}, ${t.c2})` }, brandInitials()),
+      el('div', { display: 'flex', color: '#ffffff', fontSize: '27px', fontWeight: 800,
+        letterSpacing: '1px' }, BRAND),
+    ]),
+
+    // ── CENTRO: pill + acento + título ──
+    el('div', { display: 'flex', flexDirection: 'column' }, [
+      el('div', { display: 'flex', alignSelf: 'flex-start', padding: '11px 22px', borderRadius: '40px',
+        marginBottom: '32px', backgroundColor: 'rgba(255,255,255,0.10)', border: `2px solid ${t.c1}`,
+        color: t.c1, fontSize: '23px', fontWeight: 700, letterSpacing: '3px' }, t.label),
+      el('div', { display: 'flex', width: '92px', height: '8px', borderRadius: '4px', marginBottom: '30px',
+        backgroundImage: `linear-gradient(90deg, ${t.c1}, ${t.c2})` }),
+      el('div', { display: 'flex', color: '#ffffff', fontSize: `${fontSize}px`, fontWeight: 800,
+        lineHeight: 1.16, letterSpacing: '-1px' }, title),
+    ]),
+
+    // ── RODAPÉ: fonte ──
+    el('div', { display: 'flex', alignItems: 'center', gap: '14px' },
+      article.source ? [
+        el('div', { display: 'flex', width: '34px', height: '3px', borderRadius: '2px', backgroundColor: t.c1 }),
+        el('div', { display: 'flex', color: 'rgba(255,255,255,0.82)', fontSize: '25px', fontWeight: 600,
+          letterSpacing: '2px' }, `FONTE · ${article.source.toUpperCase()}`),
+      ] : []),
   ]);
 
-  const svg = await satori(tree, {
-    width: 1024, height: 1024,
-    fonts: [{ name: 'Montserrat', data: fontData, weight: 700, style: 'normal' }],
-  });
-
-  const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1024 } }).render().asPng();
+  const svg = await satori(tree, { width: S, height: S, fonts: FONTS });
+  const png = new Resvg(svg, { fitTo: { mode: 'width', value: S } }).render().asPng();
   return Buffer.from(png).toString('base64');
 }
 
