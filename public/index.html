@@ -624,9 +624,9 @@ const IG_HASHTAGS = {
 };
 
 function buildCaption(a) {
-  // Primeiro parágrafo do resumo, limitado para caber bem no feed
-  let resumo = (a.summary || '').split(/\n\n|\\n\\n/)[0].trim();
-  if (resumo.length > 550) resumo = resumo.slice(0, 547).trim() + '...';
+  // Resumo completo (padrão Instagram: ~2 parágrafos), com margem de segurança
+  let resumo = (a.summary || '').replace(/\\n/g, '\n').trim();
+  if (resumo.length > 900) resumo = resumo.slice(0, 897).trim() + '...';
 
   return `${a.title}\n\n${resumo}\n\n🔗 Leia a notícia completa:\n${a.url}\n\n📰 Fonte: ${a.source}\n\n${IG_HASHTAGS[currentCat] || IG_HASHTAGS.ia}`;
 }

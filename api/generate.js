@@ -48,7 +48,7 @@ Para cada notícia escreva:
 TÍTULO: ...
 FONTE: ...
 URL: ...
-RESUMO: 3 parágrafos sobre o que aconteceu e impacto para quem usa IA
+RESUMO: 2 parágrafos curtos (o que aconteceu + impacto para quem usa IA)
 TAGS: escolha de LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal
 
 Traga 8 a 10 notícias.`,
@@ -69,7 +69,7 @@ Para cada notícia escreva:
 TÍTULO: ...
 FONTE: ...
 URL: ...
-RESUMO: 3 parágrafos focando no impacto prático para desenvolvedores e engenheiros de software
+RESUMO: 2 parágrafos curtos focando no impacto prático para desenvolvedores e engenheiros de software
 TAGS: escolha de Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps
 
 Traga 8 a 10 notícias.`,
@@ -94,7 +94,7 @@ Para cada notícia escreva:
 TÍTULO: ...
 FONTE: ...
 URL: ...
-RESUMO: 3 parágrafos focando no valor prático para um gerente de projetos de software no setor financeiro/previdência
+RESUMO: 2 parágrafos curtos focando no valor prático para um gerente de projetos de software no setor financeiro/previdência
 TAGS: escolha de Planejamento, Estimativa, Agile, Risco, Equipes, Compliance, FinTech, Automação, Ferramentas, Liderança
 
 Traga 8 a 10 notícias.`,
@@ -107,10 +107,18 @@ Responda APENAS com um objeto JSON. Sem markdown, sem blocos de código, sem tex
 
 const STRUCT_USER = (text, tags) =>
   `Converta as notícias abaixo para JSON com este formato exato:
-{"articles":[{"title":"...","summary":"parágrafo 1\\n\\nparágrafo 2\\n\\nparágrafo 3","source":"...","url":"https://...","tags":["tag1","tag2"]}]}
+{"articles":[{"title":"...","summary":"parágrafo 1\\n\\nparágrafo 2","source":"...","url":"https://...","tags":["tag1","tag2"]}]}
 
 Tags permitidas: ${tags}
 Use 1 a 3 tags por artigo. Se não encontrar URL real, omita o artigo.
+
+IMPORTANTE — FORMATO DO RESUMO (padrão de publicação para Instagram):
+- Escreva EXATAMENTE 2 parágrafos separados por "\\n\\n".
+- Comprimento total entre 400 e 600 caracteres (nem curto demais, nem extenso).
+- 1º parágrafo: o fato principal de forma clara e direta (o que aconteceu e por quê importa).
+- 2º parágrafo: o impacto prático ou desdobramento para o leitor.
+- Tom informativo e envolvente, adequado para uma legenda de Instagram. Frases objetivas.
+- NÃO use hashtags, emojis, nem "leia mais" dentro do resumo.
 
 IMPORTANTE — CODIFICAÇÃO:
 Corrija caracteres corrompidos ou substituídos (ex: "c�digo", "gera��o") restaurando
