@@ -1,0 +1,177 @@
+{
+  "date": "2026-07-25",
+  "categories": {
+    "ia": [
+      {
+        "title": "IBM alerta que boom da IA está pressionando orçamentos de software; ação desaba",
+        "summary": "A IBM anunciou que ficou atrás na adaptação às mudanças nos investimentos corporativos, que migraram de software para infraestrutura de data centers, e projetou lucro do segundo trimestre abaixo das estimativas do mercado, indicando o impacto crescente da inteligência artificial no setor. Esse alerta fez as ações da IBM despencarem mais de 25%, pressionando também outras ações do setor de softwares. Investidores estão preocupados com o fato de que ferramentas de IA capazes de automatizar tarefas rotineiras possam representar uma ameaça existencial para a indústria de software.",
+        "source": "Reuters",
+        "url": "https://www.bol.uol.com.br/tecnologia/2026/07/14/ibm-alerta-que-boom-da-ia-esta-pressionando-orcamentos-de-software-acao-desaba.amp.htm",
+        "tags": [
+          "Empresas",
+          "Regulação",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "Google Cloud gasta mais do que fatura devido à corrida da IA",
+        "summary": "A Alphabet, dona do Google, gerou US$ 39,1 bilhões no trimestre, mas gastou US$ 44,9 bilhões em servidores e centros de dados para inteligência artificial. A empresa possui uma reserva de US$ 242,5 bilhões, e o Google Cloud cresce rapidamente, já ajudando a pagar a conta. No entanto, a Alphabet prevê gastar mais US$ 114 bilhões a US$ 124 bilhões no segundo semestre, levantando questões sobre a sustentabilidade dessa aposta bilionária sem afetar outros negócios.",
+        "source": "IA em Curso",
+        "url": "https://iaemcurso.com.br/noticias/google-cloud-gasta-mais-do-que-fatura-devido-a-corrida-da-ia",
+        "tags": [
+          "Empresas",
+          "Open Source",
+          "Hardware"
+        ]
+      },
+      {
+        "title": "Indra buscará sua diferenciação tecnológica com a IA como eixo em seu novo plano",
+        "summary": "A empresa Indra está preparando um novo plano estratégico onde a IA desempenhará um papel crucial para sua diferenciação tecnológica. A iniciativa visa posicionar a empresa como líder em soluções baseadas em IA, aproveitando as oportunidades de mercado e atendendo às demandas crescentes por inovação tecnológica. A estratégia reflete a tendência de empresas que buscam integrar IA em seus processos para obter vantagem competitiva.",
+        "source": "El Nacional",
+        "url": "https://www.elnacional.cat/oneconomia/es/tag/inteligencia-artificial",
+        "tags": [
+          "Empresas",
+          "Ferramentas",
+          "Open Source"
+        ]
+      },
+      {
+        "title": "Spotify lança recurso de playlist conversacional com IA baseado em modelos Llama adaptados",
+        "summary": "O Spotify lançou a versão beta do recurso \"Talk to Spotify\" para usuários Premium nos EUA, Irlanda e Suécia, utilizando modelos Llama adaptados para oferecer playlists personalizadas por meio de interações conversacionais. A integração de IA visa melhorar a experiência do usuário, proporcionando recomendações musicais mais precisas e interativas. Essa iniciativa destaca a aplicação de IA em plataformas de streaming para aumentar o engajamento e a satisfa��ão dos usuários.",
+        "source": "Silicon Report",
+        "url": "https://www.siliconreport.com/ai-news",
+        "tags": [
+          "Agentes",
+          "Ferramentas",
+          "Empresas"
+        ]
+      },
+      {
+        "title": "OpenAI lança GPT-5.6 em ChatGPT, Codex e sua API",
+        "summary": "A OpenAI lançou globalmente o modelo GPT-5.6, disponível no ChatGPT, Codex e sua API, prometendo desempenho mais rápido e econômico em comparação com o modelo anterior, Claude Fable 5. A atualização oferece melhorias significativas em tarefas de processamento de linguagem natural, beneficiando desenvolvedores e empresas que utilizam IA em suas operações. A adoção do GPT-5.6 pode impulsionar a inovação em produtos e serviços baseados em IA.",
+        "source": "Silicon Report",
+        "url": "https://www.siliconreport.com/ai-news",
+        "tags": [
+          "LLM",
+          "Ferramentas",
+          "Empresas"
+        ]
+      }
+    ],
+    "dev": [
+      {
+        "title": "Desenvolvimento Assistido por IA: O Guia de 2026 para Equipes de Engenharia e Líderes de Negócios",
+        "summary": "Este guia abrangente explora como a IA está transformando o desenvolvimento de software, destacando o uso de assistentes de codificação baseados em IA, como GitHub Copilot e Cursor, que aumentam a produtividade dos desenvolvedores ao gerar código a partir de descrições em linguagem natural. Além disso, discute a integração de IA em pipelines de CI/CD, permitindo automação de testes e detecção de vulnerabilidades em tempo real. O artigo também aborda os desafios e as melhores práticas para implementar essas tecnologias de forma eficaz, enfatizando a necessidade de revisão humana para garantir a qualidade e a segurança do código gerado.",
+        "source": "Coderio",
+        "url": "https://www.coderio.com/blog/biz-tech/ai-assisted-development-guide-use-cases-business-needs-to-know/",
+        "tags": [
+          "Copilot",
+          "Produtividade",
+          "DevOps"
+        ]
+      },
+      {
+        "title": "A IA está reformulando o DevSecOps para aproximar a segurança do código",
+        "summary": "A matéria explora como a IA está revolucionando o DevSecOps, integrando práticas de segurança diretamente no processo de desenvolvimento de software. Ferramentas baseadas em IA estão sendo utilizadas para identificar vulnerabilidades em tempo real, sugerir correções e automatizar testes de segurança, permitindo que equipes de desenvolvimento integrem medidas de segurança de forma contínua e eficiente. O artigo destaca a importância de adotar uma abordagem proativa para a segurança, utilizando IA para antecipar e mitigar riscos antes que se tornem ameaças reais.",
+        "source": "CSO Online",
+        "url": "https://www.csoonline.com/article/4163355/ai-is-reshaping-devsecops-to-bring-security-closer-to-the-code.html",
+        "tags": [
+          "DevOps",
+          "Testes",
+          "Produtividade"
+        ]
+      },
+      {
+        "title": "A IA está transformando IDEs em assistentes de desenvolvimento inteligentes",
+        "summary": "Este artigo discute como a IA está aprimorando os ambientes de desenvolvimento integrado (IDEs), transformando-os em assistentes inteligentes que automatizam tarefas rotineiras, como formatação de código, depuração e revisão de código. Ferramentas como Cursor e GitHub Copilot estão sendo integradas aos IDEs para fornecer sugestões contextuais, identificar erros e otimizar o fluxo de trabalho dos desenvolvedores. A implementação de IA nos IDEs permite que os desenvolvedores se concentrem em aspectos mais criativos e complexos do desenvolvimento de software, aumentando a eficiência e a qualidade do código produzido.",
+        "source": "InfoWorld",
+        "url": "https://www.infoworld.com/article/3849532/how-ai-is-transforming-ides-into-intelligent-development-assistants.html",
+        "tags": [
+          "IDE",
+          "Copilot",
+          "Produtividade"
+        ]
+      },
+      {
+        "title": "IA no Desenvolvimento de Software: Ferramentas, Riscos e Carreiras",
+        "summary": "A publicação oferece uma visão detalhada sobre as principais ferramentas de IA utilizadas no desenvolvimento de software, incluindo assistentes de codificação como GitHub Copilot e Cursor, que auxiliam na geração e refatoração de código. O artigo também aborda os riscos associados ao uso de IA, como a introdução de vulnerabilidades de segurança e a necessidade de revisão humana para garantir a qualidade do código. Além disso, discute as implicações para as carreiras dos desenvolvedores, enfatizando a importância de habilidades em IA para profissionais que desejam se manter competitivos no mercado de trabalho.",
+        "source": "RegInsights",
+        "url": "https://www.regenesys.net/reginsights/ai-in-software-development-tools-risks-and-careers",
+        "tags": [
+          "Copilot",
+          "Produtividade",
+          "DevOps"
+        ]
+      }
+    ],
+    "projetos": [
+      {
+        "title": "NetProject: Plataforma de Gestão de Projetos com IA para o Setor Financeiro",
+        "summary": "A NetProject oferece uma plataforma online integrada que centraliza informações de projetos, prazos, responsáveis, alocação, disponibilidade e custos, utilizando IA para otimizar o planejamento e execução de projetos. Para gerentes de projetos no setor financeiro, isso significa maior previsibilidade e controle sobre os portfólios de projetos, facilitando a tomada de decisões rápidas e informadas. A integração de IA permite a automação de tarefas operacionais, liberando tempo para atividades estratégicas e aumentando a eficiência da equipe.",
+        "source": "NetProject",
+        "url": "https://www.netproject.com.br/",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "FinTech"
+        ]
+      },
+      {
+        "title": "Ferramentas de IA para Gerenciamento de Projetos: Guia Completo para 2026",
+        "summary": "Este guia detalha como a IA está transformando o gerenciamento de projetos, desde o planejamento até a execução e monitoramento. Para gerentes de projetos de software no setor financeiro, a ado��ão de ferramentas de IA pode aprimorar a estimativa de cronogramas, automatizar relatórios de status e melhorar a gestão de riscos, resultando em projetos mais ágeis e com maior aderência aos requisitos regulatórios. A análise preditiva proporcionada pela IA permite antecipar possíveis obstáculos e ajustar estratégias proativamente.",
+        "source": "AI PM Tools Directory",
+        "url": "https://aipmtools.org/articles/ai-in-project-management-guide",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Risco"
+        ]
+      },
+      {
+        "title": "Aplicações de IA no Gerenciamento de Projetos: Benefícios e Desafios",
+        "summary": "Este estudo analisa como a IA está impactando a gestão de projetos, identificando suas aplicações, benefícios e desafios. Para gerentes de projetos de software no setor financeiro, a IA pode otimizar a alocação de recursos, melhorar a comunicação entre equipes distribuídas e garantir a conformidade com as regulamentações da SUSEP e PREVIC. No entanto, a adoção de IA também apresenta desafios, como a necessidade de treinamento adequado da equipe e a gestão de mudanças organizacionais.",
+        "source": "South American Development Society Journal",
+        "url": "https://sadsj.org/index.php/revista/article/view/735",
+        "tags": [
+          "Planejamento",
+          "Compliance",
+          "Risco"
+        ]
+      },
+      {
+        "title": "Ferramentas de IA para Gerenciamento de Projetos: 12 Opções para Aumentar a Eficiência",
+        "summary": "Este artigo explora como ferramentas de IA podem aprimorar os fluxos de trabalho de gerenciamento de projetos, abordando diferentes ferramentas para atender a necessidades específicas. Para gerentes de projetos de software no setor financeiro, a implementação de IA pode facilitar a estimativa de cronogramas, automatizar relatórios de status e melhorar a gestão de riscos, resultando em projetos mais ágeis e com maior aderência aos requisitos regulatórios. A análise preditiva proporcionada pela IA permite antecipar possíveis obstáculos e ajustar estratégias proativamente.",
+        "source": "Coursera",
+        "url": "https://www.coursera.org/articles/ai-project-management-tools",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Risco"
+        ]
+      },
+      {
+        "title": "Agentes de IA no Gerenciamento de Projetos: Benefícios e Casos de Uso",
+        "summary": "A Atlassian discute como agentes de IA podem aprimorar os fluxos de trabalho de gerenciamento de projetos, atuando como ferramentas colaborativas que suportam planejamento, execução e entrega. Para gerentes de projetos de software no setor financeiro, esses agentes podem automatizar tarefas rotineiras, como coordenação de reuniões e manutenção de documentação, permitindo que a equipe se concentre em atividades de maior valor agregado. Além disso, a IA pode auxiliar na análise de dados em tempo real, facilitando a tomada de decisões informadas e a gestão de riscos.",
+        "source": "Atlassian",
+        "url": "https://www.atlassian.com/agile/project-management/ai-agents",
+        "tags": [
+          "Planejamento",
+          "Automação",
+          "Risco"
+        ]
+      },
+      {
+        "title": "IA no Gerenciamento de Projetos: Como Equipes Usam IA para Planejar de Forma Inteligente e Entregar Mais Rápido",
+        "summary": "Este artigo explora como equipes estão utilizando IA para planejar de forma mais inteligente e entregar projetos mais rapidamente. Para gerentes de projetos de software no setor financeiro, a IA pode otimizar o planejamento de sprints, melhorar a colaboração entre equipes distribuídas e garantir a conformidade com as regulamentações vigentes. A integração de IA nos fluxos de trabalho de gerenciamento de projetos permite uma abordagem mais ágil e eficiente, resultando em entregas de maior qualidade e dentro dos prazos estabelecidos.",
+        "source": "monday.com Blog",
+        "url": "https://monday.com/blog/project-management/ai-project-management/",
+        "tags": [
+          "Planejamento",
+          "Estimativa",
+          "Agile"
+        ]
+      }
+    ]
+  },
+  "generated_at": "2026-07-25T14:45:13.844Z"
+}
