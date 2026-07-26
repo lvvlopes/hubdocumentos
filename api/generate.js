@@ -314,16 +314,27 @@ module.exports = async (req, res) => {
       ? `feat: notícias ${today} (+${totalAdded} artigos em ${catKeys.filter(k => stats.added[k] > 0).join(', ')})`
       : `chore: verificação sem novos artigos ${today}`;
 
-    const commitBody = {
+    const commitContent = Buffer.from(JSON.stringify(existingData, null, 2)).toString('base64');
+    const doCommit = (sha) => put('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}`, hdrs, {
       message: commitMsg,
-      content: Buffer.from(JSON.stringify(existingData, null, 2)).toString('base64'),
+      content: commitContent,
       branch: GH_BRANCH,
-      ...(existingSha ? { sha: existingSha } : {}),
-    };
+      ...(sha ? { sha } : {}),
+    });
 
-    const commitResp = await put('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}`, hdrs, commitBody);
-    if (commitResp.status !== 200 && commitResp.status !== 201)
-      return res.status(502).json({ error: 'Erro ao salvar no GitHub', detail: commitResp.body });
+    let commitResp = await doCommit(existingSha);
+
+    // 409 = SHA desatualizado (o arquivo mudou entre a leitura e a escrita).
+    // Rebusca o SHA atual e tenta de novo uma vez.
+    if (commitResp.status === 409) {
+      const fresh = await get('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}?ref=${GH_BRANCH}`, hdrs);
+      if (fresh.status === 200) commitResp = await doCommit(fresh.body.sha);
+    }
+
+    if (commitResp.status !== 200 && commitResp.status !== 201) {
+      const detail = commitResp.body?.message || JSON.stringify(commitResp.body).slice(0, 200);
+      return res.status(502).json({ error: `Erro ao salvar no GitHub (${commitResp.status}): ${detail}` });
+    }
 
     res.status(200).json({ ok: true, date: today, stats });
 
