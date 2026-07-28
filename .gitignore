@@ -2,6 +2,10 @@ node_modules/
 .vercel/
 .env
 .env.local
+
+# Segredos e anotações locais (NUNCA versionar)
+CONFIG.txt
+*.secret
 *.log
 __pycache__/
 .venv/
