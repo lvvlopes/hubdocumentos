@@ -35,14 +35,18 @@ const CATEGORIES = {
     label: 'Notícias IA',
     searchPrompt: `Busque nos principais portais de tecnologia DO BRASIL E DO MUNDO as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
 
-PRIORIZE notícias internacionais (do mundo): a maioria dos artigos deve vir de portais internacionais — TechCrunch, The Verge, Wired, MIT Technology Review, VentureBeat, Reuters Tech, Bloomberg Technology.
+PRIORIZE notícias internacionais (do mundo). Consulte com prioridade estas fontes de referência:
+- Imprensa de tecnologia: TechCrunch (seção de IA: techcrunch.com/category/artificial-intelligence), The Verge (theverge.com/ai-artificial-intelligence), Ars Technica (arstechnica.com/ai), Wired, MIT Technology Review, Reuters, Bloomberg.
+- Anúncios oficiais dos grandes laboratórios (fonte primária de lançamentos): OpenAI (openai.com/news), Anthropic (anthropic.com/news), Google AI (blog.google/technology/ai).
+- Curadorias e boletins: TLDR AI (tldr.tech/ai), The Batch da DeepLearning.AI (deeplearning.ai/the-batch), Hacker News (news.ycombinator.com).
 Portais brasileiros: CNN Brasil (tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (mas apenas 1 ou 2; o restante deve ser internacional).
 
 FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHEIROS DE SOFTWARE: oportunidades de negócio, ferramentas aplicáveis, mudanças de mercado, novos modelos e APIs, decisões estratégicas das empresas de IA.
 
-PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão. Descarte notícias menores ou de nicho.
+PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão das ÚLTIMAS 24 HORAS. Descarte notícias menores ou de nicho.
 
-PROIBIDO (NÃO traga): páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa; conteúdo de marketing ou publieditorial. Se o link for do site da própria empresa promovendo seu produto, DESCARTE — prefira a cobertura JORNALÍSTICA independente sobre o mesmo fato.
+PERMITIDO como fonte primária: anúncios oficiais de lançamento/pesquisa dos grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral) — um lançamento de modelo é notícia legítima.
+PROIBIDO (NÃO traga): conteúdo de marketing, publieditorial, tutorial ou página de produto de fornecedores menores tentando VENDER a ferramenta. Diferencie: "OpenAI lança modelo X" (notícia, ok) vs. "conheça as vantagens do produto da empresa Y" (marketing, descarte).
 
 IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente ou deduza URLs.
 
@@ -61,7 +65,7 @@ Traga 8 a 10 notícias.`,
     label: 'Dev de Software',
     searchPrompt: `Busque nas ÚLTIMAS 24 HORAS, em veículos JORNALÍSTICOS conceituados do Brasil e do mundo, NOTÍCIAS sobre o impacto da INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
 
-Veículos internacionais de referência: Reuters, Bloomberg, The Verge, Wired, MIT Technology Review, Ars Technica, InfoQ, The New Stack, IEEE Spectrum.
+Veículos internacionais de referência: InfoQ (infoq.com), The New Stack (thenewstack.io), Ars Technica (arstechnica.com/ai), The Verge, Reuters, Bloomberg, MIT Technology Review, IEEE Spectrum. Use também como sinal de relevância o Hacker News (news.ycombinator.com) e o GitHub Trending (github.com/trending) para identificar o que está repercutindo — mas o artigo final deve apontar para a cobertura/fonte original, não para a lista.
 Veículos brasileiros de referência: Tecnoblog, Canaltech, Olhar Digital, InfoMoney, CNN Brasil, Exame, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (1 ou 2; o resto internacional).
 
 O QUE BUSCAR (jornalismo, análise, dados, estudos, tendências): como a IA está mudando a rotina de desenvolvimento, estudos sobre produtividade e qualidade de código com IA, pesquisas e benchmarks, movimentos e decisões relevantes do setor, debates sobre segurança/qualidade, impactos no mercado de trabalho de engenharia.
