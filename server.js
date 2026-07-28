@@ -81,6 +81,7 @@ server.on('request', (req, res) => {
 
   if (p === '/api/files') return origFilesHandler(req, mockRes(200));
   if (p === '/api/edition') { req.query = Object.fromEntries(new URL(req.url, 'http://x').searchParams); return require('./api/edition')(req, mockRes(200)); }
+  if (p === '/api/delete' && req.method === 'POST') { return require('./api/delete')(req, mockRes(200)); }
   if (p === '/api/generate' && req.method === 'POST') {
     res.writeHead(200, {'Content-Type':'application/json'});
     return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));

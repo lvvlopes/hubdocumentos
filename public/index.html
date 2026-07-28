@@ -231,6 +231,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
   transition:opacity .15s;
 }
 .btn-ig:hover{opacity:.85}
+.btn-del{
+  background:var(--surface2);border:1px solid var(--border);color:var(--text-muted);
+  font-size:12px;padding:5px 9px;border-radius:6px;cursor:pointer;transition:all .15s;
+}
+.btn-del:hover{border-color:rgba(239,68,68,.5);color:#f87171;background:rgba(239,68,68,.08)}
 #ig-modal{
   position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
   display:none;align-items:center;justify-content:center;z-index:200;padding:20px;
@@ -608,9 +613,41 @@ function renderCards(articles) {
       <div class="card-footer">
         <button class="btn-expand" onclick="toggle(${i},this)">Ver mais ↓</button>
         <button class="btn-ig" onclick="openIg(${i})" title="Publicar no Instagram">📷 Instagram</button>
+        <button class="btn-del" onclick="deleteArticle(${i})" title="Apagar notícia">🗑</button>
         <a class="btn-src" href="${esc(a.url)}" target="_blank" rel="noopener">Ler na fonte ↗</a>
       </div>
     </div>`).join('');
+}
+
+// ── Apagar notícia (somente admin) ────────────────────────────────
+async function deleteArticle(i) {
+  const a = visibleArticles[i];
+  if (!a) return;
+  if (!a.id) return showToast('Esta notícia não pode ser apagada (sem id).', 'error', '⚠️');
+  if (!confirm(`Apagar esta notícia?\n\n"${a.title}"`)) return;
+
+  const key = getAdminKey();
+  if (!key) return;
+
+  try {
+    const r = await fetch('/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+      body: JSON.stringify({ id: a.id }),
+    });
+    const d = await r.json();
+    if (r.status === 401) { handleAuthError(); return; }
+    if (!r.ok || d.error) throw new Error(d.error || 'Falha ao apagar.');
+
+    // remove da estrutura local e re-renderiza sem recarregar
+    const list = currentData.categories[currentCat] || [];
+    const idx = list.findIndex(x => x.id === a.id);
+    if (idx > -1) list.splice(idx, 1);
+    showEdition();
+    showToast('Notícia apagada.', 'success', '🗑');
+  } catch (err) {
+    showToast(`Erro ao apagar: ${err.message}`, 'error', '❌');
+  }
 }
 
 // ── Instagram ─────────────────────────────────────────────────────

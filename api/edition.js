@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     const supa = db();
     const { data, error } = await supa
       .from('articles')
-      .select('title, summary, source, url, tags, category, created_at')
+      .select('id, title, summary, source, url, tags, category, created_at')
       .eq('date', date)
       .order('created_at', { ascending: true });
 
@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
 
     const categories = { ia: [], dev: [], projetos: [] };
     for (const a of data || []) {
-      const item = { title: a.title, summary: a.summary, source: a.source, url: a.url, tags: a.tags || [] };
+      const item = { id: a.id, title: a.title, summary: a.summary, source: a.source, url: a.url, tags: a.tags || [] };
       (categories[a.category] || (categories[a.category] = [])).push(item);
     }
 
