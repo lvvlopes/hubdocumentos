@@ -42,6 +42,8 @@ FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHE
 
 PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão. Descarte notícias menores ou de nicho.
 
+PROIBIDO (NÃO traga): páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa; conteúdo de marketing ou publieditorial. Se o link for do site da própria empresa promovendo seu produto, DESCARTE — prefira a cobertura JORNALÍSTICA independente sobre o mesmo fato.
+
 IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente ou deduza URLs.
 
 Para cada notícia escreva:
@@ -57,19 +59,26 @@ Traga 8 a 10 notícias.`,
 
   dev: {
     label: 'Dev de Software',
-    searchPrompt: `Busque nas últimas 24 horas nos principais portais (GitHub Blog, Dev.to, InfoQ, The New Stack, Ars Technica, Hacker News top stories, Stack Overflow Blog) notícias sobre o USO DE INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
+    searchPrompt: `Busque nas ÚLTIMAS 24 HORAS, em veículos JORNALÍSTICOS conceituados do Brasil e do mundo, NOTÍCIAS sobre o impacto da INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
 
-Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: Tecnoblog, Canaltech, InfoMoney, CNN Brasil Tecnologia, Exame, iMasters, Olhar Digital.
+Veículos internacionais de referência: Reuters, Bloomberg, The Verge, Wired, MIT Technology Review, Ars Technica, InfoQ, The New Stack, IEEE Spectrum.
+Veículos brasileiros de referência: Tecnoblog, Canaltech, Olhar Digital, InfoMoney, CNN Brasil, Exame, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (1 ou 2; o resto internacional).
 
-PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão na comunidade de desenvolvimento. Descarte notícias menores ou de nicho.
+O QUE BUSCAR (jornalismo, análise, dados, estudos, tendências): como a IA está mudando a rotina de desenvolvimento, estudos sobre produtividade e qualidade de código com IA, pesquisas e benchmarks, movimentos e decisões relevantes do setor, debates sobre segurança/qualidade, impactos no mercado de trabalho de engenharia.
 
-Foco: ferramentas de geração de código (GitHub Copilot, Cursor, Windsurf, Cline, etc.), IA para testes automatizados, debugging com IA, code review com IA, novos recursos em IDEs, integrações de LLM em pipelines de dev, aumento de produtividade do desenvolvedor, novas APIs e SDKs relevantes, frameworks de agentes para código.
+PROIBIDO (NÃO traga):
+- Páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa.
+- Conteúdo de marketing, "anúncio de novo recurso", tutorial ou publieditorial.
+- Regra prática: se o link for do site da própria empresa promovendo seu produto, DESCARTE. Prefira a cobertura JORNALÍSTICA independente sobre o mesmo fato.
+
+PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão. Descarte o que for menor, de nicho ou promocional.
+IMPORTANTE: use APENAS URLs reais encontradas na busca. NUNCA invente URLs.
 
 Para cada notícia escreva:
-TÍTULO: ...
+TÍTULO: ... (pode estar em inglês; será traduzido depois)
 FONTE: ...
 URL: ...
-RESUMO: 2 parágrafos curtos focando no impacto prático para desenvolvedores e engenheiros de software
+RESUMO: 2 parágrafos curtos sobre o fato e seu impacto prático para desenvolvedores e engenheiros
 TAGS: escolha de Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps
 
 Traga 8 a 10 notícias.`,
@@ -87,6 +96,8 @@ Busque nos portais: PMI blog, ProjectManagement.com, CIO, InfoQ, TechRepublic, H
 Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: InfoMoney, Exame, CNN Brasil, IT Forum, CIO Brasil, MIT Sloan Review Brasil, Você RH/Exame.
 
 PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão para gestão de projetos e tecnologia. Descarte notícias menores ou de nicho.
+
+PROIBIDO (NÃO traga): páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa; conteúdo de marketing ou publieditorial. Prefira sempre a cobertura JORNALÍSTICA e análises independentes sobre o mesmo tema.
 
 Foco: IA para estimativa e planejamento de projetos, automação de status reports, gestão de backlog com IA, ferramentas de IA para líderes técnicos (Jira AI, Linear, GitHub Projects), IA para gestão de risco em projetos, análise preditiva de cronograma, gestão de equipes distribuídas com IA, metodologias ágeis potencializadas por IA, compliance e rastreabilidade com IA, impactos de IA em equipes de desenvolvimento financeiro/seguros.
 
@@ -125,13 +136,15 @@ Corrija caracteres corrompidos ou substituídos (ex: "c�digo", "gera��o") 
 a acentuação correta em português ("código", "geração"). O JSON final deve conter
 apenas texto UTF-8 válido e bem acentuado.
 
-IMPORTANTE — IDIOMA:
-O campo "title" e o campo "summary" devem estar SEMPRE em português do Brasil.
-Se o título original estiver em inglês, TRADUZA para português do Brasil de forma
-natural e jornalística (não traduza ao pé da letra).
-Mantenha em inglês apenas nomes próprios: empresas (OpenAI, Google), produtos
+IMPORTANTE — IDIOMA (REGRA CRÍTICA):
+Os campos "title" e "summary" devem estar OBRIGATORIAMENTE em português do Brasil.
+NENHUM título pode ficar em inglês. Se o título original estiver em inglês, TRADUZA-O
+para português do Brasil de forma natural e jornalística (não ao pé da letra).
+Exemplo: "OpenAI launches new coding agent" -> "OpenAI lança novo agente de programação".
+Antes de finalizar, releia cada "title": se detectar qualquer frase em inglês, reescreva em português.
+Mantenha em inglês APENAS nomes próprios: empresas (OpenAI, Google), produtos
 (Copilot, Cursor), modelos (GPT-4o, Claude) e termos técnicos consagrados
-(prompt, benchmark, open source).
+(prompt, benchmark, open source, deploy).
 O campo "source" mantém o nome original do portal (ex: TechCrunch).
 
 NOTÍCIAS:
