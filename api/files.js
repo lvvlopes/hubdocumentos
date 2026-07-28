@@ -1,37 +1,33 @@
-const fs = require('fs');
-const path = require('path');
+// Lista as edições (datas) com a contagem de artigos por categoria.
+const { db } = require('../lib/db');
 
-const DATA_DIR = path.join(__dirname, '..', 'public', 'data');
-
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Cache-Control', 'no-cache');
 
-  const editions = [];
   try {
-    const files = fs.readdirSync(DATA_DIR)
-      .filter(f => /^\d{4}-\d{2}-\d{2}\.json$/.test(f))
-      .sort((a, b) => b.localeCompare(a));
+    const supa = db();
+    // Busca data+categoria de todos os artigos e agrega em memória.
+    const { data, error } = await supa
+      .from('articles')
+      .select('date, category');
 
-    for (const file of files) {
-      try {
-        const data = JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
-        const cats = data.categories || { ia: data.articles || [] };
-        const counts = {
-          ia:       (cats.ia       || []).length,
-          dev:      (cats.dev      || []).length,
-          projetos: (cats.projetos || []).length,
-        };
-        editions.push({
-          date: data.date,
-          file,
-          counts,
-          total: counts.ia + counts.dev + counts.projetos,
-          generated_at: data.generated_at,
-        });
-      } catch (_) {}
+    if (error) return res.status(500).json({ error: error.message });
+
+    const byDate = {};
+    for (const row of data || []) {
+      const d = row.date;
+      if (!byDate[d]) byDate[d] = { date: d, file: d, counts: { ia: 0, dev: 0, projetos: 0 } };
+      if (byDate[d].counts[row.category] != null) byDate[d].counts[row.category]++;
     }
-  } catch (_) {}
 
-  res.status(200).json(editions);
+    const editions = Object.values(byDate)
+      .map(e => ({ ...e, total: e.counts.ia + e.counts.dev + e.counts.projetos }))
+      .sort((a, b) => b.date.localeCompare(a.date));
+
+    res.status(200).json(editions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

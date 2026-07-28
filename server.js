@@ -3,6 +3,17 @@ const fs   = require('fs');
 const path = require('path');
 const url  = require('url');
 
+// Carrega variáveis de um .env local (dev), se existir
+try {
+  const envFile = path.join(__dirname, '.env');
+  if (fs.existsSync(envFile)) {
+    for (const line of fs.readFileSync(envFile, 'utf8').split('\n')) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/i);
+      if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+    }
+  }
+} catch (_) {}
+
 const ROOT   = path.join(__dirname, 'public');
 const API_DIR = path.join(__dirname, 'api');
 const PORT   = 3000;
@@ -69,6 +80,7 @@ server.on('request', (req, res) => {
   });
 
   if (p === '/api/files') return origFilesHandler(req, mockRes(200));
+  if (p === '/api/edition') { req.query = Object.fromEntries(new URL(req.url, 'http://x').searchParams); return require('./api/edition')(req, mockRes(200)); }
   if (p === '/api/generate' && req.method === 'POST') {
     res.writeHead(200, {'Content-Type':'application/json'});
     return res.end(JSON.stringify({ error: 'Geração disponível apenas no Vercel.' }));

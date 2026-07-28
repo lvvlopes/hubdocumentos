@@ -223,19 +223,9 @@ async function fetchCategory(apiKey, category) {
   return filterValidUrls(parsed?.articles || []);
 }
 
-// ── GitHub helpers ────────────────────────────────────────────────
-
-function ghHeaders(token) {
-  return {
-    'Authorization': `Bearer ${token}`,
-    'Accept': 'application/vnd.github+json',
-    'User-Agent': 'ai-news-hub',
-    'X-GitHub-Api-Version': '2022-11-28',
-    'Content-Type': 'application/json',
-  };
-}
-
 // ── Main handler ──────────────────────────────────────────────────
+
+const { db } = require('../lib/db');
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -245,40 +235,17 @@ module.exports = async (req, res) => {
     return res.status(401).json({ error: 'Senha inválida.' });
 
   const OPENAI_KEY = process.env.OPENAI_API_KEY;
-  const GH_TOKEN   = process.env.GITHUB_TOKEN;
-  const GH_REPO    = process.env.GITHUB_REPO;
-  const GH_BRANCH  = process.env.GITHUB_BRANCH || 'main';
+  if (!OPENAI_KEY)
+    return res.status(500).json({ error: 'Variável de ambiente não configurada (OPENAI_API_KEY).' });
 
-  if (!OPENAI_KEY || !GH_TOKEN || !GH_REPO)
-    return res.status(500).json({ error: 'Variáveis de ambiente não configuradas (OPENAI_API_KEY, GITHUB_TOKEN, GITHUB_REPO).' });
-
-  const [owner, repoName] = GH_REPO.split('/');
   // Data no fuso de Brasília (UTC ficava 1 dia à frente após as 21h BRT)
   const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
-  const jsonPath = `public/data/${today}.json`;
+  const catKeys = ['ia', 'dev', 'projetos'];
 
   try {
-    // 1. Buscar arquivo existente do dia
-    const hdrs = ghHeaders(GH_TOKEN);
-    const existingFile = await get('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}?ref=${GH_BRANCH}`, hdrs);
+    const supa = db();
 
-    let existingData = { date: today, categories: { ia: [], dev: [], projetos: [] } };
-    let existingSha  = null;
-
-    if (existingFile.status === 200) {
-      existingSha = existingFile.body.sha;
-      try {
-        existingData = JSON.parse(Buffer.from(existingFile.body.content, 'base64').toString('utf8'));
-        // backward compat: migrate old "articles" flat format
-        if (existingData.articles && !existingData.categories) {
-          existingData.categories = { ia: existingData.articles, dev: [], projetos: [] };
-          delete existingData.articles;
-        }
-        existingData.categories = existingData.categories || { ia: [], dev: [], projetos: [] };
-      } catch (_) {}
-    }
-
-    // 2. Buscar as 3 categorias em paralelo
+    // 1. Buscar as 3 categorias em paralelo
     const results = await Promise.allSettled([
       fetchCategory(OPENAI_KEY, 'ia'),
       fetchCategory(OPENAI_KEY, 'dev'),
@@ -287,53 +254,37 @@ module.exports = async (req, res) => {
 
     const stats = { added: {}, existing: {}, errors: [] };
 
-    const catKeys = ['ia', 'dev', 'projetos'];
     for (let i = 0; i < 3; i++) {
       const key = catKeys[i];
-      const existing = existingData.categories[key] || [];
-      const existingUrls = new Set(existing.map(a => a.url));
+      stats.added[key] = 0;
 
-      if (results[i].status === 'fulfilled') {
-        const newArticles = results[i].value.filter(a => a.url && !existingUrls.has(a.url));
-        existingData.categories[key] = [...existing, ...newArticles];
-        stats.added[key]    = newArticles.length;
-        stats.existing[key] = existing.length;
-      } else {
+      if (results[i].status !== 'fulfilled') {
         stats.errors.push(`${key}: ${results[i].reason?.message || 'erro desconhecido'}`);
-        stats.added[key]    = 0;
-        stats.existing[key] = existing.length;
+        continue;
       }
-    }
 
-    existingData.generated_at = new Date().toISOString();
-    existingData.date = today;
+      const rows = results[i].value
+        .filter(a => a.url && a.title)
+        .map(a => ({
+          date: today,
+          category: key,
+          title: a.title,
+          summary: a.summary || '',
+          source: a.source || '',
+          url: a.url,
+          tags: Array.isArray(a.tags) ? a.tags : [],
+        }));
 
-    // 3. Commit no GitHub
-    const totalAdded = Object.values(stats.added).reduce((s, n) => s + n, 0);
-    const commitMsg = totalAdded > 0
-      ? `feat: notícias ${today} (+${totalAdded} artigos em ${catKeys.filter(k => stats.added[k] > 0).join(', ')})`
-      : `chore: verificação sem novos artigos ${today}`;
+      if (!rows.length) continue;
 
-    const commitContent = Buffer.from(JSON.stringify(existingData, null, 2)).toString('base64');
-    const doCommit = (sha) => put('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}`, hdrs, {
-      message: commitMsg,
-      content: commitContent,
-      branch: GH_BRANCH,
-      ...(sha ? { sha } : {}),
-    });
+      // upsert com deduplicação por (category, url): linhas repetidas são ignoradas
+      const { data, error } = await supa
+        .from('articles')
+        .upsert(rows, { onConflict: 'category,url', ignoreDuplicates: true })
+        .select('id');
 
-    let commitResp = await doCommit(existingSha);
-
-    // 409 = SHA desatualizado (o arquivo mudou entre a leitura e a escrita).
-    // Rebusca o SHA atual e tenta de novo uma vez.
-    if (commitResp.status === 409) {
-      const fresh = await get('api.github.com', `/repos/${owner}/${repoName}/contents/${jsonPath}?ref=${GH_BRANCH}`, hdrs);
-      if (fresh.status === 200) commitResp = await doCommit(fresh.body.sha);
-    }
-
-    if (commitResp.status !== 200 && commitResp.status !== 201) {
-      const detail = commitResp.body?.message || JSON.stringify(commitResp.body).slice(0, 200);
-      return res.status(502).json({ error: `Erro ao salvar no GitHub (${commitResp.status}): ${detail}` });
+      if (error) { stats.errors.push(`${key}: ${error.message}`); continue; }
+      stats.added[key] = data ? data.length : 0;
     }
 
     res.status(200).json({ ok: true, date: today, stats });
