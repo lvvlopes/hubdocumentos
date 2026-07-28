@@ -2,6 +2,7 @@ const https = require('https');
 const fs    = require('fs');
 const path  = require('path');
 const { Resvg } = require('@resvg/resvg-js');
+const { db, BUCKET } = require('../lib/db');
 
 module.exports.config = { maxDuration: 60 };
 
@@ -166,31 +167,22 @@ async function composeCard(bgB64, article) {
   return Buffer.from(png).toString('base64');
 }
 
-// ── Hospeda a imagem no GitHub (Instagram exige URL pública) ───────
+// ── Hospeda a imagem no Storage do Supabase (Instagram exige URL pública) ──
 
-async function uploadImageToGitHub(token, repo, branch, b64) {
-  const [owner, repoName] = repo.split('/');
-  const imgPath = `public/ig/${Date.now()}.png`;
+async function uploadImage(b64) {
+  const buffer = Buffer.from(b64, 'base64');
+  const filePath = `${Date.now()}.png`;
+  const supa = db();
 
-  const resp = await httpsRequest('PUT', 'api.github.com',
-    `/repos/${owner}/${repoName}/contents/${imgPath}`, {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/vnd.github+json',
-      'User-Agent': 'ai-news-hub',
-      'X-GitHub-Api-Version': '2022-11-28',
-      'Content-Type': 'application/json',
-    }, {
-      message: `feat: imagem para post no Instagram`,
-      content: b64,
-      branch,
-    });
+  const { error } = await supa.storage.from(BUCKET).upload(filePath, buffer, {
+    contentType: 'image/png',
+    upsert: false,
+  });
+  if (error) throw new Error(`Erro ao hospedar imagem: ${error.message}`);
 
-  if (resp.status !== 200 && resp.status !== 201) {
-    throw new Error(`Erro ao hospedar imagem no GitHub: ${JSON.stringify(resp.body).slice(0, 300)}`);
-  }
-
-  // URL raw pública — disponível imediatamente, sem esperar redeploy do Vercel
-  return `https://raw.githubusercontent.com/${owner}/${repoName}/${branch}/${imgPath}`;
+  const { data } = supa.storage.from(BUCKET).getPublicUrl(filePath);
+  if (!data?.publicUrl) throw new Error('URL pública da imagem não gerada.');
+  return data.publicUrl;
 }
 
 // ── Publica no Instagram ───────────────────────────────────────────
@@ -245,12 +237,9 @@ module.exports = async (req, res) => {
   const OPENAI_KEY  = process.env.OPENAI_API_KEY;
   const IG_TOKEN    = process.env.INSTAGRAM_ACCESS_TOKEN;
   const IG_ACCOUNT  = process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID;
-  const GH_TOKEN    = process.env.GITHUB_TOKEN;
-  const GH_REPO     = process.env.GITHUB_REPO;
-  const GH_BRANCH   = process.env.GITHUB_BRANCH || 'main';
 
-  if (!OPENAI_KEY || !IG_TOKEN || !IG_ACCOUNT || !GH_TOKEN || !GH_REPO) {
-    return res.status(500).json({ error: 'Variáveis não configuradas: OPENAI_API_KEY, INSTAGRAM_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID, GITHUB_TOKEN, GITHUB_REPO' });
+  if (!OPENAI_KEY || !IG_TOKEN || !IG_ACCOUNT) {
+    return res.status(500).json({ error: 'Variáveis não configuradas: OPENAI_API_KEY, INSTAGRAM_ACCESS_TOKEN, INSTAGRAM_BUSINESS_ACCOUNT_ID' });
   }
 
   const { article, caption } = await readBody(req);
@@ -263,14 +252,24 @@ module.exports = async (req, res) => {
     // 2. Sobrepõe título + rótulo + fonte com tipografia real
     const b64 = await composeCard(bgB64, article);
 
-    // 3. Hospeda no GitHub para obter URL pública
-    const imageUrl = await uploadImageToGitHub(GH_TOKEN, GH_REPO, GH_BRANCH, b64);
+    // 3. Hospeda no Storage do Supabase para obter URL pública
+    const imageUrl = await uploadImage(b64);
 
     // 4. Publica no Instagram
     const postId = await publishToInstagram(IG_TOKEN, IG_ACCOUNT, imageUrl, caption);
 
     // 5. Comenta o link da notícia no post
     if (article.url) await commentLink(IG_TOKEN, postId, article.url);
+
+    // 6. Registra o post no banco (histórico)
+    try {
+      await db().from('instagram_posts').insert({
+        category: article.category || null,
+        image_url: imageUrl,
+        caption,
+        ig_post_id: postId,
+      });
+    } catch (_) { /* histórico é secundário; não falha a publicação */ }
 
     res.status(200).json({
       ok: true,

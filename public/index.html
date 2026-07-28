@@ -506,7 +506,7 @@ function renderSidebar() {
 // ── Edition + category ─────────────────────────────────────────────
 async function selectEdition(ed) {
   activeTag = 'all';
-  const r    = await fetch(`/data/${ed.date}.json`);
+  const r    = await fetch(`/api/edition?date=${ed.date}`);
   currentData = await r.json();
   // backward compat
   if (currentData.articles && !currentData.categories) {

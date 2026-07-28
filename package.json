@@ -3,8 +3,9 @@
   "versionBase": "1.3",
   "versionOffset": 54,
   "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@supabase/supabase-js": "^2.110.9",
     "agent-browser": "^0.27.0",
-    "satori": "^0.12.2",
-    "@resvg/resvg-js": "^2.6.2"
+    "satori": "^0.12.2"
   }
 }
