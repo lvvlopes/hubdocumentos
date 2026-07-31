@@ -66,7 +66,8 @@ a{color:inherit;text-decoration:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ── 3. TICKER ── */
-.ticker{background:var(--hero);color:var(--hero-text);border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+.ticker{display:none;background:var(--hero);color:var(--hero-text);border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+.ticker.show{display:block}
 .ticker .wrap{display:flex;align-items:stretch;gap:0;padding:0}
 .ticker-lbl{display:flex;align-items:center;gap:8px;padding:0 18px;background:var(--gold);color:var(--ink);
   font-family:var(--mono);text-transform:uppercase;letter-spacing:0.12em;font-size:10.5px;font-weight:600;flex-shrink:0}
@@ -268,19 +269,38 @@ a{color:inherit;text-decoration:none}
 @media (max-width:720px){
   body{font-size:16px}
   .wrap{padding:0 16px}
-  .ticker,.utility .u-last,.utility .u-right{display:none}
+  .ticker,.ticker.show,.utility .u-last,.utility .u-right{display:none!important}
   .masthead .wrap{flex-wrap:wrap;gap:14px}
   .signal{display:none}
   .wordmark{font-size:26px}
   .mast-right{width:100%;margin-left:0}
-  .hero-h{font-size:32px}
+  .hero{min-height:0;padding:24px 20px 28px;border-radius:3px}
+  .hero-h{font-size:28px;margin:12px 0 10px}
+  .hero-sf{font-size:16px}
   .subs{grid-template-columns:1fr}
-  .sub:first-child{border-right:none;padding-right:0;border-bottom:1px solid var(--line)}
-  .sub:last-child{padding-left:0}
+  .sub:first-child{border-right:none;padding-right:0;border-bottom:1px solid var(--line);padding-bottom:22px}
+  .sub:last-child{padding-left:0;padding-top:22px}
   .grade{grid-template-columns:1fr}
-  .card{border-right:none!important}
-  .tagbar{overflow-x:auto;flex-wrap:nowrap}
+  .card{border-right:none!important;padding:18px 0}
+  .thumb{height:180px}
+  .tagbar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .filters{gap:8px}
+  .rail-block{margin-bottom:26px}
+  .foot-top{gap:24px}
+  .foot-cols{gap:32px}
   #toast{left:14px;right:14px;bottom:14px;max-width:none}
+  .ig-box{padding:18px;border-radius:4px;max-height:94vh}
+  .ig-row{flex-wrap:wrap}
+  .ig-row input{width:100%}
+  .ig-copy{width:100%;padding:10px 0}
+  .ig-actions{flex-wrap:wrap}
+  .ig-actions button{flex:1;min-width:120px}
+}
+@media (max-width:420px){
+  .wordmark{font-size:22px}
+  .tagline{font-size:9px}
+  .btn,.btn-primary{padding:8px 11px;font-size:10px}
+  .hero-h{font-size:24px}
 }
 
 @media (prefers-reduced-motion:reduce){
@@ -315,7 +335,7 @@ a{color:inherit;text-decoration:none}
 </div></header>
 
 <!-- 3. TICKER -->
-<div class="ticker" id="ticker" style="display:none"><div class="wrap">
+<div class="ticker" id="ticker"><div class="wrap">
   <div class="ticker-lbl"><span class="live-dot"></span> Ao vivo</div>
   <div class="ticker-track"><div class="ticker-move" id="ticker-move"></div></div>
 </div></div>
@@ -475,7 +495,7 @@ function renderAll(){
     document.getElementById('u-last').innerHTML='<b>Última:</b> '+esc(allArts[0].title);
     const tk=allArts.slice(0,12).map(a=>`<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a>`).join('');
     document.getElementById('ticker-move').innerHTML=tk+tk;
-    document.getElementById('ticker').style.display='block';
+    document.getElementById('ticker').classList.add('show');
   }
 
   // lista da categoria atual + filtro de tag
