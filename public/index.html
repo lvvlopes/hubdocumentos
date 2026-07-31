@@ -88,14 +88,14 @@ a{color:inherit;text-decoration:none}
 /* ── HERO ── */
 .hero{position:relative;overflow:hidden;border-radius:4px;border-top:3px solid var(--tint,var(--gold));
   min-height:430px;display:flex;flex-direction:column;justify-content:flex-end;
-  padding:34px 36px 40px;color:var(--hero-text);isolation:isolate;
-  background:#15141b url('/static/hero/default.jpg') center/cover no-repeat}
-/* tinta da categoria sobre a foto */
-.hero::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:-2;
-  background:var(--tint,var(--gold));opacity:.42;mix-blend-mode:multiply}
-/* escurecimento para legibilidade do texto (base) */
-.hero::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:-1;
-  background:linear-gradient(to top,rgba(12,11,17,.94) 0%,rgba(12,11,17,.6) 48%,rgba(12,11,17,.42) 100%)}
+  padding:34px 36px 40px;color:var(--hero-text);
+  background:linear-gradient(155deg,var(--hero-2),var(--hero))}
+.hero::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(60% 55% at 12% 8%,rgba(244,178,35,.30),transparent 60%),
+    radial-gradient(55% 55% at 92% 6%,rgba(124,92,214,.28),transparent 60%),
+    radial-gradient(60% 60% at 88% 96%,rgba(24,143,134,.26),transparent 62%)}
+.hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero-in{position:relative;z-index:1;max-width:640px}
 .hero-h{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;font-size:46px;line-height:1.04;margin:16px 0 14px;cursor:pointer;color:var(--hero-text)}
 .hero-h:hover{color:var(--gold)}
@@ -176,18 +176,18 @@ a{color:inherit;text-decoration:none}
 .grade{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
 .card{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:20px 22px 18px;display:flex;flex-direction:column}
 .card:nth-child(3n){border-right:none}
-.thumb{position:relative;height:220px;border-radius:3px;margin-bottom:16px;overflow:hidden;isolation:isolate;
-  background:#15141b url('/static/hero/default.jpg') center/cover no-repeat}
-/* tinta da categoria sobre a foto */
-.thumb::before{content:'';position:absolute;inset:0;z-index:-2;
+/* mídia do card: imagem tingida por categoria + texto sobreposto */
+.card-media{position:relative;min-height:200px;border-radius:3px;margin-bottom:14px;overflow:hidden;isolation:isolate;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:16px 16px 15px;
+  background:#15141b url('/static/hero/default2.png') center/cover no-repeat}
+.card-media::before{content:'';position:absolute;inset:0;z-index:-2;
   background:var(--tint);opacity:.5;mix-blend-mode:multiply}
-/* leve escurecimento na base p/ legibilidade do rótulo */
-.thumb::after{content:'';position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,rgba(10,9,15,.65),transparent 55%)}
-.thumb-tag{position:absolute;left:12px;bottom:12px;z-index:1;font-family:var(--mono);text-transform:uppercase;
-  letter-spacing:.14em;font-size:10px;color:rgba(255,255,255,.92)}
-.card-h{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.16;letter-spacing:-0.015em;margin:11px 0 9px;cursor:pointer}
-.card-h:hover{color:var(--gold-deep)}
+.card-media::after{content:'';position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(to top,rgba(9,8,14,.9) 0%,rgba(9,8,14,.35) 55%,transparent 100%)}
+.card-media .kicker{position:relative;z-index:1;color:#fff;margin-bottom:9px}
+.card-media .kicker i{background:var(--gold)}
+.card-h{position:relative;z-index:1;font-family:var(--display);font-weight:600;font-size:19px;line-height:1.16;letter-spacing:-0.015em;cursor:pointer;color:#fff}
+.card-h:hover{color:var(--gold)}
 .dek{font-size:15px;line-height:1.46;color:var(--ink-2);flex:1;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .dek.expanded{display:block;-webkit-line-clamp:unset}
@@ -586,9 +586,10 @@ function subHTML(a,idx){
 
 function cardHTML(a,idx){
   return `<article class="card">
-    <div class="thumb" style="--tint:${CAT[currentCat].tint}"><span class="thumb-tag">${CAT[currentCat].short}</span></div>
-    <div class="kicker"><i></i>${kicker(a)}</div>
-    <h3 class="card-h" onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</h3>
+    <div class="card-media" style="--tint:${CAT[currentCat].tint}">
+      <div class="kicker"><i></i>${kicker(a)}</div>
+      <h3 class="card-h" onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</h3>
+    </div>
     <p class="dek" id="s${idx}">${esc(normSummary(a.summary)).replace(/\n/g,'<br>')}</p>
     ${(a.tags||[]).length?`<div class="tags">${(a.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="card-foot">Fonte · ${esc(a.source||'—')}</div>
