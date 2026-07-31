@@ -97,10 +97,12 @@ a{color:inherit;text-decoration:none}
 .hero::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:.045;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 .hero-in{position:relative;z-index:1;max-width:640px}
-.hero-h{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;font-size:46px;line-height:1.04;margin:16px 0 14px;cursor:pointer;color:var(--hero-text)}
-.hero-h:hover{color:var(--gold)}
+.hero-h{font-family:var(--display);font-weight:700;letter-spacing:-0.02em;font-size:46px;line-height:1.04;margin:16px 0 14px}
+.hero-h a{color:var(--hero-text);display:block}
+.hero-h a:hover{color:var(--gold)}
 .hero-sf{font-family:var(--serif);font-size:18px;line-height:1.5;color:#C9C8C1;margin-bottom:20px;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hero-sf.expanded{display:block;-webkit-line-clamp:unset}
 .hero-meta{font-family:var(--mono);text-transform:uppercase;letter-spacing:0.12em;font-size:10.5px;color:#9A998F}
 
 /* kicker */
@@ -115,16 +117,18 @@ a{color:inherit;text-decoration:none}
 .sub{padding:22px 0;padding-right:22px}
 .sub:first-child{border-right:1px solid var(--line);padding-right:22px}
 .sub:last-child{padding-left:22px}
-.sub h3{font-family:var(--display);font-weight:600;font-size:20px;line-height:1.14;letter-spacing:-0.015em;margin:12px 0 8px;cursor:pointer}
-.sub h3:hover{color:var(--gold-deep)}
+.sub h3{font-family:var(--display);font-weight:600;font-size:20px;line-height:1.14;letter-spacing:-0.015em;margin:12px 0 8px}
+.sub h3 a{color:var(--ink);display:block}
+.sub h3 a:hover{color:var(--gold-deep)}
 .sub p{font-size:15.5px;line-height:1.45;color:var(--ink-2);
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.sub p.expanded{display:block;-webkit-line-clamp:unset}
 
 /* ── RAIL ── */
 .rail-block{margin-bottom:34px}
 .rail-head{font-family:var(--mono);text-transform:uppercase;letter-spacing:0.14em;font-size:11px;color:var(--ink);
   padding-bottom:10px;border-bottom:1.5px solid var(--ink);margin-bottom:14px;display:flex;justify-content:space-between}
-.hot{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.hot{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
 .hot:hover .hot-t{color:var(--gold-deep)}
 .hot-n{font-family:var(--display);font-weight:700;font-size:24px;line-height:1;color:var(--gold-deep);width:26px;flex-shrink:0}
 .hot-t{font-family:var(--display);font-weight:500;font-size:15px;line-height:1.2;letter-spacing:-0.01em}
@@ -183,8 +187,9 @@ a{color:inherit;text-decoration:none}
   background-repeat:no-repeat;background-position:center;background-size:contain}
 .thumb-tag{position:absolute;left:12px;bottom:12px;z-index:1;font-family:var(--mono);text-transform:uppercase;
   letter-spacing:.14em;font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5)}
-.card-h{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.16;letter-spacing:-0.015em;margin:11px 0 9px;cursor:pointer}
-.card-h:hover{color:var(--gold-deep)}
+.card-h{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.16;letter-spacing:-0.015em;margin:11px 0 9px}
+.card-h a{color:var(--ink);display:block}
+.card-h a:hover{color:var(--gold-deep)}
 .dek{font-size:15px;line-height:1.46;color:var(--ink-2);flex:1;
   display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .dek.expanded{display:block;-webkit-line-clamp:unset}
@@ -468,7 +473,7 @@ function renderAll(){
   const allArts=['ia','dev','projetos'].flatMap(k=>(cats[k]||[]).map(a=>({...a,cat:k})));
   if(allArts.length){
     document.getElementById('u-last').innerHTML='<b>Última:</b> '+esc(allArts[0].title);
-    const tk=allArts.slice(0,12).map(a=>`<a onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</a>`).join('');
+    const tk=allArts.slice(0,12).map(a=>`<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a>`).join('');
     document.getElementById('ticker-move').innerHTML=tk+tk;
     document.getElementById('ticker').style.display='block';
   }
@@ -515,10 +520,10 @@ function renderAll(){
         <div class="rail-block">
           <div class="rail-head"><span>Em alta</span><span>${allArts.length}</span></div>
           ${allArts.slice(0,5).map((a,i)=>`
-            <div class="hot" onclick="window.open('${esc(a.url)}','_blank')">
+            <a class="hot" href="${esc(a.url)}" target="_blank" rel="noopener">
               <div class="hot-n">${i+1}</div>
               <div><div class="hot-t">${esc(a.title)}</div><div class="hot-s">${CAT[a.cat].short} · ${esc(a.source||'')}</div></div>
-            </div>`).join('')}
+            </a>`).join('')}
         </div>
 
         <div class="rail-block">
@@ -564,8 +569,8 @@ function heroHTML(a,idx){
   return `<div class="hero" style="--tint:${CAT[currentCat].tint}">
     <div class="hero-in">
       <div class="kicker"><i></i>${CAT[currentCat].short} · Destaque</div>
-      <h1 class="hero-h" onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</h1>
-      <p class="hero-sf">${esc(firstPara(a.summary))}</p>
+      <h1 class="hero-h"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a></h1>
+      <p class="hero-sf" id="s${idx}">${esc(firstPara(a.summary))}</p>
       <div class="hero-meta">Fonte · ${esc(a.source||'—')}</div>
       ${actsHTML(idx,true)}
     </div>
@@ -575,8 +580,8 @@ function heroHTML(a,idx){
 function subHTML(a,idx){
   return `<article class="sub">
     <div class="kicker"><i></i>${kicker(a)}</div>
-    <h3 onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</h3>
-    <p>${esc(firstPara(a.summary))}</p>
+    <h3><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a></h3>
+    <p id="s${idx}">${esc(firstPara(a.summary))}</p>
     ${actsHTML(idx)}
   </article>`;
 }
@@ -585,7 +590,7 @@ function cardHTML(a,idx){
   return `<article class="card">
     <div class="thumb" style="--tint:${CAT[currentCat].tint}"><span class="thumb-tag">${CAT[currentCat].short}</span></div>
     <div class="kicker"><i></i>${kicker(a)}</div>
-    <h3 class="card-h" onclick="window.open('${esc(a.url)}','_blank')">${esc(a.title)}</h3>
+    <h3 class="card-h"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a></h3>
     <p class="dek" id="s${idx}">${esc(normSummary(a.summary)).replace(/\n/g,'<br>')}</p>
     ${(a.tags||[]).length?`<div class="tags">${(a.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>`:''}
     <div class="card-foot">Fonte · ${esc(a.source||'—')}</div>
