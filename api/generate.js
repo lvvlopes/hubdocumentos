@@ -45,10 +45,10 @@ FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHE
 
 PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão das ÚLTIMAS 24 HORAS. Descarte notícias menores ou de nicho.
 
-PERMITIDO como fonte primária: anúncios oficiais de lançamento/pesquisa dos grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral) — um lançamento de modelo é notícia legítima.
+Lançamentos de modelos/produtos dos grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral) são notícia legítima — MAS para essas notícias, dê preferência à URL da COBERTURA JORNALÍSTICA independente do fato (TechCrunch, The Verge, Reuters, Bloomberg etc.) em vez do link direto para o blog/página de anúncio do próprio laboratório. Motivo prático: você tem historico de citar URLs de openai.com/anthropic.com/blog.google que, ao verificar, não existem (foram inventadas por aproximação) — jornalistas cobrindo o mesmo lançamento têm URLs mais fáceis de confirmar. Só use o link direto do laboratório se tiver certeza absoluta de que aquela URL existe.
 PROIBIDO (NÃO traga): conteúdo de marketing, publieditorial, tutorial ou página de produto de fornecedores menores tentando VENDER a ferramenta. Diferencie: "OpenAI lança modelo X" (notícia, ok) vs. "conheça as vantagens do produto da empresa Y" (marketing, descarte).
 
-IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente ou deduza URLs.
+IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente, deduza ou "complete" URLs — se não tiver certeza de que uma URL existe exatamente como escrita, descarte a notícia em vez de arriscar um link quebrado.
 
 Para cada notícia escreva:
 TÍTULO: ...
@@ -177,11 +177,22 @@ function extractAndParseJson(text) {
 
 // ── Validação de URLs (descarta links quebrados/inventados) ───────
 
+// Domínios de laboratórios de IA que o modelo tende a "alucinar" URLs (ele sabe que
+// a empresa provavelmente publicou algo, mas inventa o slug exato). Como esses sites
+// bloqueiam bots com 403 — indistinguível de "não existe" numa checagem HTTP simples —
+// tratamos esses domínios com política mais rígida: 403/timeout também reprovam.
+const STRICT_DOMAINS = [
+  'openai.com', 'anthropic.com', 'ai.meta.com', 'about.meta.com',
+  'mistral.ai', 'x.ai', 'deepmind.google',
+];
+const isStrictDomain = (hostname) => STRICT_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
+
 function checkUrl(rawUrl, redirectsLeft = 5) {
   return new Promise((resolve) => {
     let u;
     try { u = new URL(rawUrl); } catch { return resolve(false); }
     if (u.protocol !== 'https:') return resolve(true); // http: mantém sem checar
+    const strict = isStrictDomain(u.hostname);
 
     const req = https.request({
       hostname: u.hostname,
@@ -200,10 +211,14 @@ function checkUrl(rawUrl, redirectsLeft = 5) {
         return resolve(checkUrl(next, redirectsLeft - 1));
       }
 
+      if (strict) {
+        // domínio de alto risco: só aceita 2xx/3xx-final claros
+        return resolve(res.statusCode >= 200 && res.statusCode < 400);
+      }
       // 404/410 = página não existe; 403/outros mantém (muitos sites bloqueiam bots)
       resolve(res.statusCode !== 404 && res.statusCode !== 410);
     });
-    req.on('timeout', () => { req.destroy(); resolve(true); }); // lento ≠ quebrado
+    req.on('timeout', () => { req.destroy(); resolve(!strict); }); // lento ≠ quebrado, exceto em domínio estrito
     req.on('error', () => resolve(false)); // DNS/conexão falhou = quebrado
     req.end();
   });
