@@ -177,7 +177,7 @@ function extractAndParseJson(text) {
 
 // ── Validação de URLs (descarta links quebrados/inventados) ───────
 
-function checkUrl(rawUrl) {
+function checkUrl(rawUrl, redirectsLeft = 5) {
   return new Promise((resolve) => {
     let u;
     try { u = new URL(rawUrl); } catch { return resolve(false); }
@@ -187,11 +187,20 @@ function checkUrl(rawUrl) {
       hostname: u.hostname,
       path: u.pathname + u.search,
       method: 'HEAD',
-      timeout: 5000,
+      timeout: 6000,
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ai-news-hub)' },
     }, (res) => {
       res.resume();
-      // 404/410 = página não existe; 403/redirects/etc. mantém (muitos sites bloqueiam bots)
+
+      // Segue redirects até o destino final antes de decidir (301/302/303/307/308
+      // podem apontar para uma página 404 — checar só o 1º salto é insuficiente).
+      if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location && redirectsLeft > 0) {
+        let next;
+        try { next = new URL(res.headers.location, u).href; } catch { return resolve(false); }
+        return resolve(checkUrl(next, redirectsLeft - 1));
+      }
+
+      // 404/410 = página não existe; 403/outros mantém (muitos sites bloqueiam bots)
       resolve(res.statusCode !== 404 && res.statusCode !== 410);
     });
     req.on('timeout', () => { req.destroy(); resolve(true); }); // lento ≠ quebrado
