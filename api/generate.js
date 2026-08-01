@@ -30,90 +30,84 @@ const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 
 // ── Prompts por categoria ──────────────────────────────────────────
 
+// Regras comuns às 3 categorias (credibilidade de fonte + proibição de links quebrados
+// + proibição de conteúdo acadêmico + viés dev/engenheiro). Cada categoria injeta isso
+// e complementa com seu recorte temático específico.
+const COMMON_RULES = (minCount, windowHours = 24) => `
+FONTES: use APENAS os melhores e mais conceituados veículos jornalísticos do Brasil e do mundo — os que têm alta repercussão, são referência no setor e estão gerando debate público sobre o fato. Evite blogs pequenos, sites de nicho pouco conhecidos ou conteúdo sem assinatura editorial clara.
+
+O QUE TRAZER: NOTÍCIAS — fatos que aconteceram e estão sendo noticiados agora (lançamentos, aquisições, parcerias, decisões estratégicas, polêmicas, debates públicos, movimentos regulatórios, declarações de executivos/lideranças).
+
+O QUE NÃO TRAZER (PROIBIDO):
+- Estudos acadêmicos, papers de pesquisa, benchmarks técnicos detalhados ou testes de laboratório. Isto é um portal de NOTÍCIAS, não um repositório científico. Uma pesquisa só entra se ela VIROU notícia por ter gerado repercussão pública (ex.: "Estudo reacende debate sobre segurança de modelos de IA" é ok; um resumo técnico do paper em si não é).
+- Conteúdo de marketing, publieditorial, tutorial ou página de produto tentando VENDER uma ferramenta. Se o link é do site da própria empresa promovendo seu produto, descarte — prefira a cobertura jornalística independente sobre o mesmo fato.
+
+VIÉS DO PORTAL: os leitores são majoritariamente DESENVOLVEDORES e ENGENHEIROS DE SOFTWARE. Entre notícias de relevância parecida, priorize a que for mais útil/interessante para esse público.
+
+LINKS — REGRA CRÍTICA: link quebrado destrói a credibilidade do portal, é o pior erro possível aqui. Use APENAS URLs reais que você efetivamente encontrou na busca. NUNCA invente, deduza ou "complete" uma URL. Para lançamentos de grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral), prefira a URL da cobertura jornalística independente (TechCrunch, Reuters etc.) em vez do link direto do laboratório — você não tem como confirmar que aquele link específico existe, e esses domínios costumam ser citados incorretamente. Na dúvida sobre uma URL, DESCARTE a notícia em vez de arriscar.
+
+OBRIGATÓRIO: traga NO MÍNIMO ${minCount} notícias, mesmo que precise ampliar a janela de busca para as ÚLTIMAS ${windowHours === 24 ? '48 HORAS' : '72 HORAS'}. NUNCA retorne uma lista vazia — este tópico precisa ter pelo menos 1 notícia publicável.`;
+
 const CATEGORIES = {
   ia: {
     label: 'Notícias IA',
-    searchPrompt: `Busque nos principais portais de tecnologia DO BRASIL E DO MUNDO as principais notícias sobre inteligência artificial das ÚLTIMAS 24 HORAS.
+    searchPrompt: `Busque as notícias mais relevantes sobre INTELIGÊNCIA ARTIFICIAL (de forma geral) das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE — no Brasil e no mundo.
 
-PRIORIZE notícias internacionais (do mundo). Consulte com prioridade estas fontes de referência:
-- Imprensa de tecnologia: TechCrunch (seção de IA: techcrunch.com/category/artificial-intelligence), The Verge (theverge.com/ai-artificial-intelligence), Ars Technica (arstechnica.com/ai), Wired, MIT Technology Review, Reuters, Bloomberg.
-- Anúncios oficiais dos grandes laboratórios (fonte primária de lançamentos): OpenAI (openai.com/news), Anthropic (anthropic.com/news), Google AI (blog.google/technology/ai).
-- Curadorias e boletins: TLDR AI (tldr.tech/ai), The Batch da DeepLearning.AI (deeplearning.ai/the-batch), Hacker News (news.ycombinator.com).
-Portais brasileiros: CNN Brasil (tecnologia), InfoMoney (IA), Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (mas apenas 1 ou 2; o restante deve ser internacional).
-
-FOQUE em conteúdos que possam ajudar de alguma forma o EMPRESÁRIO e os ENGENHEIROS DE SOFTWARE: oportunidades de negócio, ferramentas aplicáveis, mudanças de mercado, novos modelos e APIs, decisões estratégicas das empresas de IA.
-
-PRIORIZE relevância: escolha apenas notícias de grande impacto e alta repercussão das ÚLTIMAS 24 HORAS. Descarte notícias menores ou de nicho.
-
-Lançamentos de modelos/produtos dos grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral) são notícia legítima — MAS para essas notícias, dê preferência à URL da COBERTURA JORNALÍSTICA independente do fato (TechCrunch, The Verge, Reuters, Bloomberg etc.) em vez do link direto para o blog/página de anúncio do próprio laboratório. Motivo prático: você tem historico de citar URLs de openai.com/anthropic.com/blog.google que, ao verificar, não existem (foram inventadas por aproximação) — jornalistas cobrindo o mesmo lançamento têm URLs mais fáceis de confirmar. Só use o link direto do laboratório se tiver certeza absoluta de que aquela URL existe.
-PROIBIDO (NÃO traga): conteúdo de marketing, publieditorial, tutorial ou página de produto de fornecedores menores tentando VENDER a ferramenta. Diferencie: "OpenAI lança modelo X" (notícia, ok) vs. "conheça as vantagens do produto da empresa Y" (marketing, descarte).
-
-IMPORTANTE: use APENAS URLs reais que você encontrou na busca. NUNCA invente, deduza ou "complete" URLs — se não tiver certeza de que uma URL existe exatamente como escrita, descarte a notícia em vez de arriscar um link quebrado.
+Fontes internacionais de referência: TechCrunch (seção IA), The Verge, Wired, Reuters, Bloomberg, Ars Technica, MIT Technology Review.
+Fontes brasileiras de referência: CNN Brasil, InfoMoney, Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
+${COMMON_RULES(3)}
 
 Para cada notícia escreva:
 TÍTULO: ...
 FONTE: ...
 URL: ...
-RESUMO: 2 parágrafos curtos (o que aconteceu + impacto para quem usa IA)
-TAGS: escolha de LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal
+RESUMO: 2 parágrafos curtos (o que aconteceu + por que importa)
+TAGS: escolha de LLM, Ferramentas, Empresas, Segurança, Regulação, Open Source, Hardware, Agentes, Multimodal, Mercado
 
 Traga 8 a 10 notícias.`,
-    tags: 'LLM, Ferramentas, Empresas, Segurança, Pesquisa, Open Source, Hardware, Regulação, Agentes, Multimodal',
+    tags: 'LLM, Ferramentas, Empresas, Segurança, Regulação, Open Source, Hardware, Agentes, Multimodal, Mercado',
   },
 
   dev: {
     label: 'Dev de Software',
-    searchPrompt: `Busque nas ÚLTIMAS 24 HORAS, em veículos JORNALÍSTICOS conceituados do Brasil e do mundo, NOTÍCIAS sobre o impacto da INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE.
+    searchPrompt: `Busque as notícias mais relevantes sobre O USO DE INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE na comunidade — no Brasil e no mundo.
 
-Veículos internacionais de referência: InfoQ (infoq.com), The New Stack (thenewstack.io), Ars Technica (arstechnica.com/ai), The Verge, Reuters, Bloomberg, MIT Technology Review, IEEE Spectrum. Use também como sinal de relevância o Hacker News (news.ycombinator.com) e o GitHub Trending (github.com/trending) para identificar o que está repercutindo — mas o artigo final deve apontar para a cobertura/fonte original, não para a lista.
-Veículos brasileiros de referência: Tecnoblog, Canaltech, Olhar Digital, InfoMoney, CNN Brasil, Exame, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (1 ou 2; o resto internacional).
+Fontes internacionais de referência: InfoQ, The New Stack, TechCrunch, The Verge, Ars Technica, Reuters, Bloomberg. Hacker News e GitHub Trending podem ser usados como sinal do que está repercutindo, mas a notícia deve apontar para a cobertura jornalística real, não para a lista.
+Fontes brasileiras de referência: Tecnoblog, Canaltech, Olhar Digital, InfoMoney, CNN Brasil, Exame — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
 
-O QUE BUSCAR (jornalismo, análise, dados, estudos, tendências): como a IA está mudando a rotina de desenvolvimento, estudos sobre produtividade e qualidade de código com IA, pesquisas e benchmarks, movimentos e decisões relevantes do setor, debates sobre segurança/qualidade, impactos no mercado de trabalho de engenharia.
-
-PROIBIDO (NÃO traga):
-- Páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa.
-- Conteúdo de marketing, "anúncio de novo recurso", tutorial ou publieditorial.
-- Regra prática: se o link for do site da própria empresa promovendo seu produto, DESCARTE. Prefira a cobertura JORNALÍSTICA independente sobre o mesmo fato.
-
-PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão. Descarte o que for menor, de nicho ou promocional.
-IMPORTANTE: use APENAS URLs reais encontradas na busca. NUNCA invente URLs.
+Temas: ferramentas de geração/revisão de código (Copilot, Cursor, agentes de código), mudanças no mercado de trabalho de engenharia, movimentos de empresas do setor dev+IA (aquisições, funding, parcerias), debates sobre produtividade/qualidade/segurança do código gerado por IA, novas integrações relevantes em IDEs e pipelines.
+${COMMON_RULES(3)}
 
 Para cada notícia escreva:
 TÍTULO: ... (pode estar em inglês; será traduzido depois)
 FONTE: ...
 URL: ...
 RESUMO: 2 parágrafos curtos sobre o fato e seu impacto prático para desenvolvedores e engenheiros
-TAGS: escolha de Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps
+TAGS: escolha de Copilot, IDE, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps, Mercado
 
 Traga 8 a 10 notícias.`,
-    tags: 'Copilot, IDE, Testes, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps',
+    tags: 'Copilot, IDE, Code Review, Produtividade, API, Framework, Agentes, Open Source, DevOps, Mercado',
   },
 
   projetos: {
     label: 'Projetos de Software',
-    searchPrompt: `Busque nas últimas 24 horas notícias sobre USO DE INTELIGÊNCIA ARTIFICIAL NA GESTÃO E GERENCIAMENTO DE PROJETOS DE SOFTWARE.
+    searchPrompt: `Busque as notícias mais relevantes sobre O USO DE INTELIGÊNCIA ARTIFICIAL NO GERENCIAMENTO DE PROJETOS DE SOFTWARE das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE — no Brasil e no mundo.
 
-Público-alvo: gerente de projetos de software que lidera equipe de desenvolvimento no setor de previdência privada complementar (seguros, benefícios, regulação SUSEP/PREVIC, compliance, sistemas core de gestão de benefícios).
+Fontes internacionais de referência: CIO, InfoQ, TechRepublic, Harvard Business Review, Gartner, McKinsey Digital, TechCrunch, Reuters.
+Fontes brasileiras de referência: InfoMoney, Exame, CNN Brasil, IT Forum, CIO Brasil — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
 
-Busque nos portais: PMI blog, ProjectManagement.com, CIO, InfoQ, TechRepublic, Harvard Business Review Tech, Gartner blogs, McKinsey Digital.
-
-Inclua OBRIGATORIAMENTE pelo menos 1 notícia de portais brasileiros renomados: InfoMoney, Exame, CNN Brasil, IT Forum, CIO Brasil, MIT Sloan Review Brasil, Você RH/Exame.
-
-PRIORIZE relevância: apenas notícias de grande impacto e alta repercussão para gestão de projetos e tecnologia. Descarte notícias menores ou de nicho.
-
-PROIBIDO (NÃO traga): páginas de produto, blogs corporativos ou releases que DIVULGUEM/PROMOVAM uma ferramenta ou empresa; conteúdo de marketing ou publieditorial. Prefira sempre a cobertura JORNALÍSTICA e análises independentes sobre o mesmo tema.
-
-Foco: IA para estimativa e planejamento de projetos, automação de status reports, gestão de backlog com IA, ferramentas de IA para líderes técnicos (Jira AI, Linear, GitHub Projects), IA para gestão de risco em projetos, análise preditiva de cronograma, gestão de equipes distribuídas com IA, metodologias ágeis potencializadas por IA, compliance e rastreabilidade com IA, impactos de IA em equipes de desenvolvimento financeiro/seguros.
+Temas: IA aplicada a planejamento/estimativa de projetos, automação de relatórios e gestão de backlog, ferramentas de IA para líderes técnicos (Jira, Linear, GitHub Projects), gestão de risco e cronograma com IA, gestão de equipes de engenharia distribuídas, metodologias ágeis potencializadas por IA, movimentos de mercado em ferramentas de gestão de projetos. Ângulo: útil para quem lidera times de desenvolvimento de software, não gestão de projetos genérica fora de tecnologia.
+${COMMON_RULES(3)}
 
 Para cada notícia escreva:
 TÍTULO: ...
 FONTE: ...
 URL: ...
-RESUMO: 2 parágrafos curtos focando no valor prático para um gerente de projetos de software no setor financeiro/previdência
-TAGS: escolha de Planejamento, Estimativa, Agile, Risco, Equipes, Compliance, FinTech, Automação, Ferramentas, Liderança
+RESUMO: 2 parágrafos curtos focando no valor prático para quem lidera projetos/times de software
+TAGS: escolha de Planejamento, Agile, Risco, Equipes, Ferramentas, Liderança, Automação, Mercado
 
 Traga 8 a 10 notícias.`,
-    tags: 'Planejamento, Estimativa, Agile, Risco, Equipes, Compliance, FinTech, Automação, Ferramentas, Liderança',
+    tags: 'Planejamento, Agile, Risco, Equipes, Ferramentas, Liderança, Automação, Mercado',
   },
 };
 
@@ -231,7 +225,7 @@ async function filterValidUrls(articles) {
 
 // ── Busca + estrutura para uma categoria ──────────────────────────
 
-async function fetchCategory(apiKey, category) {
+async function searchAndStructure(apiKey, category, extraNote) {
   const cfg = CATEGORIES[category];
 
   const searchResp = await post('api.openai.com', '/v1/chat/completions', {
@@ -240,7 +234,7 @@ async function fetchCategory(apiKey, category) {
   }, {
     model: 'gpt-4o-mini-search-preview',
     web_search_options: {},
-    messages: [{ role: 'user', content: cfg.searchPrompt }],
+    messages: [{ role: 'user', content: cfg.searchPrompt + (extraNote || '') }],
   });
 
   if (searchResp.status !== 200) throw new Error(`Search failed for ${category}: ${JSON.stringify(searchResp.body).slice(0,200)}`);
@@ -262,6 +256,21 @@ async function fetchCategory(apiKey, category) {
   const rawJson = structResp.body.choices?.[0]?.message?.content || '';
   const parsed = extractAndParseJson(rawJson);
   return filterValidUrls(parsed?.articles || []);
+}
+
+// Garante pelo menos 1 notícia por categoria (cada tópico vira post fixo no
+// Instagram — categoria vazia quebra esse fluxo). Se a 1ª tentativa não retornar
+// nada válido (ex.: todas as URLs falharam na validação), tenta de novo com uma
+// janela de tempo mais ampla antes de desistir.
+async function fetchCategory(apiKey, category) {
+  let articles = await searchAndStructure(apiKey, category);
+  if (articles.length > 0) return articles;
+
+  const retryNote = '\n\nATENÇÃO: a busca anterior não retornou nenhuma notícia válida/verificável. ' +
+    'AMPLIE a janela de tempo para as ÚLTIMAS 72 HORAS e traga pelo menos 1 notícia real, com URL ' +
+    'confirmada, nesta categoria — é obrigatório não retornar uma lista vazia.';
+  articles = await searchAndStructure(apiKey, category, retryNote);
+  return articles;
 }
 
 // ── Main handler ──────────────────────────────────────────────────
@@ -326,6 +335,18 @@ module.exports = async (req, res) => {
 
       if (error) { stats.errors.push(`${key}: ${error.message}`); continue; }
       stats.added[key] = data ? data.length : 0;
+    }
+
+    // Aviso operacional: cada categoria vira 1 post fixo no Instagram, então uma
+    // categoria sem NENHUM artigo hoje (nem novo, nem já existente) quebra esse fluxo.
+    stats.warnings = [];
+    for (const key of catKeys) {
+      const { count, error } = await supa
+        .from('articles')
+        .select('id', { count: 'exact', head: true })
+        .eq('date', today)
+        .eq('category', key);
+      if (!error && count === 0) stats.warnings.push(`${key}: nenhuma notícia hoje mesmo após nova tentativa`);
     }
 
     res.status(200).json({ ok: true, date: today, stats });

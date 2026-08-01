@@ -705,7 +705,8 @@ async function generateNews(){
     const labels={ia:'IA',dev:'DEV',projetos:'PROJETOS'};
     const lines=['ia','dev','projetos'].map(k=>`${labels[k]}: +${s.added?.[k]||0}`);
     const errs=s.errors?.length?`<br><small style="color:#f88">Erros: ${esc(s.errors.join(', '))}</small>`:'';
-    showToast(lines.join(' · ')+errs+'<br><small>Atualizando…</small>','success','✅');
+    const warns=s.warnings?.length?`<br><small style="color:#fb923c">⚠ ${esc(s.warnings.join(', '))}</small>`:'';
+    showToast(lines.join(' · ')+errs+warns+'<br><small>Atualizando…</small>',s.warnings?.length?'info':'success', s.warnings?.length?'⚠️':'✅');
     setTimeout(loadEditions,1500);
   }catch(e){showToast('Erro de conexão: '+e.message,'error','❌');}
   finally{btn.disabled=false;btn.classList.remove('loading');}
