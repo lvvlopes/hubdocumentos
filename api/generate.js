@@ -181,18 +181,25 @@ const STRICT_DOMAINS = [
 ];
 const isStrictDomain = (hostname) => STRICT_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
 
+// Domínios de imprensa real que têm infraestrutura anti-bot lenta/instável (a checagem
+// pode dar timeout mesmo numa URL morta). Para esses, timeout NÃO passa automaticamente
+// como válido — evita que um link 404 "escape" só porque a resposta demorou.
+const SLOW_UNRELIABLE_DOMAINS = ['bloomberg.com'];
+const isSlowUnreliable = (hostname) => SLOW_UNRELIABLE_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
+
 function checkUrl(rawUrl, redirectsLeft = 5) {
   return new Promise((resolve) => {
     let u;
     try { u = new URL(rawUrl); } catch { return resolve(false); }
     if (u.protocol !== 'https:') return resolve(true); // http: mantém sem checar
     const strict = isStrictDomain(u.hostname);
+    const slow = isSlowUnreliable(u.hostname);
 
     const req = https.request({
       hostname: u.hostname,
       path: u.pathname + u.search,
       method: 'HEAD',
-      timeout: 6000,
+      timeout: 9000,
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; ai-news-hub)' },
     }, (res) => {
       res.resume();
@@ -212,7 +219,9 @@ function checkUrl(rawUrl, redirectsLeft = 5) {
       // 404/410 = página não existe; 403/outros mantém (muitos sites bloqueiam bots)
       resolve(res.statusCode !== 404 && res.statusCode !== 410);
     });
-    req.on('timeout', () => { req.destroy(); resolve(!strict); }); // lento ≠ quebrado, exceto em domínio estrito
+    // lento ≠ quebrado, EXCETO em domínio estrito ou de imprensa lenta/instável
+    // (nesses, um timeout não pode "salvar" um link morto por engano)
+    req.on('timeout', () => { req.destroy(); resolve(!strict && !slow); });
     req.on('error', () => resolve(false)); // DNS/conexão falhou = quebrado
     req.end();
   });
