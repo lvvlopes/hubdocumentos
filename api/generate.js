@@ -31,31 +31,36 @@ const put  = (h, p, hdrs, b) => request('PUT',  h, p, hdrs, b);
 // ── Prompts por categoria ──────────────────────────────────────────
 
 // Regras comuns às 3 categorias (credibilidade de fonte + proibição de links quebrados
-// + proibição de conteúdo acadêmico + viés dev/engenheiro). Cada categoria injeta isso
-// e complementa com seu recorte temático específico.
-const COMMON_RULES = (minCount, windowHours = 24) => `
-FONTES: use APENAS os melhores e mais conceituados veículos jornalísticos do Brasil e do mundo — os que têm alta repercussão, são referência no setor e estão gerando debate público sobre o fato. Evite blogs pequenos, sites de nicho pouco conhecidos ou conteúdo sem assinatura editorial clara.
+// + proibição de conteúdo acadêmico/arquivo + viés dev/engenheiro). Cada categoria injeta
+// isso e complementa com seu recorte temático e menu de fontes específico.
+const COMMON_RULES = (minCount, sourcesBlock) => `
+PAPEL: aja como um EDITOR/ESPECIALISTA em IA com faro editorial de verdade — não um agregador mecânico. A regra final de "o que é relevante" é o SEU julgamento: o que está realmente repercutindo, gerando debate, sendo comentado por quem acompanha o setor agora.
 
-O QUE TRAZER: NOTÍCIAS — fatos que aconteceram e estão sendo noticiados agora (lançamentos, aquisições, parcerias, decisões estratégicas, polêmicas, debates públicos, movimentos regulatórios, declarações de executivos/lideranças).
+MENU DE FONTES (ponto de partida, não lista fechada — é um guia da qualidade/perfil de veículo esperado; se você souber de uma notícia mais relevante em outro veículo de prestígio equivalente, pode usá-la):
+${sourcesBlock}
+
+O QUE TRAZER: NOTÍCIAS — fatos que aconteceram e estão sendo noticiados agora (lançamentos, aquisições, parcerias, decisões estratégicas, polêmicas, debates públicos, movimentos regulatórios, declarações de executivos/lideranças). Sempre uma matéria de um SITE/PORTAL DE NOTÍCIAS.
 
 O QUE NÃO TRAZER (PROIBIDO):
-- Estudos acadêmicos, papers de pesquisa, benchmarks técnicos detalhados ou testes de laboratório. Isto é um portal de NOTÍCIAS, não um repositório científico. Uma pesquisa só entra se ela VIROU notícia por ter gerado repercussão pública (ex.: "Estudo reacende debate sobre segurança de modelos de IA" é ok; um resumo técnico do paper em si não é).
+- Links para ARQUIVOS PARA DOWNLOAD: PDF, DOC/DOCX, PPT/PPTX, XLS/XLSX, ou qualquer URL que termine em extensão de arquivo. Mesmo que o conteúdo seja sobre IA, se não é uma página de notícia em HTML de um veículo de imprensa, descarte.
+- Estudos acadêmicos, papers de pesquisa (arXiv, repositórios universitários, teses), benchmarks técnicos detalhados ou testes de laboratório. Isto é um portal de NOTÍCIAS, não um repositório científico. Uma pesquisa só entra se ela VIROU notícia por ter gerado repercussão pública, através da COBERTURA JORNALÍSTICA sobre ela — nunca o paper/PDF original.
 - Conteúdo de marketing, publieditorial, tutorial ou página de produto tentando VENDER uma ferramenta. Se o link é do site da própria empresa promovendo seu produto, descarte — prefira a cobertura jornalística independente sobre o mesmo fato.
 
 VIÉS DO PORTAL: os leitores são majoritariamente DESENVOLVEDORES e ENGENHEIROS DE SOFTWARE. Entre notícias de relevância parecida, priorize a que for mais útil/interessante para esse público.
 
-LINKS — REGRA CRÍTICA: link quebrado destrói a credibilidade do portal, é o pior erro possível aqui. Use APENAS URLs reais que você efetivamente encontrou na busca. NUNCA invente, deduza ou "complete" uma URL. Para lançamentos de grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral), prefira a URL da cobertura jornalística independente (TechCrunch, Reuters etc.) em vez do link direto do laboratório — você não tem como confirmar que aquele link específico existe, e esses domínios costumam ser citados incorretamente. Na dúvida sobre uma URL, DESCARTE a notícia em vez de arriscar.
+LINKS — REGRA CRÍTICA: link quebrado destrói a credibilidade do portal, é o pior erro possível aqui. Use APENAS URLs reais que você efetivamente encontrou na busca, de uma página de notícia (não arquivo). NUNCA invente, deduza ou "complete" uma URL. Para lançamentos de grandes laboratórios (OpenAI, Anthropic, Google, Meta, Mistral), prefira a URL da cobertura jornalística independente (TechCrunch, Reuters etc.) em vez do link direto do laboratório — você não tem como confirmar que aquele link específico existe. Na dúvida sobre uma URL, DESCARTE a notícia em vez de arriscar.
 
-OBRIGATÓRIO: traga NO MÍNIMO ${minCount} notícias, mesmo que precise ampliar a janela de busca para as ÚLTIMAS ${windowHours === 24 ? '48 HORAS' : '72 HORAS'}. NUNCA retorne uma lista vazia — este tópico precisa ter pelo menos 1 notícia publicável.`;
+OBRIGATÓRIO: traga NO MÍNIMO ${minCount} notícias, mesmo que precise ampliar a janela de busca para as ÚLTIMAS 48-72 HORAS. NUNCA retorne uma lista vazia — este tópico precisa ter pelo menos 1 notícia publicável.`;
 
 const CATEGORIES = {
   ia: {
     label: 'Notícias IA',
     searchPrompt: `Busque as notícias mais relevantes sobre INTELIGÊNCIA ARTIFICIAL (de forma geral) das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE — no Brasil e no mundo.
-
-Fontes internacionais de referência: TechCrunch (seção IA), The Verge, Wired, Reuters, Bloomberg, Ars Technica, MIT Technology Review.
-Fontes brasileiras de referência: CNN Brasil, InfoMoney, Exame, Tecnoblog, Canaltech, Olhar Digital, G1 Tecnologia — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
-${COMMON_RULES(3)}
+${COMMON_RULES(3, `- Imprensa/tech geral: MIT Technology Review, Wired, The Verge, Reuters, Bloomberg, Ars Technica.
+- Portais dedicados a IA: TechCrunch (seção IA), VentureBeat (AI), AI News (artificialintelligence-news.com).
+- Curadorias/boletins (sinal de repercussão, não fonte final): TLDR AI, The Batch (DeepLearning.AI), Hacker News.
+- Blogs oficiais dos laboratórios (OpenAI, Anthropic, Google DeepMind, Meta AI, Microsoft AI): só cite se tiver certeza de que a URL existe; prefira a cobertura jornalística do mesmo fato.
+- Brasil: CNN Brasil (IA), Olhar Digital, Tecmundo, Canaltech, InfoMoney, Exame, G1 Tecnologia — inclua 1 ou 2 notícias brasileiras, o restante internacional.`)}
 
 Para cada notícia escreva:
 TÍTULO: ...
@@ -71,12 +76,13 @@ Traga 8 a 10 notícias.`,
   dev: {
     label: 'Dev de Software',
     searchPrompt: `Busque as notícias mais relevantes sobre O USO DE INTELIGÊNCIA ARTIFICIAL NO DESENVOLVIMENTO DE SOFTWARE das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE na comunidade — no Brasil e no mundo.
-
-Fontes internacionais de referência: InfoQ, The New Stack, TechCrunch, The Verge, Ars Technica, Reuters, Bloomberg. Hacker News e GitHub Trending podem ser usados como sinal do que está repercutindo, mas a notícia deve apontar para a cobertura jornalística real, não para a lista.
-Fontes brasileiras de referência: Tecnoblog, Canaltech, Olhar Digital, InfoMoney, CNN Brasil, Exame — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
+${COMMON_RULES(3, `- Especializados em engenharia de software: InfoQ, The New Stack, SD Times, Developer Tech News.
+- Tech geral com boa cobertura de IA aplicada a dev: TechCrunch (seção IA), The Verge, Ars Technica, Reuters, Bloomberg.
+- Sinal de repercussão (não use como fonte final, aponte para a cobertura real): Hacker News, GitHub Trending.
+- Blogs oficiais de release (só se tiver certeza da URL): GitHub Blog, .NET Blog, Anthropic, OpenAI, Google DeepMind.
+- Brasil: iMasters, ComputerWeekly Brasil, Tecmundo, Canaltech, Olhar Digital, Tecnoblog — inclua 1 ou 2 notícias brasileiras, o restante internacional.`)}
 
 Temas: ferramentas de geração/revisão de código (Copilot, Cursor, agentes de código), mudanças no mercado de trabalho de engenharia, movimentos de empresas do setor dev+IA (aquisições, funding, parcerias), debates sobre produtividade/qualidade/segurança do código gerado por IA, novas integrações relevantes em IDEs e pipelines.
-${COMMON_RULES(3)}
 
 Para cada notícia escreva:
 TÍTULO: ... (pode estar em inglês; será traduzido depois)
@@ -92,12 +98,11 @@ Traga 8 a 10 notícias.`,
   projetos: {
     label: 'Projetos de Software',
     searchPrompt: `Busque as notícias mais relevantes sobre O USO DE INTELIGÊNCIA ARTIFICIAL NO GERENCIAMENTO DE PROJETOS DE SOFTWARE das ÚLTIMAS 24 HORAS, com ALTA REPERCUSSÃO e que estão gerando DEBATE — no Brasil e no mundo.
-
-Fontes internacionais de referência: CIO, InfoQ, TechRepublic, Harvard Business Review, Gartner, McKinsey Digital, TechCrunch, Reuters.
-Fontes brasileiras de referência: InfoMoney, Exame, CNN Brasil, IT Forum, CIO Brasil — inclua pelo menos 1 notícia brasileira (1 ou 2 no máximo; o restante deve ser internacional).
+${COMMON_RULES(3, `- Especializados em gestão de projetos: The Digital Project Manager, PMI (seção IA: pmi.org/learning/ai-in-project-management), ProjectManagement.com.
+- Ponte com engenharia/liderança técnica: InfoQ (Culture & Methods), TechRepublic, CIO, Harvard Business Review, Gartner, McKinsey Digital.
+- Brasil: PMI Brasil e capítulos regionais, ComputerWeekly Brasil, iMasters, InfoMoney, Exame, CNN Brasil — inclua 1 ou 2 notícias brasileiras, o restante internacional.`)}
 
 Temas: IA aplicada a planejamento/estimativa de projetos, automação de relatórios e gestão de backlog, ferramentas de IA para líderes técnicos (Jira, Linear, GitHub Projects), gestão de risco e cronograma com IA, gestão de equipes de engenharia distribuídas, metodologias ágeis potencializadas por IA, movimentos de mercado em ferramentas de gestão de projetos. Ângulo: útil para quem lidera times de desenvolvimento de software, não gestão de projetos genérica fora de tecnologia.
-${COMMON_RULES(3)}
 
 Para cada notícia escreva:
 TÍTULO: ...
@@ -187,10 +192,16 @@ const isStrictDomain = (hostname) => STRICT_DOMAINS.some(d => hostname === d || 
 const SLOW_UNRELIABLE_DOMAINS = ['bloomberg.com'];
 const isSlowUnreliable = (hostname) => SLOW_UNRELIABLE_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
 
+// Backstop no código (não depende só do prompt): rejeita URL de arquivo para download.
+// Portal é de notícias, não repositório de documentos.
+const FILE_EXTENSIONS = /\.(pdf|docx?|pptx?|xlsx?|csv|zip|rar)$/i;
+const isFileDownload = (pathname) => FILE_EXTENSIONS.test(pathname);
+
 function checkUrl(rawUrl, redirectsLeft = 5) {
   return new Promise((resolve) => {
     let u;
     try { u = new URL(rawUrl); } catch { return resolve(false); }
+    if (isFileDownload(u.pathname)) return resolve(false);
     if (u.protocol !== 'https:') return resolve(true); // http: mantém sem checar
     const strict = isStrictDomain(u.hostname);
     const slow = isSlowUnreliable(u.hostname);
